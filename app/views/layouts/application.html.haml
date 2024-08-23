@@ -33,7 +33,7 @@
         = render "shared/menu/sidebar"
         .container-fluid
         .row
-          - if controller_name == "accounts"
+          - if controller_name == "accounts" || controller_name == "homepage"
             .col-md-12
               .content-wrapper
                 .mx-2.pt-3

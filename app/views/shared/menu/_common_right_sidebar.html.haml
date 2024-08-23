@@ -1,27 +1,36 @@
-.col-md-12.pt-4
-  %div.card.mt-4
-    .card-header
-      %div.d-flex.justify-content-between
-        %div
-          %h5.card-title Patch Packs
-        %div
-          = image_tag("icons/boxes.svg", class: "mr-2", width: "16", height: "16")
-    .card-body
-      %p Choose one of our popular packs of patches for one-click Server Settings installation:
-      %a.btn.btn-outline-dark{ href: '#' } Get started
-  %div.card.mt-4
-    .card-header
-      %div.d-flex.justify-content-between
-        %div
-          %h5.card-title Most popular communities
-        %div
-          = image_tag("icons/chart-line-up.svg", class: "mr-2", width: "16", height: "16")
-    .card-body
-      %ul
-        %li Oil Painting
-        %li Art
-        %li Movies
-        %li TV & Radio
-        %li Music
-      %a.btn.btn-outline-secondary.mt-3{ href: '#' } Make your own community
-      %a.btn.btn-danger.mt-3{ href: '#' } Upgrade to Patchwork Community
+.card
+  .card-body.top-card
+    %h5.text-light Welcome to the Patchwork Dashboard
+    %p.text-light From here you can update the settings which show on your server. To view the server, use the button below.
+    %i.fa-solid.fa-check.text-red
+    %span.text-light Customise your server
+    %br/
+    %i.fa-solid.fa-check.text-red
+    %span.text-light Add new communities
+    %a.btn.btn-danger.mt-3{ href: '#' } Go to server
+.card.mt-3
+  .card-header
+    %div.d-flex.justify-content-between
+      %div
+        %h5.card-title Patch Packs
+      %div
+        = image_tag("icons/boxes.svg", class: "mr-2", width: "16", height: "16")
+  .card-body
+    %p.text-muted.small Choose one of our popular packs of patches for one-click Server Settings installation:
+    %a.btn.btn-outline-dark{ href: '#' } Get started
+.card.mt-3
+  .card-header
+    %div.d-flex.justify-content-between
+      %h5.card-title Most popular communities
+      = image_tag("icons/chart-line-up.svg", class: "mr-2", width: "16", height: "16")
+  .card-body.mb-3
+    - ["Oil Painting", "Art", "Movies", "TV & Radio", "Music"].each do |community|
+      .d-flex.align-items-center.mb-1
+        %img{ alt: "profile picture", src: asset_path('patchwork-logo.svg'), class: "rounded-circle", style: "width: 35px; height: 35px; border: 2px solid white;" }
+        %div.ml-3
+          %div= community
+          %div.text-muted 709,3K Followers
+        %div.ml-auto
+          = image_tag("icons/chevron-right.svg", width: "16", height: "16")
+    %a.btn.btn-outline-secondary.mt-3{ href: '#' } Make your own community
+    %a.btn.btn-danger.mt-3{ href: '#' } Upgrade to Patchwork Community

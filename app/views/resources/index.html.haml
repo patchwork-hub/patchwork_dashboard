@@ -1,0 +1,83 @@
+- content_for :title do
+  = 'Resources'
+
+.row
+  .col-12
+    .card.resource-mastodon
+      .card-header
+        .card-title
+          = image_tag("icons/mastodon.svg", class: "mr-2", width: "117", height: "50")
+
+      .card-body
+        %p
+          Patchwork runs on Mastodon's open-source software. If you're not already running Mastodon,
+          %br
+          you'll need to install this first.
+        %p.text-muted
+          Patchwork runs on Mastodon versions 1.2.0 and above. If you're not running one of these, you'll need to
+          %br
+          upgrade your Mastodon installation first.
+        .row.mt-5
+          .col-12.d-flex.justify-content-start
+            %div.btn-group
+              %button.btn.btn-outline-light.install-mastodon
+                = image_tag("icons/download.svg", class: "mr-2", width: "16", height: "16")
+                Install Mastodon
+              %button.btn.btn-outline-light.ml-3
+                Upgrade Mastodon
+
+.row
+  .col-6
+    .card.resource
+      .card-header
+        %div.d-flex.justify-content-between
+          %div
+            %h5.card-title Documentation
+          %div
+            = image_tag("icons/copy.svg", class: "mr-2", width: "16", height: "16")
+      .card-body
+        %p.text-muted.small
+          Review technical specifications and documentation for different components of Patchwork.
+        .mt-auto
+          %button.installed-button.btn.btn-outline-secondary View documentation
+  .col-6
+    .card.resource
+      .card-header
+        %div.d-flex.justify-content-between
+          %div
+            %h5.card-title Source code
+          %div
+            = image_tag("icons/Code.svg", class: "mr-2", width: "16", height: "16")
+      .card-body
+        %p.text-muted.small
+          Patchwork is an open source project, licenced under AGPL-3.0. Our code is available on Github where you can read it and adapt it for yourself.
+        .mt-auto
+          %button.install-button.btn.btn-outline-secondary View source code
+
+.row
+  .col-6
+    .card.resource
+      .card-header
+        %div.d-flex.justify-content-between
+          %div
+            %h5.card-title Website
+          %div
+            = image_tag("icons/website.svg", class: "mr-2", width: "16", height: "16")
+      .card-body
+        %p.text-muted.small
+          Visit the Patchwork website for more information about Patchwork, the people behind it and the social web.
+        .mt-auto
+          %button.installed-button.btn.btn-outline-secondary View website
+  .col-6
+    .card.resource
+      .card-header
+        %div.d-flex.justify-content-between
+          %div
+            %h5.card-title Latest news
+          %div
+            = image_tag("icons/news.svg", class: "mr-2", width: "16", height: "16")
+      .card-body
+        %p.text-muted.small
+          Check out the latest news from the team behind Patchwork. Here you can find news on upcoming features, updates from the social web and the future of social media.
+        .mt-auto
+          %button.install-button.btn.btn-outline-secondary View latest news

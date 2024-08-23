@@ -455,7 +455,6 @@ ul.pagination {
   bottom: 0;
   left: 0;
   right: 0;
-  font-size: 15px;
   text-align: center;
 }
 
@@ -472,7 +471,7 @@ ul.pagination {
   border-color: red;
 }
 
-.bordered-checkbox {
+.bordered-checkbox, .bordered-radio {
   border: 1px solid #ccc;
   border-radius: 5px;
   width: 100%;
@@ -483,4 +482,44 @@ ul.pagination {
 #create-channel {
   accent-color: red;
 }
+
+.text-smaller {
+  font-size: 0.8rem;
+}
 /* community preview */
+
+.resource-mastodon {
+  background-color: #000 !important;
+  color: #fff;
+}
+
+.resource {
+  height: 200px;
+}
+
+.install-mastodon {
+  background: linear-gradient(180deg, #6364FF 0%, #563ACC 99.99%);
+}
+
+.card.homepage {
+  position: relative;
+  background-color: #2E363B;
+  color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.logo {
+  position: absolute;
+  top: -135px;
+  z-index: 1;
+}
+
+.large-logo {
+  width: 270px;
+  height: auto;
+}
+
+.small-card {
+  width: 100%;
+}

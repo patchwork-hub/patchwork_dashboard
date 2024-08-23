@@ -4,7 +4,7 @@ class CreateKeywordFilterGroups < ActiveRecord::Migration[7.0]
       t.string :name
       t.boolean :is_custom, default: true
       t.boolean :is_active, default: true
-      t.references :server_setting, null: false, foreign_key: true
+      t.references :server_setting, null: false
 
       t.timestamps
     end

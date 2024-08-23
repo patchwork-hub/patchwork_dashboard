@@ -1,0 +1,138 @@
+- content_for :title do
+  = 'Homepage'
+
+.row
+  .col-12
+    .card.homepage
+      .card-body.mx-4.my-4
+        .row.d-flex.align-items-center
+          .col-9
+            %h2
+              Welcome to the Patchwork dashboard
+            %p.text-muted
+              Here, you can oversee all your communities in one place, allowing you to edit existing
+              %br
+              ones, manage admins, curate content, and create new communities effortlessly.
+              %br
+              Enjoy seamless control and organisation of your communities.
+          .col-3.position-relative
+            .logo
+              = image_tag("patchwork-logo.svg", class: "large-logo")
+
+.row.d-flex.justify-content-between
+  .col-4
+    .row
+      .card.small-card
+        .card-header
+          %div.d-flex.justify-content-between
+            %div
+              %h5.card-title Total server users
+            %div
+              = image_tag("icons/users.svg", class: "mr-2", width: "16", height: "16")
+        .card-body.mb-1
+          .row
+            .col-6
+              %h3 18,928
+            .col-1
+              = image_tag("icons/circle-up.svg", class: "mr-2", width: "16", height: "16")
+            .col-5
+              %p 31.24%
+          .row
+            %p Since 23 July, 2024
+    .row
+      .card.small-card
+        .card-header
+          %div.d-flex.justify-content-between
+            %div
+              %h5.card-title Visits
+            %div
+              = image_tag("icons/eye.svg", class: "mr-2", width: "16", height: "16")
+        .card-body.mb-1
+          .row
+            %h3 201
+          .row
+            %p Every 24 hours
+  .col-4
+    .card.small-card
+      .card-header
+        %div.d-flex.justify-content-between
+          %h5.card-title Most popular communities
+          = image_tag("icons/chart-line-up.svg", class: "mr-2", width: "16", height: "16")
+      .card-body.mb-3
+        - ["Oil Painting", "Art", "Movies", "TV & Radio", "Music"].each do |community|
+          .d-flex.align-items-center.mb-1
+            %img{ alt: "profile picture", src: asset_path('patchwork-logo.svg'), class: "rounded-circle", style: "width: 35px; height: 35px; border: 2px solid white;" }
+            %div.ml-3
+              %div= community
+              %div.text-muted 709,3K Followers
+            %div.ml-auto
+              = image_tag("icons/chevron-right.svg", width: "16", height: "16")
+
+  .col-4
+    .card.small-card
+      .card-header
+        %div.d-flex.justify-content-between
+          %div
+            %h5.card-title Most active contributors
+          %div
+            = image_tag("icons/users.svg", class: "mr-2", width: "16", height: "16")
+      .card-body
+        .row.d-flex.justify-content-between.my-2
+          .col-6
+            .d-flex.flex-column.align-items-center
+              %img{ alt: "profile picture", src: asset_path('patchwork-logo.svg'), class: "rounded-circle", style: "width: 60px; height: 60px; border: 2px solid white;" }
+              %div Profile Name
+              %div.text-muted @profilename
+          .col-6
+            .d-flex.flex-column.align-items-center
+              %img{ alt: "profile picture", src: asset_path('patchwork-logo.svg'), class: "rounded-circle", style: "width: 60px; height: 60px; border: 2px solid white;" }
+              %div Profile Name
+              %div.text-muted @profilename
+        .row.d-flex.justify-content-between.my-4
+          .col-6
+            .d-flex.flex-column.align-items-center
+              %img{ alt: "profile picture", src: asset_path('patchwork-logo.svg'), class: "rounded-circle", style: "width: 60px; height: 60px; border: 2px solid white;" }
+              %div Profile Name
+              %div.text-muted @profilename
+          .col-6
+            .d-flex.flex-column.align-items-center
+              %img{ alt: "profile picture", src: asset_path('patchwork-logo.svg'), class: "rounded-circle", style: "width: 60px; height: 60px; border: 2px solid white;" }
+              %div Profile Name
+              %div.text-muted @profilename
+
+%div.text-center.my-3 Use our quick actions to get started:
+
+.row
+  .col-4
+    .card.small-card
+      .card-body
+        %div.d-flex.justify-content-center.my-2
+          = image_tag("icons/setting.svg", width: "20", height: "20")
+        %div.d-flex.justify-content-center.my-2
+          %h5 Server settings
+        %p.text-muted.small.my-2
+          Update the settings for your server to ensure content is being moderated correctly and spam filters are in place.
+        %div.d-grid.gap-2.mt-auto.my-2
+          %button.installed-button.btn.btn-danger.btn-block{type: "button"} View website
+  .col-4
+    .card.small-card
+      .card-body
+        %div.d-flex.justify-content-center.my-2
+          = image_tag("icons/chat.svg", width: "20", height: "20")
+        %div.d-flex.justify-content-center.my-2
+          %h5 Communities
+        %p.text-muted.small.my-2
+          See a list of all the communities on your server and easily import, manage or create new communities all in one place.
+        %div.d-grid.gap-2.mt-auto.my-2
+          %button.installed-button.btn.btn-danger.btn-block{type: "button"} View all communities
+  .col-4
+    .card.small-card
+      .card-body
+        %div.d-flex.justify-content-center.my-2
+          = image_tag("icons/tool.svg", width: "20", height: "20")
+        %div.d-flex.justify-content-center.my-2
+          %h5 Installation
+        %p.text-muted.small.my-2
+          Update the settings for your server to ensure content is being moderated correctly and spam filters are in place.
+        %div.d-grid.gap-2.mt-auto.my-2
+          %button.installed-button.btn.btn-danger.btn-block{type: "button"} View website

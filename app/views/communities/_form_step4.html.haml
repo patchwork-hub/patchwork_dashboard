@@ -17,7 +17,7 @@
           .row
             .col
               %label Type of posts
-              %p.text-muted This selection will determine the type of content displayed within this community.
+              %p.text-muted.small Select which types of content from hashtags and key contributors are displayed within this community.
           .row
             .col.card.list-group-item
               .icheck-primary
@@ -38,7 +38,7 @@
           .row
             .col
               %label Mute accounts
-              %p.text-muted Choose accounts to Mute from the Community.
+              %p.text-muted.small Choose accounts to Mute from the Community.
           .row.d-flex.justify-content-between
             .col-auto
               %label Your muted contributors (0)
@@ -49,24 +49,24 @@
               %tbody
                 %tr
                   %td.text-center
-                    %p.text-muted You haven’t muted any contributors from this community yet
-                    %a.text-danger{ href: '#', title: 'Click here to search', 'data-toggle': 'modal', 'data-target': '#muteContributorModal' }
+                    %p.text-muted.small You haven’t muted any contributors from this community yet
+                    %a.text-danger.small{ href: '#', title: 'Click here to search', 'data-toggle': 'modal', 'data-target': '#muteContributorModal' }
                       Click here to search
       .card
         .card-body
           .row.d-flex.justify-content-between
-            .col-md-6
+            .col-md-9-auto
               %label Keyword filtering
-              %p.text-muted Lorem ipsum dolor sit amet consectetur. Fermentum ac proin sed elementum erat aliquam quis sem libero. Sit morbi mi magna adipiscing tellus hac.
-            .col-md-6-auto
+              %p.text-muted.small Add keyword filters to prevent posts from the wider network using this keyword from appearing in the community.
+            .col-md-3-auto.mt-auto
               %button.btn.btn-outline-secondary{"data-toggle" => "modal", "data-target" => "#filterModal"} Add New
           .table-responsive
             %table.table.mt-3.table-striped
               %tbody
                 %tr
                   %td.text-center
-                    %p.text-muted You haven’t muted any contributors from this community yet
-                    %a.text-danger{ href: '#', title: 'Click here to add one', 'data-toggle': 'modal', 'data-target': '#filterModal' }
+                    %p.text-muted.small You haven’t muted any contributors from this community yet
+                    %a.text-danger.small{ href: '#', title: 'Click here to add one', 'data-toggle': 'modal', 'data-target': '#filterModal' }
                       Click here to add one
       .row.d-flex.justify-content-between
         .col

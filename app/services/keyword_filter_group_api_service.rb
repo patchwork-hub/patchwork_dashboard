@@ -3,22 +3,32 @@ class KeywordFilterGroupApiService
 
   def initialize(name)
     @name = name
-    @base_url = "https://hub.patchwork.online/api/v1/keyword_filter_groups"
-    @api_key = "8e225f965e51445fd5e27c5870111481"
+    @host = ENV['PATCHWORK_HUB_URL']
+
+    raise CustomError.new("`PATCHWORK_HUB_URL` is not set!") unless @host
+
+    @path = "/api/v1/keyword_filter_groups"
+    @api_key = ApiKey.first
   end
 
   def get_keywords
     begin
-      res = HTTParty.get("#{@base_url}?name=#{@name}",
+      conn = Faraday.new(
+        url: @host,
         headers: {
-          "Content-Type" => "application/json",
-          "x-api-key" => @api_key
+          'Content-Type': 'application/json',
+          'x-api-key': @api_key.key,
+          'x-api-secret': @api_key.secret
         }
       )
-      return [] if res.code != 200
-      JSON.parse(res.body)
-    rescue HTTParty::Error, SocketError, Timeout::Error, Errno::ECONNREFUSED => e
-      Rails.logger.error("Failed to get access token: #{e}")
+
+      response = conn.get(@path) do |req|
+        req.body = {name: @name}.to_json
+      end
+
+      JSON.parse(response.body)
+    rescue => e
+      Rails.logger.error("Failed to get keywords: #{e}")
       []
     end
   end

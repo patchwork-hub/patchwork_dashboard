@@ -1,12 +1,12 @@
 #previewCommunityModal.modal.fade{ role: 'dialog', tabindex: "-1", aria: { labelledby: 'previewCommunityModalLabel', hidden: 'true' } }
-  .modal-dialog.modal-lg{ role: 'document' }
+  .modal-dialog.custom-modal-width{ role: 'document' }
     .modal-content
       .modal-header
         %h5.modal-title#previewCommunityModalLabel Preview your community
         %button.close{ type: 'button', 'data-dismiss': 'modal', 'aria-label': 'Close' }
           = image_tag 'icons/circle-xmark.svg', alt: 'Close', width: 18, height: 18, 'aria-hidden': 'true'
       .modal-body
-        %p.small Use the preview below to check that your community is set up correctly and the content has been curated as you'd like it to be.
+        %p.text-muted.small Use the preview below to check that your community is set up and curated correctly.
         .community-preview
           %div{:style => "border: 1px solid #ddd; padding: 10px;"}
             .row.no-gutters
@@ -17,8 +17,8 @@
             .row.mt-3
               .col
                 %h5.mb-0 Community Name
-                %p.small.text-muted.mb-0 @iwashere • Joined on Dec 2022
-                %p.small.text-muted.mb-1 London, United Kingdom
+                %p.text-muted.small.mb-0 @iwashere • Joined on Dec 2022
+                %p.text-muted.small.mb-1 London, United Kingdom
                 %p.small.mb-0 Lorem ipsum dolor sit amet consectetur. Ante morbi tincidunt faucibus integer lacus morbi.
             %hr
             .row.mt-3
@@ -34,25 +34,30 @@
             .row.mt-1.mx-1
               %p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
         .add-to-server.mt-4
-          %h6 Add to server
+          %h6 Choose visibility
+          %p.text-muted.small Select whether only users on your server can participate in the community or open it up to a wider audience.
           .btn-group-toggle.d-flex.justify-content-between
-            .btn.btn-light.btn-lg.flex-grow-1.mr-2{class: ("selected" if @selected_option == "public")}
+            .btn.btn-light.btn-lg.flex-grow-1.mr-2.w-100.d-flex.flex-column.align-items-start{class: ("selected" if @selected_option == "public")}
               %input{type: "radio", name: "server_access", value: "public", autocomplete: "off", checked: ("checked" if @selected_option == "public")}
-              %p.small.mb-0 Public
-              %p.small.text-muted Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              %div.selected-indicator Selected
-            .btn.btn-light.btn-lg.flex-grow-1.mr-2{class: ("selected" if @selected_option == "guest")}
+              %p.small.mb-0.flex-grow-1 Public
+              %p.text-muted.text-smaller.mt-1.flex-grow-1 Allow users on any Patchwork enabled server to discover and participate in your community through the discovery hub.
+              %div.small.selected-indicator.mt-auto Selected
+
+            .btn.btn-light.btn-lg.flex-grow-1.mr-2.w-100.d-flex.flex-column.align-items-start{class: ("selected" if @selected_option == "guest")}
               %input{type: "radio", name: "server_access", value: "guest", autocomplete: "off", checked: ("checked" if @selected_option == "guest")}
-              %p.small.mb-0 Share/guest access
-              %p.small.text-muted Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              %div.selected-indicator Selected
-            .btn.btn-light.btn-lg.flex-grow-1{class: ("selected" if @selected_option == "private")}
+              %p.small.mb-0.flex-grow-1 Share/guest access
+              %p.text-muted.text-smaller.mt-1.flex-grow-1 Allow users who have signed into the server as guests to access this community. Please ensure "Guest accounts" are enabled in the server settings.
+              %div.small.selected-indicator.mt-auto Selected
+
+            .btn.btn-light.btn-lg.flex-grow-1.w-100.d-flex.flex-column.align-items-start{class: ("selected" if @selected_option == "private")}
               %input{type: "radio", name: "server_access", value: "private", autocomplete: "off", checked: ("checked" if @selected_option == "private")}
-              %p.small.mb-0 Private/local
-              %p.small.text-muted Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              %div.selected-indicator Selected
+              %p.small.mb-0.flex-grow-1 Private/local
+              %p.text-muted.text-smaller.mt-1.flex-grow-1 Only allow users on your server to participate in this community.
+              %div.small.selected-indicator.mt-auto Selected
+
         .create-channel.mt-4
           %label_tag Create a channel
+          %p.text-muted.small Broadcast this community as a Channel. Channels enable discovery by any account on the social web.  Users on Patchwork servers can add them to their home screen via the Discovery Hub.
         .row
           .bordered-checkbox.mx-2.mt-2
             %input.mr-2{ type: "checkbox", id: "create-channel"} I want to create a channel from this community

@@ -4,7 +4,7 @@ Rails.application.routes.draw do
     mount Sidekiq::Web, at: 'sidekiq', as: :sidekiq
   end
 
-  root "server_settings#index"
+  root 'homepage#index'
 
   devise_for :users, controllers: {
     sessions: 'users/sessions'
@@ -64,10 +64,19 @@ Rails.application.routes.draw do
     end
   end
 
+  get '/homepage', to: 'homepage#index'
+  get '/installation', to: 'installation#index'
+  get '/patch_packs', to: 'patch_packs#index'
+  get '/resources', to: 'resources#index'
+
   resources :keyword_filter_groups do
     member do
       patch :update_is_active
     end
     resources :keyword_filters
   end
+
+  resources :api_keys, path: 'api-key'
+
+  draw :api_v1
 end

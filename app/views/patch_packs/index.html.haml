@@ -1,0 +1,29 @@
+- content_for :title do
+  = 'Patch Packs'
+
+.row
+  .col-12
+    .card
+      .card-header
+        %h3.card-title Select a pack
+
+      .card-body
+        %p.text-muted.small Get started quickly and configure Patchwork in one click with our preset packs, designed to suit a variety of preferences and needs. Choose one and the dashboard is tuned to match. These can be starting points for you to build on.
+        .row
+          .col-12
+            .bordered-radio-group
+              .bordered-radio.mx-2.mt-3
+                %input.radio-button{name: "pack_selection", type: "radio", value: "everything_on"}
+                Everything on
+              .bordered-radio.mx-2.mt-3
+                %input.radio-button{name: "pack_selection", type: "radio", value: "spam_only"}
+                Spam only
+              .bordered-radio.mx-2.mt-3
+                %input.radio-button{name: "pack_selection", type: "radio", value: "fedi_pact"}
+                Fedi-pact
+              .bordered-radio.mx-2.mt-3
+                %input.radio-button{name: "pack_selection", type: "radio", value: "organisation"}
+                Organisation
+.row.d-flex.justify-content-end
+  .col-auto
+    %button.btn.btn-danger Save changes

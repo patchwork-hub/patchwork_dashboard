@@ -67,7 +67,7 @@
                   %label Administrators
                 .row
                   .mt-auto
-                    %p.text-muted Assign administrators to your community by providing their details below.
+                    %p.text-muted.small Assign administrators to your community by providing their details below.
               .col-auto.d-flex.flex-column.justify-content-end
                 .mt-auto
                   %button.btn.btn-block.btn-outline-dark{type: "button", "data-target" => "#myModal", "data-toggle" => "modal"} Add New
@@ -85,8 +85,8 @@
                 - if @records.size == 0
                   %tr
                     %td.text-center.info-box-content{colspan: "100%"}
-                      %p.text-muted You haven’t added any hashtags to this community yet
-                      %a.text-danger{ href: step2_communities_path } Click here to add one
+                      %p.text-muted.small You haven’t added any hashtags to this community yet
+                      %a.text-danger.small{ href: step2_communities_path } Click here to add one
                 - @records.each do |community_admin|
                   %tr
                     %td

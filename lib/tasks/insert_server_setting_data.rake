@@ -52,7 +52,7 @@ namespace :db do
           { name: "Analytics", value: false }
         ],
         "Plug-ins" => [
-          { name: "Live blocklist", value: false }
+
         ]
       }
 

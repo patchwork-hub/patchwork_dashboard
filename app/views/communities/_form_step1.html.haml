@@ -16,14 +16,14 @@
           %div
             %h5.card-title Step 1 - Community Information
       .card-body
-        %p{ style: "font-size: 12px; color: #BEBEBE;" } Fill out the basic details for your community. Provide a unique name, choose the collection it belongs to, and upload a banner and avatar image. Write a short bio to describe the community's purpose and theme. Inline tooltips will help guide you through each field.
+        %p.text-muted.small Fill out the basic details for your community. Provide a unique name, choose the collection it belongs to, and upload a banner and avatar image. Write a short bio to describe the community's purpose and theme. Inline tooltips will help guide you through each field.
         .row
           .col-md-6.col-sm-12
             = f.input :username, input_html: { type: "text", class: "form-control", id: "basic-url", aria: { describedby: "basic-addon3" } }
-            %p{ style: "font-size: 12px; color: #BEBEBE;" } This will be the community's public display name. Once your community is created, you will not be able to change this.
+            %p.text-muted.small This will be the community’s public display name. Once your community is created, you will not be able to change this.
           .col-md-6.col-sm-12
             = f.input :collection_id, label: 'Collection', as: :select, collection: Collection.all.collect { |c| [c.name, c.id] }, input_html: { class: "form-control form-select-lg", aria: { label: "Choose a collection" } }
-            %p{ style: "font-size: 12px; color: #BEBEBE;" } Use this field to select the group or category that this community will belong to.
+            %p.text-muted.small Use this field to select the group or category that this community will belong to.
         .row
           .col-md-12
             .alert.alert-light{ role: "alert", style: "background-color: #F6F8FA;" }
@@ -43,7 +43,7 @@
               %div{ onclick: "document.getElementById('customFile').click();" }
                 %i.fa-solid.fa-upload
                 %p.mb-1 Drag & drop an image here or click to select a file
-                %p.mb-0{ style: "font-size: 12px; color: #BEBEBE;" } 1080 x 300 recommended dimensions, up to 5MB
+                %p.mb-0.text-muted.small 1080 x 300 recommended dimensions, up to 5MB
             :javascript
               document.getElementById('customFile').addEventListener('change', function() {
                 const file = this.files[0];
@@ -67,7 +67,7 @@
                     = f.input :avatar, as: :file, label: false, input_html: { id: "customFileAvatar", class: "form-control-file", style: "display: none;" }
               .col-md-8.col-sm-6.col-xs-12
                 %button.btn.btn-primary.mt-2{ onclick: "event.preventDefault(); document.getElementById('customFileAvatar').click();" } Upload image
-                %p.mt-4{ style: "font-size: 12px; color: #BEBEBE;" } SVG, PNG, JPG (max: 800x800px)
+                %p.mt-4.text-muted.small SVG, PNG, JPG (max: 800x800px)
               :javascript
                 document.getElementById('customFileAvatar').addEventListener('change', function() {
                   const file = this.files[0];

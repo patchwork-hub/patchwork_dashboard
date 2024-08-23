@@ -1,6 +1,6 @@
 class User < ApplicationRecord
   has_secure_password
-  
+
   belongs_to :role, class_name: 'UserRole', inverse_of: :users
   belongs_to :account, inverse_of: :user
   has_many :community_admins, inverse_of: :user

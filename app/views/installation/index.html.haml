@@ -1,0 +1,37 @@
+- content_for :title do
+  = 'Installation'
+
+.row
+  .col-6
+    .card
+      .card-header
+        %h3.card-title Patchwork Standard
+      .card-body
+        %p.text-muted.small
+          Install a lighter version of Patchwork with standard tools to enhance your server, including post, moderation & federation tools. Excludes community and channel features.
+        .mt-auto
+          %button.installed-button.btn.btn-outline-secondary
+            Installed
+            %i.fa-solid.fa-check
+  .col-6
+    .card
+      .card-header
+        %h3.card-title Patchwork Community Card
+      .card-body
+        %p.text-muted.small
+          Install a Patchwork with community & channel features to improve organisation and discovery on your server, as well as the features included in the standard version.
+        .mt-auto
+          %button.install-button.btn.btn-outline-secondary Install
+
+.row.ml-1
+  .col-12
+    %h6 Useful links
+    .row
+      %a{ href: "#" }
+        = image_tag("icons/file-lines.svg", class: "mr-2", width: "16", height: "16")
+        Installation Guide
+      %br
+    .row.mt-2
+      %a{ href: "#" }
+        = image_tag("icons/file-lines.svg", class: "mr-2", width: "16", height: "16")
+        Mastodon Installation

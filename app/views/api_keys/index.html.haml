@@ -1,0 +1,26 @@
+- content_for :title do
+  API key
+
+#api-key 
+  %p.text-muted.small
+    An API key is a unique token used to access and authenticate requests to the PatchWork services.
+
+  .row
+    .col-6
+      - if @api_key
+        .card
+          .card-header{class: @api_key.activated? ? 'bg-success' : 'bg-danger'}
+            %h3.card-title
+              = @api_key.status
+          .card-body
+            %p
+              = @api_key.key
+            .mt-auto
+              = link_to 'Edit', edit_api_key_path(@api_key), class: 'btn btn-outline-secondary w-25'
+      - else 
+        .card
+          .card-body
+            %p.text-muted 
+              You need to add your API key to enable the PatchWork features.
+            
+            = link_to 'Add API Key', new_api_key_path, class: 'btn btn-outline-secondary w-25'

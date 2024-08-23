@@ -13,7 +13,19 @@
             .col-md-5
               %div
                 %strong= setting[:name]
-              %p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.
+                - case setting[:name]
+                  - when 'Spam Block'
+                    %p.text-muted.small.mt-2 Filter out spam posts and bots from the wider network at a server level to keep your server clean.
+                  - when 'Content Moderation'
+                    %p.text-muted.small.mt-2 Control content entering your server from the wider network using keyword filters and controlling which servers your connected to in the wider network.
+                  - when 'Federation'
+                    %p.text-muted.small.mt-2 Decide which parts of the social web you want to be connected to, casting a broad net or staying focused.
+                  - when 'Local Features'
+                    %p.text-muted.small.mt-2 Customise and design your server’s experience, giving your community features to enhance their experience.
+                  - when 'User Management'
+                    %p.text-muted.small.mt-2 Foster community through engagement tools and control who has access.
+                  - when 'Plug-ins'
+                    %p.text-muted.small.mt-2 Enable more plug-ins created for Patchwork for more tools and functionality.
             .col-md-7
               - setting[:settings].each_with_index do |option, option_index|
                 - is_collapse = ['Content filters', 'Spam filters'].include?(option[:name])
@@ -30,8 +42,11 @@
                             %i.fa-solid.fa-xmark
                       %span.ml-2
                         = option[:name]
-                        %span.small.tooltip-custom{ 'data-tooltip-text': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.' }
-                          = image_tag("icons/circle-info.svg", alt: "Circle Info Icon", class: "mr-2", width: "16", height: "16")
+                        - case option[:name]
+                          - when 'Spam filters'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Block spam posts by applying a preset list of keyword filters or add your own. These are maintained with input from other Patchwork server admins.'
+                          - when 'Content filters'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Apply preset lists of keyword filters or add your own to block specific types of content. Or create your own lists and share them with the admin community.'
                       %br
                       - if option[:name].casecmp?('Spam filters')
                         %a{ href: '#', style: 'color: red;', title: 'Add spam filter', 'data-filter-type': 'spam', 'data-id': option[:id], 'data-toggle': 'modal', 'data-target': '#keyFilterModal', 'data-label': 'Spam filter name' }
@@ -80,8 +95,31 @@
                             %i.fa-solid.fa-xmark
                       %span.ml-2
                         = option[:name]
-                        %span.small.tooltip-custom{ 'data-tooltip-text': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.' }
-                          = image_tag("icons/circle-info.svg", alt: "Circle Info Icon", class: "mr-2", width: "16", height: "16")
+                        - case option[:name]
+                          - when 'Sign up challenge'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Add a challenge for new users to answer so spam bots can’t easily join your server.'
+                          - when 'Live blocklist'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Control which servers you connect to in the wider network with deny lists that block all posts from specific servers.'
+                          - when 'Bluesky'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Block posts from the microblogging platform Bluesky.'
+                          - when 'Threads'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Block posts from the microblogging platform Threads, owned by Meta & Instagram.'
+                          - when 'Custom theme'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Browse a variety of themes for your server’s Web interface to give it the flavour you want.'
+                          - when 'Search opt-out'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Make all text within the server, including user’s posts and bios, visible to search. Users are able to opt-out if they choose.'
+                          - when 'Local only posts'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Allow users to publish posts just to your server, fostering a greater sense of community.'
+                          - when 'Long posts and markdown'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Set character limits for posts and enable text formatting, including bold, italics & more.'
+                          - when 'Local quote posts'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Allow users to publish posts just to your server, fostering a greater sense of community.'
+                          - when 'Guest accounts'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Allow anyone with a Mastodon account to participate on your server with guest sign-in.'
+                          - when 'e-Newsletters'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Foster a closer, more transparent connection with users on your server by sending regular, custom newsletters.'
+                          - when 'Analytics'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Understand your community and optimise your server with non-intrusive analytics.'
                         - if option[:name].casecmp?('Long posts and markdown')
                           %br
                           %span.ml-5.small{ style: 'color: grey;' }

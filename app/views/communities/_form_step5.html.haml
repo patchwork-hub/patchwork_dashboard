@@ -15,10 +15,10 @@
           %h3.card-title Step 5 - Share content
         .card-body
           .row.d-flex.justify-content-between
-            .col-md-8
+            .col-md-10
               %label Hashtags
-              %p Choose a few default hashtags that will be automatically attached to posts made by community members. These hashtags help in organising and discovering content within your community.
-            .col-md-4-auto
+              %p.text-muted.small Choose a few default hashtags that will be automatically added to posts made by community members when they post to this community. The user can add more hashtags or remove them. These hashtags help in organising and discovering content within your community.
+            .col-md-2.mt-5
               %button.btn.btn-outline-secondary{"data-toggle" => "modal", "data-target" => "#postHashtagModel"} Add New
           .row
             .col.d-flex
@@ -45,7 +45,7 @@
                   %th{style: "width: 10px"}
                     %i.far.fa-square.mr-4
                   %th
-                    %label.text-muted Hashtags
+                    %label Hashtags
                   %th{style: "width: 200px"}
               %tbody
                 %tr

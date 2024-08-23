@@ -6,6 +6,7 @@
         %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
           %span{"aria-hidden" => "true"} ×
       .modal-body
+        %p.text-muted.small Add a community hashtag using the form below. Every post on this hashtag will appear in the community. This allows community members to post to the community even when they’re somewhere else in the network.
         = simple_form_for @community_hashtag_form, url: step3_communities_path do |form|
           = form.hidden_field :community_id, value: @community.id
           .row
@@ -18,7 +19,7 @@
               .col
                 %button.btn.btn-secondary{"data-dismiss" => "modal", :type => "button"} Close
               .col
-                = form.submit 'Save', class: 'btn btn-primary'
+                = form.submit 'Save', class: 'btn btn-danger'
 
 #contributorModal.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "exampleModalLabel", :role => "dialog", :tabindex => "-1"}
   .modal-dialog{:role => "document"}
@@ -35,7 +36,7 @@
               %button.btn.btn-default{type: "button", onclick: "reloadFollowers(document.getElementById('search-input').value)"}
                 %i.fas.fa-search
         .table-responsive#contributors_table
-                  
+
 
 
 .container-fluid
@@ -60,7 +61,7 @@
                 %label Hashtags
               .row
                 .mt-auto
-                  %p.text-muted Add the hashtags used to bring posts into your community.
+                  %p.text-muted.small Add hashtags from the wider network to bring relevant posts into your community.
             .col-auto.d-flex.flex-column.justify-content-end
               .mt-auto
                 %button.btn.btn-block.btn-outline-dark{type: "button", "data-target" => "#hashtagModal", "data-toggle" => "modal"} Add New
@@ -87,7 +88,7 @@
                     %td
                       %a.text-danger{ href: step3_communities_path } Edit
           %ul.pagination.pagination-sm.m-0.float-right
-            = render partial: 'kaminari/paginator', locals: { custom_paginator: @filter }    
+            = render partial: 'kaminari/paginator', locals: { custom_paginator: @filter }
       .card
         .card-body
           .row.d-flex.justify-content-between
@@ -96,7 +97,7 @@
                 %label Community contributors
               .row
                 .mt-auto
-                  %p.text-muted Add key contributors by searching for them below These contributors posts will be prominently featured to your community members.
+                  %p.text-muted.small Add key contributors by searching for them below. Posts from these contributors will be prominently featured in your community.
           .row
             .col
               %label Your community contributors (0)
@@ -113,23 +114,23 @@
               %tbody
                 %tr
                   %td.text-center
-                    %p.text-muted You have not added any hashtags to this community yet
-                    %a.text-danger{ href: step2_communities_path } Click here to add one
+                    %p.text-muted.small You have not added any hashtags to this community yet
+                    %a.text-danger.small{ href: step2_communities_path } Click here to add one
       .row.d-flex.justify-content-between
         .col
           %a.btn.btn-outline-secondary{ href: step2_communities_path } Back
         .col-auto
           %a.btn.btn-danger{ href: step4_communities_path } Continue
-      
-            
-
-          
 
 
 
 
-        
-          
-             
+
+
+
+
+
+
+
 
 

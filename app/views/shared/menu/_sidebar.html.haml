@@ -1,40 +1,14 @@
 %aside.main-sidebar.sidebar-dark-grey.elevation-4
-  %a.brand-link.d-flex.justify-content-center{:href => root_url}
+  %a.brand-link.d-flex.justify-content-center{ href: root_url }
     = image_tag 'patchwork-with-text.svg', alt: 'Patchwork Logo', width: 180, id: 'logo'
   .sidebar
     %nav.mt-2
-      %ul.nav.nav-pills.nav-sidebar.flex-column{"data-accordion" => "false", "data-widget" => "treeview", :role => "menu"}
-        %li.nav-item
-          = link_to server_settings_path, id: "server-settings-link", data: { header: "Server settings" }, class: "nav-link #{controller_name == 'server_settings' || (controller_name == 'keyword_filter_groups' && action_name == 'show') || (controller_name == 'keyword_filters' && action_name == 'edit') ? 'active' : ''}" do
-            = image_tag("icons/sliders.svg", class: "mr-2", width: "16", height: "16")
-            %p Server settings
-        %li.nav-item
-          = link_to '#', id: "installation-link", data: { header: "Installation" }, class: "nav-link #{controller_name == 'installation' ? 'active' : ''}" do
-            = image_tag("icons/screwdriver-wrench.svg", class: "mr-2", width: "16", height: "16")
-            %p Installation
-        %li.nav-item
-          = link_to '#', id: "patch-packs-link", data: { header: "Patch Packs" }, class: "nav-link #{controller_name == 'patch_packs' ? 'active' : ''}" do
-            = image_tag("icons/boxes.svg", class: "mr-2", width: "16", height: "16")
-            %p Patch Packs
-        %li.nav-item
-          = link_to communities_path, id: "communities-link", data: { header: "Communities" }, class: "nav-link #{controller_name == 'communities' ? 'active' : ''}" do
-            = image_tag("icons/speech.svg", class: "mr-2", width: "16", height: "16")
-            %p Communities
-        %li.nav-item
-          = link_to accounts_path, id: "resources-link", data: { header: "Users" }, class: "nav-link #{controller_name == 'users' ? 'active' : ''}" do
-            %i.nav-icon.fa-solid.fa-users
-            %p Users
-        %li.nav-item
-          = link_to '#', id: "resources-link", data: { header: "Resources" }, class: "nav-link #{controller_name == 'resources' ? 'active' : ''}" do
-            = image_tag("icons/folder.svg", class: "mr-2", width: "16", height: "16")
-            %p Resources
-        %li.nav-item
-          - protocol = Rails.env.development? ? 'http://' : 'https://'
-          - domain = ENV['LOCAL_DOMAIN']
-          = link_to "#{protocol}#{domain}/sidekiq", id: "sidekiq-link", data: { header: "Sidekiq" }, class: "nav-link", target: '_blank' do
-            = image_tag("icons/smile-1.svg", class: "mr-2", width: "16", height: "16")
-            %p Sidekiq
-        %li.nav-item
-          = link_to '#', id: "help-support-link", data: { header: "Help & Support" }, class: "nav-link #{controller_name == 'help_support' ? 'active' : ''}" do
-            = image_tag("icons/question.svg", class: "mr-2", width: "16", height: "16")
-            %p Help & Support
+      %ul.nav.nav-pills.nav-sidebar.flex-column{ "data-accordion": "false", "data-widget": "treeview", role: "menu" }
+        - sidebar_menu_items.each do |item|
+          %li.nav-item
+            = link_to item[:path], id: item[:id], data: { header: item[:header] }, class: "nav-link #{active_class(item[:active_if])}", target: item[:target] do
+              - if item[:icon_class]
+                %i.nav-icon{ class: item[:icon_class] }
+              - else
+                = image_tag("icons/#{item[:icon]}", class: "mr-2", width: "16", height: "16")
+              %p= item[:text]
