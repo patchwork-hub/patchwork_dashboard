@@ -176,8 +176,7 @@ class CommunitiesController < BaseController
   def search_contributor
     query = params[:query]
     api_base_url = ENV['MASTODON_INSTANCE_URL']
-    token = ENV['MASTODON_APPLICATION_TOKEN']
-
+    token = fetch_oauth_token || ENV['MASTODON_APPLICATION_TOKEN']
     response = HTTParty.get("#{api_base_url}/api/v2/search",
       query: {
         q: query,
@@ -277,6 +276,11 @@ class CommunitiesController < BaseController
       form_data = {}
       @community_form = Form::Community.new(form_data)
     end
+  end
+
+  def fetch_oauth_token
+    admin = @community.community_admins&.first.account
+    Doorkeeper::AccessToken.find_by(resource_owner_id: admin.user.id)&.token
   end
 
   def post_hashtag_params
