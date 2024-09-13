@@ -12,7 +12,7 @@
               %i.fas.fa-search
           %input.form-control.form-control-navbar{type: "search", placeholder: "Search", 'aria-label' => "Search"}
     %li.nav-item.mx-2
-      %a.btn.btn-danger{ href: 'https://patchwork.online/', target: '_blank'} Go to server
+      %a.btn.btn-danger{ href: (ENV['MASTODON_INSTANCE_URL'].present? ? ENV['MASTODON_INSTANCE_URL'] : '#'), target: '_blank'} Go to server
     %li.nav-item.mx-2
       %a.nav-link{'data-method' => 'delete', :href => destroy_user_session_url, :class => 'nav-link hover-effect'}
         = image_tag("icons/arrow-right-from-bracket.svg", class: "mr-2", width: "16", height: "16")

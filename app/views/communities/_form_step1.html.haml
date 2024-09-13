@@ -8,10 +8,6 @@
       %li.bg-secondary{style: "width: 65px; height: 5px;"}
       %li.bg-secondary{style: "width: 65px; height: 5px;"}
   .col-md-12
-    -# Display flash messages if any
-    -# if flash[:error]
-    -#   .alert.alert-danger
-    -#     = flash[:error]
     = simple_form_for @community_form, url: step1_communities_path do |f|
       = f.hidden_field :id
       .card.mt-4
@@ -23,7 +19,7 @@
           %p.text-muted.small Fill out the basic details for your channel. Provide a unique name, choose the collection it belongs to, and upload images for the banner and avatar. Write a short bio to describe the channel’s purpose and theme. Inline tooltips will help guide you through each field.
           .row
             .col-md-6.col-sm-12
-              = f.input :username, label: "Name", input_html: { type: "text", class: "form-control", id: "basic-url", aria: { describedby: "basic-addon3" } }, required: true
+              = f.input :name, label: "Name", input_html: { type: "text", class: "form-control", id: "basic-url", aria: { describedby: "basic-addon3" } }, required: true
               %p.text-muted.small This will be the channel’s public display name. Once your channel is created, you will not be able to change this.
             .col-md-6.col-sm-12
               = f.input :collection_id, label: 'Collection', as: :select, collection: Collection.all.collect { |c| [c.name, c.id] }, include_blank: false, input_html: { class: "form-control form-select-lg", aria: { label: "Choose a collection" } }
@@ -43,7 +39,7 @@
               %label{ for: "customFile", class: "form-label" } Banner Image
               .dropzone.p-5.border.rounded.text-center{ style: "border: dashed; background-color: #f8f9fa;", id: "bannerDropzone" }
                 = f.input :banner_image, as: :file, label: false, input_html: { id: "customFile", class: "form-control-file upload-input", style: "display: none;", accept: "image/*", 'data-preview-id': "currentBanner", 'data-error-id': "bannerUploadErrors", 'data-max-size': 5 }
-                - banner_image_url = session.dig(:form_data, 'banner_image_url') || ""
+                - banner_image_url = url_for(@community_form.banner_image || '')
                 %img{ src: banner_image_url, alt: "Current Banner", class: "img-fluid dropzone-preview", id: "currentBanner", style: "display: #{banner_image_url.present? ? 'block' : 'none'};" }
                 %div.dropzone-placeholder{ onclick: "document.getElementById('customFile').click();" }
                   %i.fa-solid.fa-upload
@@ -56,7 +52,7 @@
               .row.avatar-image-upload-container.gap-1
                 .avatar-upload-container
                   .rounded-circle.border.d-inline-flex.align-items-center.justify-content-center{ style: "width: 90px; height: 90px; border: dotted; overflow: hidden;" }
-                    - avatar_image_url = session.dig(:form_data, 'avatar_image_url') || ""
+                    - avatar_image_url = url_for(@community_form.avatar_image || '')
                     %img{ id: "currentAvatar", src: avatar_image_url, alt: "Avatar Preview", style: "display: #{avatar_image_url.present? ? 'block' : 'none'}; width: 100%; height: 100%; object-fit: cover; margin-left: 16px;" }
                     %i.fa-solid.fa-image
                     = f.input :avatar_image, as: :file, label: false, input_html: { id: "customFileAvatar", class: "form-control-file upload-input", style: "display: none;", accept: "image/*", 'data-preview-id': "currentAvatar", 'data-error-id': "avatarUploadErrors", 'data-max-size': 2 }

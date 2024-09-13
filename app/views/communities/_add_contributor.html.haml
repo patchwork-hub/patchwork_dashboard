@@ -14,7 +14,7 @@
           %div.input-group-prepend
             %span.input-group-text
               %i.fa-solid.fa-search
-          %input.form-control#search-input{ "aria-label": "Search contributor", placeholder: "Search by name or username", type: "text" }
+          %input.form-control#search-input{ "aria-label": "Search contributor", placeholder: "Search by name or username", type: "text", data: { communityId: @community.id } }
         %div#search-results.list-group
           %p No results yet...
       .modal-footer

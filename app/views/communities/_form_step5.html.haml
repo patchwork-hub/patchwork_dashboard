@@ -7,7 +7,7 @@
           %span{"aria-hidden" => "true"} ×
       .modal-body
         %p.text-muted.small Add up to three hashtags which will be automatically added to posts made by users on your server when they post to this channel.
-        = simple_form_for @form_post_hashtag, url: step5_communities_path do |form|
+        = simple_form_for @form_post_hashtag, url: step5_community_path do |form|
           = form.hidden_field :community_id, value: @community.id
           .row
             .col
@@ -34,7 +34,7 @@
           %span{"aria-hidden" => "true"} ×
       .modal-body
         %p.text-muted.small Edit the hashtag for this channel.
-        = simple_form_for @form_post_hashtag, url: step5_update_communities_path do |form|
+        = simple_form_for @form_post_hashtag, url: step5_update_community_path do |form|
           = form.hidden_field :community_id, value: @community.id
           = form.hidden_field :id, id: 'post_hashtag_id' # Hidden field for the hashtag ID
           .row
@@ -69,7 +69,7 @@
             .col-md-10
               %label Hashtags
               %p.text-muted.small Choose a few hashtags that will be automatically added to posts made by users on your server when they post to this channel. The user can add more hashtags or remove them. These hashtags help in organising content on your server and boost visibility in the wider federated network.
-            .col-md-2.mt-5
+            .col-md-2-auto.mt-auto.mb-2.mr-2
               %button.btn.btn-outline-secondary{"data-toggle" => "modal", "data-target" => "#postHashtagModel"} Add New
           .row
             .col.d-flex
@@ -84,7 +84,7 @@
               %p entries
             .col-auto
               .card-tools
-                = search_form_for @search, url: step5_communities_path do |f|
+                = search_form_for @search, url: step5_community_path do |f|
                   .input-group.input-group-sm{ style: "width: 150px;" }
                     = f.search_field :hashtag_cont, class: "form-control float-right", placeholder: "Search", type: "text"
                     .input-group-append
@@ -97,7 +97,7 @@
                   %th{style: "width: 10px"}
                     %i.far.fa-square.mr-4
                   %th
-                    %label Hashtags
+                    %label.text-muted{ style: "font-size: 14px;" } Hashtags
                   %th{style: "width: 200px"}
               %tbody
                 - @records.each do |record|
@@ -108,7 +108,7 @@
                       %p= record.hashtag
                     %td
                       %a.text-danger.mr-2{"data-toggle" => "modal", "data-target" => "#postHashtagEditModel", "data-id" => record.id, "data-hashtag" => record.hashtag, :class => 'edit-link'} Edit
-                      = link_to 'Remove', step5_delete_communities_path(record.id), method: :post, class: 'text-danger'
+                      = link_to 'Remove', step5_delete_community_path(@community, post_hashtag_id: record.id), method: :post, class: 'text-danger'
 
           %ul.pagination.pagination-sm.m-0.float-right
             = render partial: 'kaminari/paginator', locals: { custom_paginator: @filter }
@@ -124,8 +124,8 @@
               %a.dropdown-item{href: "#"} Separated link
       .row.d-flex.justify-content-between
         .col
-          %a.btn.btn-outline-secondary{ href: step4_communities_path } Back
+          %a.btn.btn-outline-secondary{ href: step4_community_path } Back
         .col-auto
-          %a.btn.btn-danger{ href: step6_communities_path } Continue
+          %a.btn.btn-danger{ href: step6_community_path } Continue
 
 = render 'post_hashtag'

@@ -6,7 +6,7 @@
         %button.close{ type: 'button', 'data-dismiss': 'modal', 'aria-label': 'Close' }
           = image_tag 'icons/circle-xmark.svg', alt: 'Close', width: 18, height: 18, 'aria-hidden': 'true'
       .modal-body
-        = simple_form_for @new_admin_form, url: step2_communities_path do |form|
+        = simple_form_for @new_admin_form, url: step2_community_path do |form|
           = form.hidden_field :community_id, value: @community.id
           .row
             .col
@@ -97,10 +97,14 @@
                     %td= community_admin.account&.user&.email
                     %td= community_admin.account&.user&.role&.name
                     %td
-                      %a.text-danger{ href: step2_communities_path } Edit
+                      %a.text-danger{ href: step2_community_path } Edit
         .row.d-flex.justify-content-between
           .col-auto
-            %a.btn.btn-outline-secondary{ href: step1_communities_path } Back
+            %a.btn.btn-outline-secondary{ href: step1_communities_path(id: @community.id) } Back
           .col-auto
-            %a.btn.btn-danger{ href: step3_communities_path, onclick: "reload_contributors_table('/communities/contributors_table')" } Continue
-          
+            %a.btn.btn-danger{ 
+              href: step3_community_path(id: @community.id), 
+              onclick: "reload_contributors_table('/communities/contributors_table')", 
+              class: (@records.size == 0 ? 'disabled' : '')
+            } Continue
+

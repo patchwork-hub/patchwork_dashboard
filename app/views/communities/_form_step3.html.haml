@@ -7,8 +7,8 @@
           %span{"aria-hidden" => "true"} ×
       .modal-body
         %p.text-muted.small Add a channel hashtag using the form below. Every post on this hashtag will appear in the channel. This allows channel members to post to the channel even when they’re somewhere else in the network.
-        = simple_form_for @community_hashtag_form, url: step3_communities_path do |form|
-          = form.hidden_field :community_id, value: @community.id
+        = simple_form_for @community_hashtag_form, url: step3_community_path do |form|
+          = form.hidden_field :community_id, value: @community.id, id: 'community_id'
           .row
             .col
               .form-group
@@ -54,7 +54,7 @@
                   %th{style: "width: 30px;"}
                     %i.far.fa-square.mr-4
                   %th
-                    %label.text-muted{ style: "font-size: 13px;" } Hashtags
+                    %label.text-muted{ style: "font-size: 14px;" } Hashtags
               %tbody
                 - if @records.size == 0
                   %tr
@@ -68,9 +68,10 @@
                       = check_box_tag "selected_accounts[]", community_hashtag.id, false, class: 'select_hashtag'
                     %td
                       = "##{community_hashtag.hashtag}"
-                    %td{style: "width: 200px;"}
-                      %a.text-danger.mr-2{ href: step3_communities_path } Edit
-                      %a.text-danger{ href: step3_communities_path } Remove
+                    -#
+                      %td{style: "width: 200px;"}
+                        %a.text-danger.mr-2{ href: step3_community_path } Edit
+                        %a.text-danger{ href: step3_community_path } Remove
           %ul.pagination.pagination-sm.m-0.float-right
             = render partial: 'kaminari/paginator', locals: { custom_paginator: @filter }
       .card
@@ -84,31 +85,34 @@
                   %p.text-muted.small Add key contributors by searching for them below. Posts from these contributors will be prominently featured in your channel.
           .row
             .col
-              %label Your channel contributors (0)
+              %label
+                = "Your channel contributors (#{@follow_records.present? ? @follow_records.size : 0})"
             .col-auto.d-flex.flex-column.justify-content-end
               .mt-auto
                 %button.btn.btn-outline-secondary{"data-toggle" => "modal", "data-target" => "#addContributorModal"} Add New
           .table-responsive
             %table.table.mt-3.table-striped
               %tbody
-                - if @follower_records.size == 0
+                - if @follow_records.size == 0
                   %tr
                     %td.text-center
-                      %p.text-muted.small You have not added any hashtags to this channel yet
+                      %p.text-muted.small You have not added any contributors to this channel yet
                       %a.text-danger.small{ href: '#', title: 'Add a contributor', 'data-toggle': 'modal', 'data-target': '#addContributorModal' }
                         Click here to add one
-                - @follower_records.each do |record|
-                  - record = record.target_account
+                - @follow_records.each do |record|
                   %tr
-                    %td
-                      %p= record.username
+                    %td{ style: 'width: 10%;' }
+                      %img{ alt: "", src: asset_path('patchwork-logo.svg'), class: "rounded-circle mr-2", style: "width: 70px; height: 70px; border: 2px solid white;" }
+                    %td{ style: 'width: 80%;' }
+                      %h6.mb-0= record.username
+                      %p.text-muted.mb-0= raw(record.note)
                     %td{style: "width: 60px;"}
-                      %button.btn.btn-block.btn-outline-dark{ id: "follow_btn_#{record.id}", onclick: "unfollowContributor('#{record.id}')" } Unfollow
+                      %button.btn.btn-sm.btn-outline-dark{ id: "follow_btn_#{record.id}", onclick: "unfollowContributor('#{record.id}', '#{@community.id}'); setTimeout(function() { location.reload(); }, 1000);" } Unfollow
       .row.d-flex.justify-content-between
         .col
-          %a.btn.btn-outline-secondary{ href: step2_communities_path } Back
+          %a.btn.btn-outline-secondary{ href: step2_community_path } Back
         .col-auto
-          %a.btn.btn-danger{ href: step4_communities_path } Continue
+          %a.btn.btn-danger{ href:step4_community_path(id: @community.id) } Continue
 
 = render 'add_contributor'
 

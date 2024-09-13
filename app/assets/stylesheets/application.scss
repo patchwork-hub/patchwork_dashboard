@@ -570,9 +570,8 @@ ul.pagination {
 #search-results {
   position: relative;
 }
-
 #disabled-overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -585,8 +584,12 @@ ul.pagination {
 }
 
 #loading-spinner img {
-  width: 100px; /* Adjust size as needed */
+  width: 100px;
   height: 100px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 /* community filter keyword */
 
@@ -624,4 +627,17 @@ ul.pagination {
 
 .installed-button{
   width: max-content !important;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.position-absolute.index-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.8em; 
+  color: white; 
 }

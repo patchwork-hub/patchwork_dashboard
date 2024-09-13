@@ -6,7 +6,7 @@
         %button.close{ type: 'button', 'data-dismiss': 'modal', 'aria-label': 'Close' }
           = image_tag 'icons/circle-xmark.svg', alt: 'Close', width: 18, height: 18, 'aria-hidden': 'true'
       .modal-body
-        = simple_form_for @community, url: manage_additional_information_communities_path, method: :post, html: { id: 'community-additional-informations-form' } do |info_form|
+        = simple_form_for @community, url: manage_additional_information_community_path, method: :post, html: { id: 'community-additional-informations-form' } do |info_form|
           .mb-3.patchwork_community_additional_informations
             %div.d-flex
               %div.col-3.mt-1

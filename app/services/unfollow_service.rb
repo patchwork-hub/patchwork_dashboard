@@ -1,27 +1,50 @@
 # frozen_string_literal: true
 
 class UnfollowService < BaseService
-  def call(account, target_account)
-    @source_account = account
+  def call(admin, target_account)
+    @admin = admin
     @target_account = target_account
-    direct_unfollow!
+    follow_contributor!
   end
 
-  private
+  def follow_contributor!
+    api_base_url = ENV['MASTODON_INSTANCE_URL']
+    token = fetch_oauth_token
 
-  def follow_attributes
-    {
-      target_account_id: @target_account.id,
-      account_id: @source_account.id,
-      show_reblogs: true,
-      uri: nil,
-      notify: false,
-      languages: nil
-    }.compact
+    response = unfollow_account(api_base_url, token)
+    account_data = process_api_response(response)
+    account = find_account(account_data)
+
+  rescue HTTParty::Error => e
+    puts "HTTP request failed: #{e.message}"
+  rescue StandardError => e
+    puts "An unexpected error occurred: #{e.message}"
   end
 
-  def direct_unfollow!
-    @follow = Follow.find_by(follow_attributes)
-    @follow&.destroy
+  def unfollow_account(api_base_url, token)
+    payload = { reblogs: true }
+    headers = { 'Authorization' => "Bearer #{token}" }
+
+    HTTParty.post("#{api_base_url}/api/v1/accounts/#{@target_account.id}/unfollow",
+      body: payload,
+      headers: headers
+    )
+  end
+
+  def fetch_oauth_token
+    return nil unless @admin.user
+    Doorkeeper::AccessToken.find_by(resource_owner_id: @admin.user.id)&.token
+  end
+
+  def process_api_response(response)
+    sleep 2
+    account_data = response.parsed_response
+    return nil if account_data.nil?
+
+    account_data
+  end
+
+  def find_account(account_data)
+    Account.find_by(id: account_data['id'])
   end
 end

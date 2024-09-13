@@ -1,6 +1,6 @@
 class FollowsController < BaseController
   def index
-    @current_acc = CommunityAdmin.where(patchwork_community_id: session[:form_data]['id']).last.account_id
+    @current_acc = CommunityAdmin.where(patchwork_community_id: session[:form_data]['id']).first.account_id
     @records = load_records
     @search = records_filter.build_search
     respond_to do |format|
@@ -9,6 +9,7 @@ class FollowsController < BaseController
   end
 
   protected
+
   def records_filter
     @filter = Filter::Account.new(params)
   end

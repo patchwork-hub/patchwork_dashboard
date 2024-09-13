@@ -16,7 +16,7 @@
         .card-body
           .row
             .col
-              = simple_form_for @community_post_type, url: step4_communities_path, method: :post do |f|
+              = simple_form_for @community_post_type, url: step4_community_path, method: :post do |f|
                 %label Type of posts
                 %p.text-muted.small Select which types of content from hashtags and key contributors are excluded from this channel.
 
@@ -48,8 +48,8 @@
               %p.text-muted.small Choose accounts to Mute from the channel.
           .row.d-flex.justify-content-between
             .col-auto
-              %label Your muted contributors (0)
-            .col-auto
+              %label Your muted contributors (#{@muted_accounts.present? ? @muted_accounts.size : 0})
+            .col-3-auto
               %button.btn.btn-outline-secondary{"data-toggle" => "modal", "data-target" => "#muteContributorModal"} Search
           .table-responsive
             %table.table.mt-3.table-striped
@@ -62,13 +62,13 @@
                         Click here to search
                 - @muted_accounts.each do |account|
                   %tr
-                    %td{ style: 'width: 20%;' }
+                    %td{ style: 'width: 10%;' }
                       %img{ alt: "", src: asset_path('patchwork-logo.svg'), class: "rounded-circle mr-2", style: "width: 70px; height: 70px; border: 2px solid white;" }
-                    %td{ style: 'width: 70%;' }
+                    %td{ style: 'width: 80%;' }
                       %h6.mb-0= account.username
                       %p.text-muted.mb-0= raw(account.note)
                     %td{ style: 'width: 10%;' }
-                      = form_with url: unmute_contributor_communities_path, method: :post, remote: true, authenticity_token: true do |form|
+                      = form_with url: unmute_contributor_community_path, method: :post, remote: true, authenticity_token: true do |form|
                         = form.hidden_field :account_id, value: account.id
                         %button.btn.btn-sm.btn-outline-secondary{ type: 'submit' }
                           Unmute
@@ -96,14 +96,14 @@
                       %a.text-danger{ href: '#', title: 'Edit keyword filtering', 'data-toggle': 'modal', 'data-target': '#CommunityFilterModal', 'data-id': keyword.id, 'data-is-filter-hashtag': keyword.is_filter_hashtag.to_s, 'data-keyword': keyword.keyword }
                         Edit
                     %td
-                      %a.text-danger{ href: community_filter_keyword_path(keyword), method: :delete, data: { confirm: 'Are you sure?' }, title: 'Delete', rel: 'nofollow', 'data-method': 'delete' }
+                      %a.text-danger{ href: community_filter_keyword_path(keyword, patchwork_community_id: @community.id), method: :delete, data: { confirm: 'Are you sure?' }, title: 'Delete', rel: 'nofollow', 'data-method': 'delete' }
                         Remove
 
       .row.d-flex.justify-content-between
         .col
-          %a.btn.btn-outline-secondary{ href: step3_communities_path } Back
+          %a.btn.btn-outline-secondary{ href: step3_community_path } Back
         .col-auto
-          %a.btn.btn-danger{ href: step5_communities_path } Continue
+          %a.btn.btn-danger{ href: step5_community_path } Continue
 
 = render 'mute_contributor'
 = render 'keyword_filter'

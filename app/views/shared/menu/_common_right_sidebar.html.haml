@@ -10,7 +10,7 @@
     %br/
     %i.fa-solid.fa-check.text-red
     %span.text-light Install plug-in patches
-    %a.btn.btn-danger.mt-3{ href: '#' } Go to your server
+    %a.btn.btn-danger.mt-3{ href: (ENV['MASTODON_INSTANCE_URL'].present? ? ENV['MASTODON_INSTANCE_URL'] : '#'), target: '_blank' } Go to your server
 .card.mt-3
   .card-header
     %div.d-flex.justify-content-between

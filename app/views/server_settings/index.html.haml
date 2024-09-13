@@ -38,8 +38,8 @@
                 - if is_collapse
                   %div.d-flex.justify-content-between
                     %div
-                      %label.form-check-label.switch{ for: option[:id] }
-                        %input.form-check-input.switch-input.setting-input{ type: 'checkbox', id: option[:id], checked: option[:is_operational], 'data-setting-id' => option[:id], 'data-setting-name' => option[:name], 'data-optional-value' => option[:optional_value] }
+                      %label.form-check-label.switch{ for: "setting-input-check-#{option[:id]}" }
+                        %input.form-check-input.switch-input.setting-input{ type: 'checkbox', id: "setting-input-check-#{option[:id]}", checked: option[:is_operational], 'data-setting-id' => option[:id], 'data-setting-name' => option[:name], 'data-optional-value' => option[:optional_value] }
                         %span.switch-slider.round
                           %span.slider-tick
                             %i.fa-solid.fa-check
@@ -71,8 +71,8 @@
                           .d-flex.align-items-center.justify-content-between.mb-2
                             %div
                               = image_tag("icons/diagram-nested.svg", alt: "Nested Diagram Icon", class: "mr-2", width: "16", height: "16")
-                              %label.form-check-label.switch{ for: sub_option[:id] }
-                                %input.form-check-input.switch-input.keyword-group-input{ type: 'checkbox', id: sub_option[:id], checked: sub_option[:is_active], 'data-group-id' => sub_option[:id], 'data-is-custom' => sub_option[:is_custom], 'data-server-setting-id' => option[:id] }
+                              %label.form-check-label.switch{ for: "keyword-group-input-#{sub_option[:id]}" }
+                                %input.form-check-input.switch-input.keyword-group-input{ type: 'checkbox', id: "keyword-group-input-#{sub_option[:id]}", checked: sub_option[:is_active], 'data-group-id' => sub_option[:id], 'data-is-custom' => sub_option[:is_custom], 'data-server-setting-id' => option[:id] }
                                 %span.switch-slider.round
                                   %span.slider-tick
                                     %i.fa-solid.fa-check
@@ -91,8 +91,8 @@
                 - else
                   %div.d-flex
                     %div
-                      %label.form-check-label.switch{ for: option[:id] }
-                        %input.form-check-input.switch-input.setting-input{ type: 'checkbox', id: option[:id], checked: option[:is_operational], 'data-setting-id' => option[:id], 'data-setting-name' => option[:name], 'data-optional-value' => option[:optional_value] }
+                      %label.form-check-label.switch{ for: "setting-input-#{option[:id]}" }
+                        %input.form-check-input.switch-input.setting-input{ type: 'checkbox', id: "setting-input-#{option[:id]}", checked: option[:is_operational], 'data-setting-id' => option[:id], 'data-setting-name' => option[:name], 'data-optional-value' => option[:optional_value] }
                         %span.switch-slider.round
                           %span.slider-tick
                             %i.fa-solid.fa-check

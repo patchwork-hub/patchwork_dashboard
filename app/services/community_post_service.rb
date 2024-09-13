@@ -32,13 +32,13 @@ class CommunityPostService < BaseService
   end
 
   def unique_slug?
-    slug = @options[:username].to_s.parameterize.underscore
+    slug = @options[:name].to_s.parameterize.underscore
     community = Community.find_by(slug: slug)
     community
   end
 
   def prepare_slug
-    @slug = @options[:username].parameterize.underscore
+    @slug = @options[:name].parameterize.underscore
   end
 
   def add_admin!
@@ -47,7 +47,7 @@ class CommunityPostService < BaseService
 
   def community_attributes
     { id: get_id,
-      name: @options[:username],
+      name: @options[:name],
       slug: @slug,
       description: @options[:bio],
       is_recommended: false,

@@ -14,7 +14,7 @@
           %div.input-group-prepend
             %span.input-group-text
               = image_tag("icons/search.svg", width: "16", height: "16")
-          %input.form-control#mute-search-input{ "aria-label": "Search contributor", placeholder: "Search by name or username", type: "text" }
+          %input.form-control#mute-search-input{ "aria-label": "Search contributor", placeholder: "Search by name or username", type: "text", data: { communityId: @community.id } }
         %div#mute-search-results.list-group
           %p No results yet...
       .modal-footer

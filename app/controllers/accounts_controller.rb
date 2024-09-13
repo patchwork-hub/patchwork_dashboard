@@ -4,12 +4,16 @@ class AccountsController < BaseController
   def show; end
 
   def follow
-    follow = FollowService.new.call(current_user.account, @account)
+    community = Community.find(params[:community_id])
+    community_admin = community.community_admins&.first.account
+    follow = FollowService.new.call(community_admin, @account)
     render json: { message: 'successfully_followed' }, status: :ok
   end
 
   def unfollow
-    follow = UnfollowService.new.call(current_user.account, @account)
+    community = Community.find(params[:community_id])
+    community_admin = community.community_admins&.first.account
+    unfollow = UnfollowService.new.call(community_admin, @account)
     render json: { message: 'successfully_unfollowed' }, status: :ok
   end
 

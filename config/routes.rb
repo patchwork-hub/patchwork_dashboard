@@ -22,8 +22,10 @@ Rails.application.routes.draw do
 
   resources :communities do
     collection do
-      get 'step1', to: 'communities#step1'
+      get 'step1', to: 'communities#step1', as: 'step1_new'
       post 'step1', to: 'communities#step1_save'
+    end
+    member do
       get 'step2', to: 'communities#step2'
       post 'step2', to: 'communities#step2_save'
       get 'step3', to: 'communities#step3'
@@ -45,7 +47,7 @@ Rails.application.routes.draw do
       post 'set_visibility', to: 'communities#set_visibility'
       post 'manage_additional_information', to: 'communities#manage_additional_information'
     end
-  end
+  end  
 
   resources :community_admins
 

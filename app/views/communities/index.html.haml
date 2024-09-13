@@ -29,7 +29,7 @@
               %tr
                 %td.text-center.info-box-content{colspan: "100%"}
                   %p.text-muted.small You haven’t added any hashtags to this channel yet
-                  %a.text-danger.small{ href: step1_communities_path } Click here to add one
+                  %a.text-danger.small{ href: step1_new_communities_path(new_community: 'true') } Click here to add one
             - @records.each do |community|
               %tr
                 %td.text-center
@@ -59,6 +59,6 @@
               %button.btn.btn-outline-secondary{ onclick: "window.location='#{communities_path}'" }
                 Import a channel
                 = image_tag("icons/circle-left.svg", class: "ml-2", width: "16", height: "16")
-              %button.btn.btn-danger.ml-3{ onclick: "window.location='#{step1_communities_path(new_community: 'true')}'" }
+              %button.btn.btn-danger.ml-3{ onclick: "window.location='#{step1_new_communities_path(new_community: 'true')}'" }
                 Create a channel
                 = image_tag("icons/circle-plus.svg", class: "ml-2", width: "16", height: "16")

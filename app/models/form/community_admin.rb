@@ -4,7 +4,7 @@ class Form::CommunityAdmin
   attr_accessor :community_id, :display_name, :username, :email, :password
 
   def initialize(options = {})
-    options = options.symbolize_keys
+    options = options.is_a?(Hash) ? options.symbolize_keys : options
     @community_id = options.fetch(:community_id) if options[:community_id]
     @role = options.fetch(:role) if options[:role]
     @display_name = options.fetch(:display_name, nil) if options[:display_name]
