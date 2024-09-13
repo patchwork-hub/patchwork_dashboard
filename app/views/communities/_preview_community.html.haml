@@ -7,64 +7,59 @@
           = image_tag 'icons/circle-xmark.svg', alt: 'Close', width: 18, height: 18, 'aria-hidden': 'true'
       .modal-body
         %p.text-muted.small Use the preview below to check that your channel is set up and curated correctly.
-        .community-preview
-          %div{:style => "border: 1px solid #ddd; padding: 10px;"}
-            .row.no-gutters
-              %img{ src: asset_path(@community.banner_image.attached? ? rails_blob_path(@community.banner_image) : 'community-banner.svg'), alt: "Channel Banner", style: "width: 100%; max-height: 200px;" }
-            .row.align-items-center.ml-2
-              .col-auto
-                %img{ alt: "profile picture", src: asset_path(@community.avatar_image.attached? ? rails_blob_path(@community.avatar_image) : 'patchwork-logo.svg'), class: "rounded-circle mr-2", style: "width: 80px; height: 80px; margin-top: -60px; border: 2px solid white;" }
-            .row.mt-3.ml-2
-              .col
-                .row.ml-1
-                  %h5.mb-0= @community.name 
-                  = image_tag("icons/vector.svg", class: "mt-1 ml-1", width: "16", height: "16")
-                %p.text-muted.small.mb-0= "@#{@community.slug} • Joined on #{@community.created_at.strftime('%b %Y')}"
-                %p.text-muted.small.mb-1
-                %p.small.mb-0= raw(@community.description)
-            %hr
+        .community-preview{ style: 'border: 1px solid #ddd; padding: 10px; max-height: 450px; overflow-y: auto;' }
+          .row.no-gutters
+            %img{ src: asset_path(@community.banner_image.attached? ? rails_blob_path(@community.banner_image) : 'community-banner.svg'), alt: "Channel Banner", style: "width: 100%; max-height: 200px;" }
+          .row.align-items-center.ml-2
+            .col-auto
+              %img{ alt: "profile picture", src: asset_path(@community.avatar_image.attached? ? rails_blob_path(@community.avatar_image) : 'patchwork-logo.svg'), class: "rounded-circle mr-2", style: "width: 80px; height: 80px; margin-top: -60px; border: 2px solid white;" }
+          .row.mt-3.ml-2
+            .col
+              .row.ml-1
+                %h5.mb-0= @community.name 
+                = image_tag("icons/vector.svg", class: "mt-1 ml-1", width: "16", height: "16")
+              %p.text-muted.small.mb-0= "@#{@community.slug} • Joined on #{@community.created_at.strftime('%b %Y')}"
+              %p.text-muted.small.mb-1
+              %p.small.mb-0= raw(@community.description)
+          %hr
+          - @community_admins.each do |community_admin|
             .row.mt-3
               .col-auto
                 %img{ alt: "profile picture", src: asset_path('patchwork-logo.svg'), class: "rounded-circle", style: "width: 40px; height: 40px;" }
               .col-10
-                %h6.mb-0= @community_admin.username
-                %p.text-muted.mb-0= "@#{@community_admin.username}"
+                %h6.mb-0= community_admin.display_name
+                %p.text-muted.mb-0= "@#{community_admin.username}"
               .col-auto
                 .row
                   = image_tag("icons/primary.svg", class: "mt-1 mr-2", width: "16", height: "16")
-                  %p.text-muted 2h
+                  %p.text-muted -h
             .row.mt-1.mx-1
-              %p= @community_admin.note
+              %p= community_admin.note
         = simple_form_for @community, url: set_visibility_community_path, method: :post, local: true do |form|
           .add-to-server.mt-4
             %h6 Choose visibility
             %p.text-muted.small Select whether only users on your server can participate in the channel or open it up to a wider audience.
 
             .btn-group-toggle.d-flex.justify-content-between
-              .btn.btn-light.btn-lg.flex-grow-1.mr-2.w-100.d-flex.flex-column.align-items-start{class: ("selected" if @community.visibility == "public_access")}
+              .btn.btn-light.btn-lg.mr-2.w-100.d-flex.flex-column.align-items-start{class: ("selected" if @community.visibility == "public_access")}
                 = form.radio_button :visibility, 'public_access', autocomplete: 'off'
-                %p.small.mb-0.flex-grow-1 Public
-                %p.text-muted.text-smaller.mt-1.flex-grow-1 Allow users on any Patchwork-enabled server to discover and participate in your channel through the discovery hub.
+                %p.small.mb-0 Public
+                %p.text-muted.text-smaller.mt-1 Allow users on any Patchwork-enabled server to discover and participate in your channel through the discovery hub.
                 %div.small.selected-indicator.mt-auto Selected
 
-              .btn.btn-light.btn-lg.flex-grow-1.mr-2.w-100.d-flex.flex-column.align-items-start{class: ("selected" if @community.visibility == "guest_access")}
+              .btn.btn-light.btn-lg.mr-2.w-100.d-flex.flex-column.align-items-start{class: ("selected" if @community.visibility == "guest_access")}
                 = form.radio_button :visibility, 'guest_access', autocomplete: 'off'
-                %p.small.mb-0.flex-grow-1 Share/guest access
-                %p.text-muted.text-smaller.mt-1.flex-grow-1 Allow users who have signed into the server as guests to access this channel. Please ensure "Guest accounts" are enabled in the server settings.
+                %p.small.mb-0 Share/guest access
+                %p.text-muted.text-smaller.mt-1 Allow users who have signed into the server as guests to access this channel. Please ensure "Guest accounts" are enabled in the server settings.
                 %div.small.selected-indicator.mt-auto Selected
 
-              .btn.btn-light.btn-lg.flex-grow-1.w-100.d-flex.flex-column.align-items-start{class: ("selected" if @community.visibility == "private_local")}
+              .btn.btn-light.btn-lg.w-100.d-flex.flex-column.align-items-start{class: ("selected" if @community.visibility == "private_local")}
                 = form.radio_button :visibility, 'private_local', autocomplete: 'off'
-                %p.small.mb-0.flex-grow-1 Private/local
-                %p.text-muted.text-smaller.mt-1.flex-grow-1 Only allow users on your server to participate in this channel.
+                %p.small.mb-0 Private/local
+                %p.text-muted.text-smaller.mt-1 Only allow users on your server to participate in this channel.
                 %div.small.selected-indicator.mt-auto Selected
 
-            .create-channel.mt-4
-              %label_tag Create a channel
-              %p.text-muted.small Broadcast this channel as a Channel. Channels enable discovery by any account on the social web. Users on Patchwork servers can add them to their home screen via the Discovery Hub.
-            .row
-              .bordered-checkbox.mx-2.mt-2
-                %input.mr-2{ type: "checkbox", id: "create-channel"} I want to create a channel from this channel
+
           .modal-footer
             %button.btn.btn-secondary{ "data-dismiss": "modal" } Cancel
             = form.submit 'Create channel', id: 'create-community-submit', class: 'btn btn-danger'

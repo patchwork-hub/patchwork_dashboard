@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class CommunityRuleService < BaseService
-  def call(account, options = {})
-    @account = account
+  def call(options = {})
     @options = options
     @community_id = options[:community_id].to_i
     @description = options[:description]

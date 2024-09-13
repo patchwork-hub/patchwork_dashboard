@@ -8,11 +8,11 @@
       },
       {
         name: 'Content Moderation',
-        options: ['Content filters', 'Live blocklist']
+        options: ['Content filters']
       },
       {
         name: 'Federation',
-        options: ['Bluesky', 'Threads']
+        options: ['Bluesky', 'Threads', 'Live blocklist']
       },
       {
         name: 'Local Features',
@@ -20,7 +20,7 @@
       },
       {
         name: 'User Management',
-        options: ['Guest Accounts', 'e-Newsletters', 'Analytics']
+        options: ['Guest accounts', 'e-Newsletters', 'Analytics']
       },
       {
         name: 'Plug-ins',

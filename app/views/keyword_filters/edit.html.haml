@@ -6,7 +6,7 @@
           = "#{action_name.capitalize} keyword"
 
       .card-body.w-50
-        = simple_form_for [@keyword_filter_group, @keyword_filter], url: keyword_filter_group_keyword_filter_path(@keyword_filter_group, @keyword_filter), html: { method: :patch } do |f|
+        = form_for [@keyword_filter_group, @keyword_filter], url: keyword_filter_group_keyword_filter_path(@keyword_filter_group, @keyword_filter), html: { method: :patch } do |f|
           - if @keyword_filter.errors.any? || @keyword_filter_group.errors.any?
             .alert.alert-danger
               %h4

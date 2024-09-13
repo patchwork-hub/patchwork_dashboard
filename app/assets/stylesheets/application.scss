@@ -291,10 +291,21 @@ ul.pagination {
   padding: 5px;
   position: absolute;
   z-index: 1;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+/* Default tooltip position: top */
+.tooltip-custom[data-tooltip-position="top"]::after {
   bottom: 125%;
   left: 50%;
   transform: translateX(-50%);
-  transition: opacity 0.3s, visibility 0.3s;
+}
+
+/* Tooltip position: right */
+.tooltip-custom[data-tooltip-position="right"]::after {
+  top: 50%;
+  left: 125%;
+  transform: translateY(-50%);
 }
 
 .tooltip-custom:hover::after {
@@ -485,7 +496,7 @@ ul.pagination {
   display: inline-block;
 }
 
-#create-channel, .type-of-post {
+.type-of-post {
   accent-color: red;
 }
 

@@ -13,11 +13,13 @@
             .col
               .form-group
                 = form.label :hashtags
-                = form.text_field :hashtag1, class: 'form-control', value: '#', required: true
-              .form-group
-                = form.text_field :hashtag2, class: 'form-control', value: '#', required: true
-              .form-group
-                = form.text_field :hashtag3, class: 'form-control', value: '#', required: true
+                - max_hashtags = 3
+                - remaining_hashtags = max_hashtags - @records.length
+                - if remaining_hashtags > 0
+                  - (1..remaining_hashtags).each do |i|
+                    = form.text_field "hashtag#{max_hashtags - remaining_hashtags + i}", class: 'form-control my-2', value: '#', required: true
+                - else
+                  %p.text-muted.small You have already added the maximum of 3 hashtags.
           .modal-footer
             %div.d-flex.justify-content-between
               .col
@@ -68,28 +70,9 @@
           .row.d-flex.justify-content-between
             .col-md-10
               %label Hashtags
-              %p.text-muted.small Choose a few hashtags that will be automatically added to posts made by users on your server when they post to this channel. The user can add more hashtags or remove them. These hashtags help in organising content on your server and boost visibility in the wider federated network.
+              %p.text-muted.small Choose a few hashtags that will be automatically added to posts made by users on your server when they post to this channel. The user can add more hashtags or remove them. This helps organise content on your server and boost its visibility in the wider federated network.
             .col-md-2-auto.mt-auto.mb-2.mr-2
               %button.btn.btn-outline-secondary{"data-toggle" => "modal", "data-target" => "#postHashtagModel"} Add New
-          .row
-            .col.d-flex
-              %p.mr-2 Show
-              .form-group.mr-2
-                %select.form-control
-                  %option 10
-                  %option 20
-                  %option 30
-                  %option 40
-                  %option 50
-              %p entries
-            .col-auto
-              .card-tools
-                = search_form_for @search, url: step5_community_path do |f|
-                  .input-group.input-group-sm{ style: "width: 150px;" }
-                    = f.search_field :hashtag_cont, class: "form-control float-right", placeholder: "Search", type: "text"
-                    .input-group-append
-                      %button.btn.btn-default{ type: "submit" }
-                        %i.fas.fa-search
           .table-responsive
             %table.table.mt-3.table-striped
               %thead
@@ -104,10 +87,11 @@
                   %tr
                     %td
                       %i.far.fa-square.mr-4
-                    %td
+                    %td{ style: 'width: 80%;' }
                       %p= record.hashtag
                     %td
                       %a.text-danger.mr-2{"data-toggle" => "modal", "data-target" => "#postHashtagEditModel", "data-id" => record.id, "data-hashtag" => record.hashtag, :class => 'edit-link'} Edit
+                    %td
                       = link_to 'Remove', step5_delete_community_path(@community, post_hashtag_id: record.id), method: :post, class: 'text-danger'
 
           %ul.pagination.pagination-sm.m-0.float-right

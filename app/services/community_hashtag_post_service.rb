@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class CommunityHashtagPostService < BaseService
+  class InvalidHashtagError < StandardError; end
+
   def call(account, options = {})
     @account = account
     @options = options
@@ -21,8 +23,16 @@ class CommunityHashtagPostService < BaseService
   end
 
   def prepare_params!
+    validate_hashtag!(@options[:hashtag])
+
     @hashtag = @options[:hashtag].gsub('#', '').downcase
     @name = @options[:hashtag].gsub('#', '')
     @community_id = @options[:community_id]
+  end
+
+  def validate_hashtag!(hashtag)
+    if hashtag.include?(' ')
+      raise InvalidHashtagError, 'Hashtag cannot contain spaces.'
+    end
   end
 end

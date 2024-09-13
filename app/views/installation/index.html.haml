@@ -62,15 +62,19 @@
               .bordered-radio.mx-2.mt-3
                 %input.radio-button{name: "pack_selection", type: "radio", value: "everything_on"}
                 Everything on
+                = render 'shared/tooltip_custom', tooltip_text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse faucibus, risus sed porta vestibulum, augue urna porttitor ipsum, non dignissim ante purus ut sem.', tooltip_position: 'right'
               .bordered-radio.mx-2.mt-3
                 %input.radio-button{name: "pack_selection", type: "radio", value: "spam_only"}
                 Spam only
+                = render 'shared/tooltip_custom', tooltip_text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse faucibus, risus sed porta vestibulum, augue urna porttitor ipsum, non dignissim ante purus ut sem.', tooltip_position: 'right'
               .bordered-radio.mx-2.mt-3
                 %input.radio-button{name: "pack_selection", type: "radio", value: "fedi_pact"}
-                Fedi-pact
+                Safe spaces
+                = render 'shared/tooltip_custom', tooltip_text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse faucibus, risus sed porta vestibulum, augue urna porttitor ipsum, non dignissim ante purus ut sem.', tooltip_position: 'right'
               .bordered-radio.mx-2.mt-3
                 %input.radio-button{name: "pack_selection", type: "radio", value: "organisation"}
                 Organisation
+                = render 'shared/tooltip_custom', tooltip_text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse faucibus, risus sed porta vestibulum, augue urna porttitor ipsum, non dignissim ante purus ut sem.', tooltip_position: 'right'
 .row.d-flex.justify-content-end
   .col-auto
     %button.btn.btn-danger Save changes
@@ -82,3 +86,7 @@
       %a{ href: 'https://github.com/patchwork-hub/patchwork_dashboard/wiki/Installation', target: '_blank' }
         = image_tag("icons/file-lines.svg", class: "mr-2", width: "16", height: "16")
         Installation Guide
+    .row
+      %a{ href: 'https://fediverse-governance.github.io/images/quick-start.pdf ', target: '_blank' }
+        = image_tag("icons/file-lines.svg", class: "mr-2", width: "16", height: "16")
+        Governance guidelines

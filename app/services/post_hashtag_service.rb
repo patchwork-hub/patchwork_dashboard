@@ -1,5 +1,5 @@
 class PostHashtagService < BaseService
-  def call(account, options = {})
+  def call(options = {})
     @community_id = options[:community_id]
     @hashtags = extract_hashtags(options)
     create!

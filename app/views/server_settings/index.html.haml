@@ -49,9 +49,9 @@
                         = option[:name]
                         - case option[:name]
                           - when 'Spam filters'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Block spam posts by applying a preset list of keyword filters or add your own. These are maintained with input from other Patchwork server admins.'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Block spam posts by applying a preset list of keyword filters or add your own. These are maintained with input from other Patchwork server admins.', tooltip_position: 'top'
                           - when 'Content filters'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Apply preset lists of keyword filters or add your own to block specific types of content. Or create your own lists and share them with the admin channel.'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Apply preset lists of keyword filters or add your own to block specific types of content. Or create your own lists and share them with the admin channel.', tooltip_position: 'top'
                       %br
                       - if option[:name].casecmp?('Spam filters')
                         %a{ href: '#', style: 'color: red;', title: 'Add spam filter', 'data-filter-type': 'spam', 'data-id': option[:id], 'data-toggle': 'modal', 'data-target': '#keyFilterModal', 'data-label': 'Select or create filter list' }
@@ -102,29 +102,29 @@
                         = option[:name]
                         - case option[:name]
                           - when 'Sign up challenge'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Add a challenge for new users to answer so spam bots can’t easily join your server.'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Add a challenge for new users to answer so spam bots can’t easily join your server.', tooltip_position: 'top'
                           - when 'Live blocklist'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Control which servers you connect to in the wider network with deny lists that block all posts from specific servers.'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Control which servers you connect to in the wider network with deny lists that block all posts from specific servers.', tooltip_position: 'top'
                           - when 'Bluesky'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Block posts from the microblogging platform Bluesky.'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Block posts from the microblogging platform Bluesky.', tooltip_position: 'top'
                           - when 'Threads'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Block posts from the microblogging platform Threads, owned by Meta & Instagram.'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Block posts from the microblogging platform Threads, owned by Meta & Instagram.', tooltip_position: 'top'
                           - when 'Custom theme'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Browse a variety of themes for your server’s Web interface to give it the flavour you want.'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Browse a variety of themes for your server’s Web interface to give it the flavour you want.', tooltip_position: 'top'
                           - when 'Search opt-out'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Make all text within the server, including user’s posts and bios, visible to search. Users are able to opt-out if they choose.'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Make all text within the server, including user’s posts and bios, visible to search. Users are able to opt-out if they choose.', tooltip_position: 'top'
                           - when 'Local only posts'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Allow users to publish posts just to your server, fostering a greater sense of channel.'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Allow users to publish posts just to your server, fostering a greater sense of channel.', tooltip_position: 'top'
                           - when 'Long posts and markdown'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Set character limits for posts and enable text formatting, including bold, italics & more.'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Set character limits for posts and enable text formatting, including bold, italics & more.', tooltip_position: 'top'
                           - when 'Local quote posts'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Allow users to publish posts just to your server, fostering a greater sense of channel.'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Allow users to publish posts just to your server, fostering a greater sense of channel.', tooltip_position: 'top'
                           - when 'Guest accounts'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Allow anyone with a Mastodon account to participate on your server with guest sign-in.'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Allow anyone with a Mastodon account to participate on your server with guest sign-in.', tooltip_position: 'top'
                           - when 'e-Newsletters'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Foster a closer, more transparent connection with users on your server by sending regular, custom newsletters.'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Foster a closer, more transparent connection with users on your server by sending regular, custom newsletters.', tooltip_position: 'top'
                           - when 'Analytics'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Understand your channel and optimise your server with non-intrusive analytics.'
+                            = render 'shared/tooltip_custom', tooltip_text: 'Understand your channel and optimise your server with non-intrusive analytics.', tooltip_position: 'top'
                         - if option[:name].casecmp?('Long posts and markdown')
                           %br
                           %span.ml-5.small{ style: 'color: grey;' }

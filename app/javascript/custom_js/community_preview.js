@@ -13,20 +13,4 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
-
-  const checkbox = document.getElementById('create-channel');
-  const submitButton = document.getElementById('create-community-submit');
-
-  if (!checkbox || !submitButton) {
-    console.log('Required elements are missing from the page.');
-    return;
-  }
-
-  function toggleSubmitButton() {
-    submitButton.disabled = !checkbox.checked;
-  }
-
-  toggleSubmitButton();
-
-  checkbox.addEventListener('change', toggleSubmitButton);
 });

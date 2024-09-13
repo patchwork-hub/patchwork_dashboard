@@ -32,12 +32,12 @@ namespace :db do
           { name: "Sign up challenge", value: false }
         ],
         "Content Moderation" => [
-          { name: "Content filters", value: false },
-          { name: "Live blocklist", value: false }
+          { name: "Content filters", value: false }
         ],
         "Federation" => [
           { name: "Bluesky", value: false },
-          { name: "Threads", value: false }
+          { name: "Threads", value: false },
+          { name: "Live blocklist", value: false }
         ],
         "Local Features" => [
           { name: "Custom theme", value: false },

@@ -77,13 +77,16 @@
                 - else
                   %tr
                     %th{ style: 'width: 30%;' } Heading
-                    %th{ style: 'width: 70%;' } Text
+                    %th{ colspan: 2, style: 'width: 70%;' } Text
                 - @aditional_information.each do |information|
                   %tr
                     %td{ style: 'width: 30%;' }
                       %input.form-control{ type: 'text', value: information.heading, readonly: true }
-                    %td{ style: 'width: 70%;' }
+                    %td{ style: 'width: 65%;' }
                       %input.form-control{ type: 'text', value: information.text, readonly: true }
+                    %td{ style: 'width: 5%;' }
+                      %a.text-danger.small{ href: '#', title: 'Edit', 'data-toggle': 'modal', 'data-target': '#communityInformation' }
+                        %i.fas.fa-edit
 
       .row.d-flex.justify-content-between
         .col

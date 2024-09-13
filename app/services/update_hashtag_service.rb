@@ -1,5 +1,5 @@
 class UpdateHashtagService < BaseService
-  def call(account, options = {})
+  def call(options = {})
     @community_id = options[:community_id]
     @id = options[:id]
     @hashtag = format_hashtag(options[:hashtag])
