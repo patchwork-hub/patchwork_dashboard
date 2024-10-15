@@ -104,3 +104,4 @@ Stay tuned - we will update our contributions policy soon.
 
 ## Licenses
 Patchwork is an open source project, licensed under AGPL-3.0. Have fun!
+
