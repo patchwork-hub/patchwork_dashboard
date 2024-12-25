@@ -12,8 +12,8 @@ class ApplicationController < ActionController::Base
   self.responder = ApplicationResponder
   respond_to :html
 
-  before_action :authenticate_user_from_cookie
-	before_action :authenticate_user!
+	# before_action :authenticate_user!
+  before_action :handle_authentication
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
 
 	before_action :prepare_datatable_params, only: %i[ index invitation_codes show ]
@@ -53,7 +53,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-
   def user_not_authorized
     flash[:error] = "You are not authorized to perform this action."
 
@@ -74,6 +73,23 @@ class ApplicationController < ActionController::Base
 
   private
 
+    # Handles authentication based on cookies
+    def handle_authentication_cookies
+      if user_signed_in? && !cookies[:access_token].present?
+        clear_invalid_token
+      end
+    end
+
+  # Handles authentication based on cookies or Devise
+  def handle_authentication
+
+    if cookies[:access_token].present?
+      authenticate_user_from_cookie || clear_invalid_token
+    else
+      authenticate_user!
+    end
+  end
+
   def authenticate_user_from_cookie
     token = cookies[:access_token]
     return unless token
@@ -82,23 +98,53 @@ class ApplicationController < ActionController::Base
 
     if user_info
       user = User.find_by(id: user_info["resource_owner_id"])
-      if user
-        sign_in(user)
+      byebug
+      if user && (user.master_admin? || user.organisation_admin? || user.user_admin?)
+        byebug
+        sign_in(user) unless user_signed_in?
+        if user.organisation_admin?
+          byebug
+
+          redirect_to communities_path(channel_type: 'channel')
+        elsif user.user_admin?
+          byebug
+
+          redirect_to communities_path(channel_type: 'channel_feed')
+        else
+          byebug
+
+          redirect_to root_path
+        end
       else
-        redirect_to new_user_session_path, alert: 'User not found.'
+        authenticate_user!
       end
     else
-      redirect_to new_user_session_path, alert: 'Invalid token.'
+      clear_invalid_token
     end
   end
 
+  # Clear cookies and redirect to login if token is invalid
+  def clear_invalid_token
+    cookies.delete(:access_token, domain: Rails.env.production? ? '.channel.org' : :all)
+    sign_out(current_user) if user_signed_in?
+    redirect_to new_user_session_path, alert: 'Session expired. Please log in again.'
+  end
+
   def validate_token(token)
+    return if token.blank?
+  
     begin
       url = Rails.env.development? ? 'http://localhost:3000/oauth/token/info' : 'https://channel.org/oauth/token/info'
       response = HTTParty.get(url, headers: { 'Authorization' => "Bearer #{token}" })
-      JSON.parse(response.body)
+  
+      if response.success?
+        JSON.parse(response.body) # Returns the token payload
+      else
+        Rails.logger.warn "Token validation failed with status #{response.code}: #{response.body}"
+        nil
+      end
     rescue HTTParty::Error => e
-      Rails.logger.error "Error fetching user info: #{e.message}"
+      Rails.logger.error "Error validating token: #{e.message}"
       nil
     end
   end

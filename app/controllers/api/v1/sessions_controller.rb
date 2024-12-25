@@ -14,9 +14,7 @@ module Api
           revoke_access_token(token)
           sign_out(current_user)
         end
-        cookies.delete(:access_token)
-        cookies.delete(:_dashboard_session, domain: :all)
-        
+        cookies.delete(:access_token, domain: :all)        
         render json: { message: 'Success!' }, status: 200
       end
 

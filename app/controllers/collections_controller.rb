@@ -1,4 +1,6 @@
 class CollectionsController < ApplicationController
+  skip_before_action :handle_authentication
+  before_action :handle_authentication_cookies
   before_action :authorize_master_admin!
   before_action :set_collection, only: %i[show edit update]
 

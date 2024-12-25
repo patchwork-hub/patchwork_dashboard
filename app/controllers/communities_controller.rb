@@ -1,5 +1,6 @@
 class CommunitiesController < BaseController
-  before_action :authenticate_user!
+  skip_before_action :handle_authentication
+  before_action :handle_authentication_cookies
   before_action :set_community, except: %i[step1 step1_save index new is_muted]
   before_action :initialize_form, only: %i[step1]
   before_action :set_current_step

@@ -4,6 +4,7 @@ class Users::SessionsController < Devise::SessionsController
   require 'httparty'
 
   skip_before_action :verify_authenticity_token, only: [:destroy]
+  skip_before_action :handle_authentication, only: [:destroy]
 
   def new
     super
@@ -11,7 +12,8 @@ class Users::SessionsController < Devise::SessionsController
 
   def create
     self.resource = warden.authenticate!(auth_options)
-
+    response = get_access_token
+    
     if resource.persisted? && !policy(resource).login?
       sign_out(resource)
       flash[:error] = "You are not authorized to log in."
@@ -21,6 +23,14 @@ class Users::SessionsController < Devise::SessionsController
 
     super do |resource|
       if resource.persisted?
+        
+        cookies[:access_token] = {
+          value: response["access_token"],
+          domain: Rails.env.development? ? :all : '.channel.org',
+          #same_site: :none, # Required for cross-domain cookies
+          #httponly: true,
+          #secure: Rails.env.production?, # Ensure the cookie is only sent over HTTPS in production
+        } if response["access_token"]
         sign_in(resource)
       end
     end
@@ -32,7 +42,6 @@ class Users::SessionsController < Devise::SessionsController
 
     # Clear the access token cookie
     cookies.delete(:access_token, domain: Rails.env.development? ? :all : '.channel.org')
-    puts params[:authenticity_token]
     super
   end
 
@@ -65,8 +74,31 @@ class Users::SessionsController < Devise::SessionsController
         },
         headers: { 'Authorization': "Bearer #{token}" }
       )
+      
     rescue HTTParty::Error => e
       Rails.logger.error "Failed to revoke access token: #{e.message}"
+    end
+  end
+
+  def get_access_token
+    begin
+      url = Rails.env.development? ? 'http://localhost:3000/oauth/token' : 'https://channel.org/oauth/token'
+
+      response = HTTParty.post(
+        url,
+        body: {
+          grant_type: "password",
+          username: params[:user][:email],
+          password: params[:user][:password],
+          scope: "read write follow push",
+          client_id: "7Xn_TbJq9D5uWhT_sL9Te9yXAJ26UrxSlXtBoKT7rt0",
+          client_secret: "5yf68rGhPsxPuSQd2RMHZ8tHV02GPIYOV5fT88V07o8"
+        },
+      )
+      response.success? ? JSON.parse(response.body) : {}
+    rescue HTTParty::Error => e
+      Rails.logger.error "Failed to login: #{e.message}"
+      {}
     end
   end
 end
