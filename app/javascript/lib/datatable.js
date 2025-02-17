@@ -233,6 +233,11 @@ jQuery(function() {
     var modal = $(this);
     modal.find('#edit_hashtag_id').val(hashtagId);
     modal.find('#edit_hashtag_input').val('#' + hashtag);
+
+    var form = modal.find('#edit_hashtag_form');
+    var communityId = $('#edit_community_id').val();
+    var actionUrl = '/channels/' + communityId + '/community_hashtags/' + hashtagId;
+    form.attr('action', actionUrl);
   });
 
   const saveAndPreviewBtn = document.getElementById("save-and-preview-btn");

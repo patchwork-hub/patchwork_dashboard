@@ -10,10 +10,10 @@
         - if @token.nil?
           %p.small.red
             = image_tag("icons/exclamation-triangle.svg", class: "ml-2", width: "16", height: "16")
-            To edit hashtag, please enable public feed.
-        = simple_form_for @community_hashtag_form, url: step3_update_hashtag_community_path, method: :patch, html: { id: 'edit_hashtag_form' } do |form|
+            To edit hashtag, please enable boost bot.
+        = simple_form_for @community_hashtag_form, url: '#', method: :patch, html: { id: 'edit_hashtag_form' } do |form|
           = form.hidden_field :community_id, value: @community.id, id: 'edit_community_id'
-          = form.hidden_field :hashtag_id, id: 'edit_hashtag_id'
+          = form.hidden_field :hashtag_id, name: 'form_community_hashtag[hashtag_id]', id: 'edit_hashtag_id' # Keep name and id for JS
           .row
             .col
               .form-group

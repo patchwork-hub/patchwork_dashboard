@@ -10,8 +10,8 @@
         - if @token.nil?
           %p.small.red
             = image_tag("icons/exclamation-triangle.svg", class: "ml-2", width: "16", height: "16")
-            To create hashtag, please enable public feed.
-        = simple_form_for @community_hashtag_form, url: step3_community_path do |form|
+            To create hashtag, please enable boost bot.
+        = simple_form_for @community_hashtag_form, url: community_community_hashtags_path(@community) do |form|
           = form.hidden_field :community_id, value: @community.id, id: 'community_id'
           .row
             .col

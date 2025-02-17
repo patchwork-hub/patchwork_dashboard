@@ -139,7 +139,7 @@
                           %a{ href: '#', "data-toggle" => "modal", "data-target" => "#editHashtagModal", "data-id" => community_hashtag.id, "data-hashtag" => community_hashtag.hashtag }
                             = image_tag("icons/edit-btn.svg", class: "ml-2", width: "16", height: "16")
                         %td
-                          = link_to step3_delete_hashtag_community_path(id: @community.id, community_hashtag_id: community_hashtag.id), method: :post, data: { confirm: 'Are you sure?' }, class: 'text-danger', title: 'Delete', rel: 'nofollow' do
+                          = link_to community_community_hashtag_path(id: community_hashtag.id, community_id: @community.id), method: :delete, data: { confirm: 'Are you sure?' }, class: 'text-danger', title: 'Delete', rel: 'nofollow' do
                             = image_tag("icons/trash-can.svg", class: "ml-2", width: "16", height: "16")
             .pagination.pagination-sm.m-0.float-right
               = paginate @records, theme: 'bootstrap4'

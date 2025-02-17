@@ -4,7 +4,7 @@ class CommunitiesController < BaseController
   before_action :initialize_form, only: %i[step1]
   before_action :set_current_step
   before_action :set_content_type, only: %i[step3 step4 step5 step6]
-  before_action :set_api_credentials, only: %i[search_contributor step3 step3_save step3_update_hashtag step3_delete_hashtag step4]
+  before_action :set_api_credentials, only: %i[search_contributor step3 step4]
   before_action :fetch_community_admins, only: %i[step4 step6]
   PER_PAGE = 10
 
@@ -63,7 +63,7 @@ class CommunitiesController < BaseController
   def step3
     @records = load_commu_hashtag_records
     @search = commu_hashtag_records_filter.build_search
-    @community_hashtag_form = Form::CommunityHashtag.new
+    @community_hashtag_form = Form::CommunityHashtag.new(community_id: @community.id)
     @follow_records = load_follow_records
     @filter_keywords = get_community_filter_keyword('filter_in')
     @community_filter_keyword = CommunityFilterKeyword.new(
@@ -71,51 +71,6 @@ class CommunitiesController < BaseController
       filter_type: 'filter_in',
       is_filter_hashtag: false
     )
-  end
-
-  def step3_save
-    begin
-      perform_hashtag_action(community_hashtag_params[:hashtag].gsub('#', ''), community_hashtag_params[:community_id], :follow)
-      flash[:notice] = "Hashtag saved successfully!"
-    rescue CommunityHashtagPostService::InvalidHashtagError => e
-      flash[:error] = e.message
-    rescue ActiveRecord::RecordNotUnique => e
-      flash[:error] = "Duplicate entry: Hashtag already exists."
-    end
-
-    redirect_to step3_community_path
-  end
-
-  def step3_update_hashtag
-    begin
-      community_hashtag = CommunityHashtag.find(params[:form_community_hashtag][:hashtag_id])
-
-      perform_hashtag_action(community_hashtag.hashtag, nil, :unfollow)
-      hashtag = params[:form_community_hashtag][:hashtag].gsub('#', '')
-      community_hashtag.assign_attributes(hashtag: hashtag, name: hashtag)
-      community_hashtag.save!
-      perform_hashtag_action(community_hashtag.hashtag, nil, :follow)
-
-      flash[:notice] = "Hashtag updated successfully!"
-    rescue CommunityHashtagPostService::InvalidHashtagError => e
-      flash[:error] = e.message
-    rescue ActiveRecord::RecordNotUnique => e
-      flash[:error] = "Duplicate entry: Hashtag already exists."
-    end
-
-    redirect_to step3_community_path
-  end
-
-  def step3_delete_hashtag
-    hashtag = CommunityHashtag.find(params[:community_hashtag_id])
-
-    if hashtag.destroy
-      perform_hashtag_action(hashtag.hashtag, nil, :unfollow)
-      flash[:notice] = "Hashtag removed successfully!"
-    else
-      flash[:error] = "Failed to remove hashtag."
-    end
-    redirect_to step3_community_path(params[:id])
   end
 
   def step4
@@ -380,10 +335,6 @@ class CommunitiesController < BaseController
     CommunityFilterKeyword.where(patchwork_community_id: @community.id, filter_type: filter_type).page(params[:page]).per(PER_PAGE)
   end
 
-  def get_community_admin_id
-    CommunityAdmin.where(patchwork_community_id: @community.id, is_boost_bot: true).pluck(:account_id).first
-  end
-
   def get_muted_accounts
     admin_account_id = get_community_admin_id
     muted_account_ids = Mute.where(account_id: admin_account_id).pluck(:target_account_id)
@@ -400,72 +351,12 @@ class CommunitiesController < BaseController
     @content_type = @community.content_type
   end
 
-  def set_api_credentials
-    @api_base_url = ENV['MASTODON_INSTANCE_URL']
-    admin = Account.where(id: get_community_admin_id).first
-    if admin
-      @token = fetch_oauth_token(admin.user.id)
-    end
-  end
-
-  def fetch_oauth_token(user_id)
-    token_service = GenerateAdminAccessTokenService.new(user_id)
-    token_service.call
-  end
-
-  def perform_hashtag_action(hashtag_name, community_id = nil, action)
-    if action == :follow && community_id
-      CommunityHashtagPostService.new.call(hashtag: hashtag_name, community_id: community_id)
-    end
-
-    hashtag = SearchHashtagService.new(@api_base_url, @token, hashtag_name).call
-    return puts "Hashtag not found" unless hashtag
-
-    service_class = action == :follow ? FollowHashtagService : UnfollowHashtagService
-    result = service_class.new(@api_base_url, @token, hashtag[:name]).call
-    puts result ? "Successfully #{action}ed ##{hashtag[:name]}" : "Failed to #{action} ##{hashtag[:name]}"
-
-    perform_relay_action(hashtag_name, community_id, action)
-  end
-
-  def perform_relay_action(hashtag_name, community_id, action)
-    # Owner account's user id
-    owner_role = UserRole.find_by(name: 'Owner')
-    owner_user = User.find_by(role: owner_role)
-    token = fetch_oauth_token(owner_user.id)
-
-    if action == :follow
-      create_relay(hashtag_name, token)
-    end
-
-    if action == :unfollow
-      unless CommunityHashtag.where(name: hashtag_name).where.not(patchwork_community_id: community_id).exists?
-        delete_relay(hashtag_name, token)
-      end
-    end
-  end
-
   def default_channel_type
     current_user.user_admin? ? 'channel_feed' : 'channel'
   end
 
   def set_current_step
     @current_step = action_name.match(/\d+/).to_s.to_i || 1
-  end
-
-  def create_relay(hashtag_name, token)
-    inbox_url = "https://relay.fedi.buzz/tag/#{hashtag_name}"
-    unless Relay.exists?(inbox_url: inbox_url)
-      CreateRelayService.new(@api_base_url, token, hashtag_name).call
-    end
-  end
-
-  def delete_relay(hashtag_name, token)
-    inbox_url = "https://relay.fedi.buzz/tag/#{hashtag_name}"
-    relay = Relay.find_by(inbox_url: inbox_url)
-    if relay
-      DeleteRelayService.new(@api_base_url, token, relay.id).call
-    end
   end
 
   def invoke_bridged

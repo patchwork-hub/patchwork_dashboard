@@ -22,9 +22,6 @@ Rails.application.routes.draw do
     member do
       get 'step2', to: 'communities#step2'
       get 'step3', to: 'communities#step3'
-      patch 'step3_update_hashtag'
-      post 'step3_delete_hashtag', to: 'communities#step3_delete_hashtag'
-      post 'step3', to: 'communities#step3_save'
       get 'step4', to: 'communities#step4'
       post 'step4', to: 'communities#step4_save'
       post 'step5_update', to: 'communities#step5_update'
@@ -41,6 +38,7 @@ Rails.application.routes.draw do
       post 'set_visibility', to: 'communities#set_visibility'
       post 'manage_additional_information', to: 'communities#manage_additional_information'
     end
+    resources :community_hashtags, only: %i[index create update destroy]
   end
 
   resources :community_admins
