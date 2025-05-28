@@ -1,0 +1,11 @@
+master_admin:
+  name: MasterAdmin
+  # description: Master administrator with full system access
+
+hub_admin:
+  name: HubAdmin
+  # description: Hub administrator with hub-level access
+
+org_admin:
+  name: OrganisationAdmin
+  # description: Organization administrator with organization-level access 

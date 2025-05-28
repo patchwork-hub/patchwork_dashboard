@@ -95,6 +95,7 @@ class CommunitiesController < BaseController
   end
 
   def step1_save
+    authorize Community, :create?
     @channel_type = @community&.channel_type || params[:channel_type]
     content_type =
       if current_user.user_admin? || @channel_type == "channel_feed"
@@ -429,7 +430,12 @@ class CommunitiesController < BaseController
   end
 
   def handle_failed_visibility_update
-    render @community.channel? ? :step6 : :step4
+    flash.now[:error] = @community.errors.full_messages.join(", ")
+    fetch_community_admins
+    @muted_accounts = load_muted_accounts
+    @community_post_type = @community.community_post_type || new_community_post_type
+    setup_filter_keywords(COMMUNITY_FILTER_TYPES[:out])
+    render @community.channel? ? :step6 : :step4, status: :unprocessable_entity
   end
 
   def channels_allowed?

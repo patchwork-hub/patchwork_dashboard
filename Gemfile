@@ -18,6 +18,7 @@ gem 'annotaterb', '~> 4.14'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
+  gem "rails-controller-testing"
 end
 
 group :development do
@@ -31,6 +32,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "webdrivers"
+  gem 'mocha'
 end
 
 gem 'responders'

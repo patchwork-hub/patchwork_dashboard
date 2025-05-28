@@ -1,0 +1,10 @@
+one:
+  id: 1
+  name: "Test Community"
+  slug: "test-community"
+  # account_id: 1
+  patchwork_community_type_id: 1
+  patchwork_collection_id: 1
+  visibility: null
+  # content_type: "custom_channel"
+  channel_type: "channel_feed"

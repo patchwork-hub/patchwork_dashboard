@@ -11,7 +11,6 @@ class CommunityPostService < BaseService
     else
       create_community
     end
-    create_content_type if @community.persisted?
     @community
   rescue ActiveRecord::RecordNotUnique => e
     Rails.logger.error("Community creation/update failed: #{e.message}")
@@ -31,54 +30,79 @@ class CommunityPostService < BaseService
       @community.save!
       set_default_additional_information
       assign_roles_and_content_type
-      Rails.logger.info "IP Address ID: #{@ip_address_id}"
-      IpAddress.find_by(id: @ip_address_id)&.increment_use_count! if @ip_address_id.present?
+      create_content_type
+      Rails.logger.debug "IP Address ID: #{@ip_address_id}"
+      if @ip_address_id.present?
+        ip_address = IpAddress.find_by(id: @ip_address_id)
+        Rails.logger.debug "Found IP address: #{ip_address.inspect}"
+        ip_address&.increment_use_count!
+        Rails.logger.debug "Incremented use count for IP address"
+      end
       @community
     end
     CommunityCreationJob.perform_later(@community.id, @current_user.id)
   rescue ActiveRecord::RecordInvalid => e
     Rails.logger.error("Community creation failed: #{e.message}")
+    Rails.logger.error("Validation errors: #{@community.errors.full_messages.join(', ')}")
     @community
   end
 
   def update_community
     ActiveRecord::Base.transaction do
       @community = Community.find_by(id: @options[:id])
+      return @community if @community.nil?
+
       validate_collection unless @options[:channel_type] == 'hub'
       validate_community_type
       validate_uniqueness(:name)
+      validate_uniqueness(:slug)
       return @community if @community&.errors&.any?
-      set_default_additional_information
 
       begin
-        @community.update!(community_attributes)
+        @community.assign_attributes(community_attributes)
+        @community.save!
+        set_default_additional_information
+        assign_roles_and_content_type
+        create_content_type
+        @community
       rescue ActiveRecord::RecordNotUnique => e
         @community.errors.add(:slug, "is already taken")
+        @community.reload
         return @community
       end
-      if @community.community_admins.present?
-        @account = Account.find_by(id: @community.community_admins.first.account_id) if @current_user.master_admin?
-        update_account_attributes
-        update_community_admin
-      end
-      if @community.channel_feed?
-        set_clean_up_policy
-      end
-      @community
     end
   rescue ActiveRecord::RecordInvalid => e
     Rails.logger.error("Community update failed: #{e.message}")
+    Rails.logger.error("Validation errors: #{@community.errors.full_messages.join(', ')}")
     @community
   end
 
   def validate_collection
     @collection = Collection.find_by(id: @options[:collection_id])
-    handle_not_found('Collection') if @collection.nil?
+    if @collection.nil?
+      @community ||= Community.new(
+        name: @options[:name],
+        slug: @options[:slug],
+        channel_type: @options[:channel_type]
+      )
+      @community.errors.add(:patchwork_collection_id, "is required for non-hub communities")
+      @community
+    end
   end
 
   def validate_community_type
+    return if @options[:channel_type] == 'hub'
+    
     @community_type = CommunityType.find_by(id: @options[:community_type_id])
-    handle_not_found('Community Type') if @community_type.nil?
+    if @community_type.nil?
+      @community ||= Community.new(
+        name: @options[:name],
+        slug: @options[:slug],
+        channel_type: @options[:channel_type]
+      )
+      @community.errors.add(:patchwork_community_type_id, "is required for non-hub communities")
+      @community
+    end
   end
 
   def validate_uniqueness(attribute)
@@ -86,8 +110,10 @@ class CommunityPostService < BaseService
     if existing_community && existing_community.id != @options[:id].to_i
       @community ||= Community.new(community_attributes)
       @community.errors.add(attribute, "has already been taken")
-      @community
+      @community.reload if @community.persisted?
+      return false
     end
+    true
   end
 
   def slug_uniqueness_within_accounts
@@ -167,7 +193,7 @@ class CommunityPostService < BaseService
       @account.update!(
         display_name: @community.name,
         username: @community.slug.parameterize.underscore,
-        note: @community.description,
+        note: @community.description || '',
         avatar: @community.avatar_image || '',
         header: @community.banner_image || '',
         actor_type: actor_type,
@@ -201,6 +227,7 @@ class CommunityPostService < BaseService
       channel_type: @options[:content_type],
       custom_condition: custom_condition_value
     )
+    @community.reload
   end
 
   def custom_condition_value
@@ -224,19 +251,22 @@ class CommunityPostService < BaseService
       guides: nil,
       position: get_position,
       admin_following_count: 0,
-      patchwork_community_type_id: @community_type.id,
       channel_type: @options[:channel_type],
       is_custom_domain: @options[:is_custom_domain],
-      ip_address_id: @ip_address_id
+      ip_address_id: @ip_address_id,
+      registration_mode: @options[:registration_mode] || 'none',
+      visibility: @options[:visibility] || 'public_access'
     }
 
     if @options[:channel_type] == 'hub'
       attributes[:patchwork_collection_id] = nil
+      attributes[:patchwork_community_type_id] = nil
     else
       attributes[:patchwork_collection_id] = @collection.id
+      attributes[:patchwork_community_type_id] = @community_type.id
     end
 
-    if @options[:id].blank? || (!@community&.visibility&.present? && !@current_user.user_admin?)
+    if @options[:id].blank? #|| (!@community&.visibility&.present? && !@current_user.user_admin?)
       attributes[:slug] = @options[:slug]
     end
 

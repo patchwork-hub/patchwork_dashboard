@@ -1,4 +1,6 @@
 class BaseController < ApplicationController
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
   def index
     @records = load_records
     @search = records_filter.build_search
@@ -27,5 +29,14 @@ class BaseController < ApplicationController
   def fetch_oauth_token(user_id)
     token_service = GenerateAdminAccessTokenService.new(user_id)
     token_service.call
+  end
+
+  private
+
+  def user_not_authorized
+    respond_to do |format|
+      format.html { render file: Rails.root.join('public/403.html'), status: :forbidden, layout: false }
+      format.json { render json: { error: "Forbidden" }, status: :forbidden }
+    end
   end
 end

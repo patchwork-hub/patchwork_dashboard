@@ -1,0 +1,18 @@
+master_admin_account:
+  username: master
+  domain: example.com
+
+hub_admin_account:
+  username: hub
+  domain: example.com
+
+org_admin_account:
+  username: org
+  domain: example.com
+
+one:
+  id: 1
+  username: user1
+  domain: example.com
+  private_key: "test-private-key"
+  public_key: "test-public-key"

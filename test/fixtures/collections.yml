@@ -1,0 +1,5 @@
+test_collection:
+  id: 1
+  name: Test Collection
+  slug: test-collection
+  sorting_index: 1 

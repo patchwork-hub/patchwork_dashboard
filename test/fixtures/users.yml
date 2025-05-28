@@ -1,0 +1,24 @@
+master_admin:
+  email: master@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
+  role: master_admin
+  account: master_admin_account
+
+hub_admin:
+  email: hub@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
+  role: hub_admin
+  account: hub_admin_account
+
+org_admin:
+  email: org@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
+  role: org_admin
+  account: org_admin_account 
+
+one:
+  id: 1
+  email: user@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
+  # token: abc123token
+  account_id: 1

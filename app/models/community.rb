@@ -71,11 +71,26 @@ class Community < ApplicationRecord
   validates :slug, presence: true,
     length: { minimum: MINIMUM_SLUG_LENGTH, maximum: SLUG_LENGTH_LIMIT,
               too_short: "must be at least %{count} characters",
-              too_long: "cannot be longer than %{count} characters" }
+              too_long: "cannot be longer than %{count} characters" },
+    uniqueness: true
 
   validate :slug_cannot_be_changed, on: :update
 
   validate :conditional_slug_format
+
+  validate :validate_collection_and_type_for_non_hub
+
+  def validate_collection_and_type_for_non_hub
+    return if channel_type == 'hub'
+
+    if patchwork_collection_id.blank?
+      errors.add(:patchwork_collection_id, "is required for non-hub communities")
+    end
+
+    if patchwork_community_type_id.blank?
+      errors.add(:patchwork_community_type_id, "is required for non-hub communities")
+    end
+  end
 
   def conditional_slug_format
     custom_domain = ActiveModel::Type::Boolean.new.cast(self[:is_custom_domain])
@@ -153,7 +168,8 @@ class Community < ApplicationRecord
 
   belongs_to :patchwork_community_type,
               class_name: 'CommunityType',
-              foreign_key: 'patchwork_community_type_id'
+              foreign_key: 'patchwork_community_type_id',
+              optional: true
 
   has_one :content_type,
             class_name: 'ContentType',
@@ -200,6 +216,8 @@ class Community < ApplicationRecord
   validates :name, presence: true, uniqueness: true
 
   validates :registration_mode, inclusion: { in: ['open', 'approved', 'none'] }
+
+  validates :channel_type, inclusion: { in: ->(community) { community.class.channel_types.keys } }
 
   scope :recommended, -> {
     joins(:patchwork_community_type)

@@ -1,0 +1,10 @@
+test_type:
+  name: Test Type
+  slug: test-type
+  sorting_index: 1 
+
+one:
+  id: 1
+  name: "General"
+  slug: "general"
+  sorting_index: 1
