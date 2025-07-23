@@ -6,10 +6,9 @@ on:
     branches:
       - production-deployment
 
-# env:
-#   DEFINITION:
-#     .aws/mome-dashboard.json
-
+env:
+  DEFINITION:
+    .task/mome-dashboard.json
 permissions:
   contents: read
 
@@ -62,53 +61,53 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       
-  # Deploy:
-  #   name: Deploy to Mo-Me Dashboard
-  #   needs: Build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
+  Deploy:
+    name: Deploy to Mo-Me Dashboard
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  #     - name: Configure AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@v1
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: ${{ secrets.AWS_REGION }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-  #     - name: Login to Amazon ECR
-  #       id: login-ecr
-  #       uses: aws-actions/amazon-ecr-login@v1
-  #       with:
-  #         mask-password: 'true'
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
 
-  #     # This is a separate action that sets up buildx runner
-  #     - name: Setup Docker Buildx
-  #       uses: docker/setup-buildx-action@v2
+      # This is a separate action that sets up buildx runner
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-  #     # Use Github action cache
-  #     - name: Cache Docker layers
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: /tmp/.buildx-cache
-  #         key: ${{ runner.os }}-buildx-${{ github.sha }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-buildx-
+      # Use Github action cache
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
       
-  #     - name: Fill in the new image ID in the Amazon ECS task definition
-  #       id: task-def
-  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
-  #       with:
-  #         task-definition: ${{ env.DEFINITION }}
-  #         container-name: ${{ secrets.DASHBOARD_CONTAINER_NAME }}
-  #         # image: ${{ steps.build-image.outputs.image }}
-  #         image:  ${{ secrets.IMAGE_TAG }}
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.DEFINITION }}
+          container-name: ${{ secrets.DASHBOARD_CONTAINER_NAME }}
+          # image: ${{ steps.build-image.outputs.image }}
+          image:  ${{ secrets.IMAGE_TAG }}
 
-  #     - name: Deploy Amazon ECS task definition
-  #       uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-  #       with:
-  #         task-definition: ${{ steps.task-def.outputs.task-definition }}
-  #         service: ${{ secrets.DASHBOARD_SERVICE_NAME }}
-  #         cluster: ${{ secrets.CLUSTER_NAME }}
-  #         wait-for-service-stability: false
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ secrets.DASHBOARD_SERVICE_NAME }}
+          cluster: ${{ secrets.CLUSTER_NAME }}
+          wait-for-service-stability: false
