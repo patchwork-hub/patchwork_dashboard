@@ -21,7 +21,7 @@ class AppVersion < ApplicationRecord
   validates :version_name, presence: true, uniqueness: { scope: :app_name, case_sensitive: false}
   validate :version_name_format
 
-  enum app_name: { patchwork: 0, newsmast: 1 }
+  enum app_name: { mo_me: 0 }
 
   private
   def version_name_format
