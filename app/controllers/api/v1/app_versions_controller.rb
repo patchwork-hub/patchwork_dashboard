@@ -22,6 +22,19 @@ module Api
 			end
 
 			private
+		
+				def set_app_version
+					key = app_version_params[:app_name]&.to_sym || :mo_me
+ 					app_name = AppVersion.app_names[key] || AppVersion.app_names[:mo_me]
+					@app_version = AppVersion.find_by(
+						version_name: app_version_params[:current_app_version],
+						app_name: app_name
+					)
+				end
+			
+				def render_error(message: "", status_code: 400)
+					render json: { error: message }, status: status_code
+				end
 
 			def set_app_version
 				key = app_version_params[:app_name]&.to_sym || :patchwork
