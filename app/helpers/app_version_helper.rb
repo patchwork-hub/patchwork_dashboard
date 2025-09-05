@@ -22,8 +22,10 @@ module AppVersionHelper
   def application_name(app_name)
     return 'Patchwork' unless app_name.present?
 
-    if app_name.present?
-      AppVersion.app_names.key(app_name.to_i).humanize.capitalize
-    end
+    app_name_key = AppVersion.app_names.key(app_name.to_i)
+    return 'Patchwork' unless app_name_key
+
+    humanized_name = app_name_key.humanize.capitalize
+    humanized_name == 'Patchwork' ? 'Channels' : humanized_name
   end
 end

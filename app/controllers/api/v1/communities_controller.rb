@@ -1,12 +1,15 @@
 module Api
   module V1
     class CommunitiesController < ApiController
+      include ApiResponseHelper
+      include BlueskyAccountBridgeHelper
+      
       skip_before_action :verify_key!
       before_action :check_authorization_header
       before_action :set_community, only: %i[show update set_visibility manage_additional_information]
       before_action :validate_patchwork_community_id, only: %i[contributor_list mute_contributor_list hashtag_list]
       before_action :set_content_and_channel_type, only: %i[index create update]
-      include BlueskyAccountBridgeHleper
+      
       PER_PAGE = 5
 
       def index
@@ -16,7 +19,7 @@ module Api
 
       def create
         if CommunityAdmin.exists?(account_id: current_user.account_id)
-          render json: { error: "You can only create one channel." }, status: :forbidden and return
+          render_forbidden('api.community.errors.only_one_channel') and return
         end
 
         community = CommunityPostService.new.call(
@@ -25,9 +28,9 @@ module Api
         )
 
         if community.errors.any?
-          render json: { errors: community.errors.full_messages }, status: :unprocessable_entity
+          render_validation_failed(community.errors)
         else
-          render json: { community: community }, status: :created
+          render_created({ community: community }, 'api.community.messages.created')
         end
       end
 
@@ -44,20 +47,20 @@ module Api
         )
 
         if @community.errors.any?
-          render json: { errors: @community.errors.full_messages }, status: :unprocessable_entity
+          render_validation_failed(@community.errors)
         else
-          render json: { community: @community }, status: :ok
+          render_updated({ community: @community }, 'api.community.messages.updated')
         end
       end
 
       def community_types
         community_types = CommunityType.pluck(:id, :name).map { |id, name| { id: id, name: name } }
-        render json: { community_types: community_types }, status: :ok
+        render_success(community_types)
       end
 
       def collections
         collections = Collection.pluck(:id, :name).map { |id, name| { id: id, name: name } }
-        render json: { collections: collections }, status: :ok
+        render_success(collections)
       end
 
       def search_contributor
@@ -67,7 +70,7 @@ module Api
         token = bearer_token
 
         if query.blank? || url.blank? || token.blank?
-          render json: { error: 'query, url and token parameters are required' }, status: :bad_request
+          render_error('api.community.errors.search_params_required', :bad_request)
           return
         end
 
@@ -76,7 +79,7 @@ module Api
         if result.any?
           render json: { 'accounts' => result }
         else
-           render json: { message: 'No saved accounts found', 'accounts' => [] }, status: :ok
+          render_success({ 'accounts' => [] }, 'api.errors.not_found', :ok, {})
         end
       end
 
@@ -100,9 +103,9 @@ module Api
         CreateCommunityInstanceDataJob.perform_later(@community) if @community.hub? && ENV['ALLOW_CHANNELS_CREATION'] == 'true'
         if @community.visibility.nil?
           @community.update(visibility: 'public_access')
-          render json: { message: "Channel created successfully" }, status: :ok
+          render_created
         else
-          render json: { message: "Channel updated successfully" }, status: :ok
+          render_updated
         end
       end
 
@@ -110,22 +113,20 @@ module Api
         authorize @community, :manage_additional_information?
 
         if params[:community].blank?
-          @community.errors.add(:base, "Missing additional information")
-          return render json: { errors: @community.formatted_error_messages }, status: :unprocessable_entity
+          return render_errors('api.community.errors.missing_additional_information', :unprocessable_entity)
         end
 
         if @community.update(additional_community_params)
           @community.update(registration_mode: params[:community][:registration_mode])
           render json: Api::V1::ChannelSerializer.new(@community, include: [:patchwork_community_additional_informations, :patchwork_community_links, :patchwork_community_rules]).serializable_hash.to_json
         else
-          render json: { errors: @community.formatted_error_messages }, status: :unprocessable_entity
+          render_validation_failed(@community.errors)
         end
-      rescue ActionController::ParameterMissing => e
-        render json: { error: e.message }, status: :bad_request
+      rescue ActionController::ParameterMissing
+        render_error('api.errors.invalid_request', :bad_request)
       rescue ActiveRecord::RecordNotUnique
-        @community.errors.add(:base, "Duplicate link URL for this community is not allowed.")
         Rails.logger.error "#{'*'*10} Duplicate link URL for community #{@community.id} #{'*'*10}"
-        render json: { errors: @community.formatted_error_messages }, status: :unprocessable_entity
+        render_errors('api.community.errors.duplicate_link_url', :unprocessable_entity)
       end
 
       def fetch_ip_address
@@ -138,7 +139,7 @@ module Api
         if ip_address
           render json: { ip_address: ip_address.ip, id: ip_address.id }, status: :ok
         else
-          render json: { error: "No valid IP available" }, status: :not_found
+          render_not_found
         end
       end
 
@@ -184,7 +185,7 @@ module Api
       def set_community
         @community = Community.find(params[:id]) if params[:id].present?
       rescue ActiveRecord::RecordNotFound
-        render json: { error: 'Community not found' }, status: :not_found
+        render_not_found
       end
 
       def set_content_and_channel_type
@@ -202,8 +203,7 @@ module Api
 
       def validate_patchwork_community_id
         if params[:patchwork_community_id].blank?
-          render json: { error: 'Patchwork community ID is required.' }, status: :bad_request
-          return
+          return render_error('api.errors.invalid_request', :bad_request)
         end
 
         community_param = params[:patchwork_community_id]
@@ -214,8 +214,7 @@ module Api
         end
 
         unless @community
-          render json: { error: 'Patchwork community not found.' }, status: :not_found
-          return
+          return render_not_found
         end
 
         @patchwork_community_id = @community.id
@@ -275,19 +274,6 @@ module Api
         }
       end
 
-      def check_authorization_header
-        if request.headers['Authorization'].present? && params[:instance_domain].present?
-          login_with_mastodon
-        else
-          authenticate_user_from_header
-          @account = current_account
-        end
-      end
-
-      def login_with_mastodon
-        validate_mastodon_account
-        @account = current_remote_account
-      end
     end
   end
 end

@@ -141,7 +141,7 @@ class CommunitiesController < BaseController
 
   def step4
     authorize_step(:step4?)
-    verify_hashtags_presence
+    verify_hashtags_presence if params[:action] == 'step4' && params[:page].blank?
     @muted_accounts = load_muted_accounts
     @community_post_type = @community.community_post_type || new_community_post_type
     setup_filter_keywords(COMMUNITY_FILTER_TYPES[:out])
@@ -342,8 +342,9 @@ class CommunitiesController < BaseController
 
     begin
       if @community.save
-        respond_to(&:html)
+        redirect_to step6_community_path(@community, show_preview: true)
       else
+        flash.now[:error] = @community.formatted_error_messages.join(', ')
         prepare_for_step6_rendering
         render :step6
       end
@@ -365,8 +366,9 @@ class CommunitiesController < BaseController
   def load_follow_records
     account_ids = Follow.where(account_id: admin_account_id).pluck(:target_account_id) +
                   FollowRequest.where(account_id: admin_account_id).pluck(:target_account_id)
-    @follow_records_size = account_ids.size
-    paginated_records(Account.where(id: account_ids))
+    accounts = Account.where(id: account_ids)
+    @follow_records_size = accounts.reject { |r| r.username == 'bsky.brid.gy' }.size
+    paginated_records(accounts)
   end
 
   def load_follower_records(is_csv: false)

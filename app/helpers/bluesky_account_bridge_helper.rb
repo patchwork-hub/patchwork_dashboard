@@ -1,4 +1,4 @@
-module BlueskyAccountBridgeHleper
+module BlueskyAccountBridgeHelper
 
   def check_account_info(community)
     error_messages = []

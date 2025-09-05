@@ -1,4 +1,8 @@
 class ContributorSearchService
+  include ActionView::Helpers::TextHelper
+  include ActionView::Helpers::AssetTagHelper
+  include ApplicationHelper
+
   def initialize(query, options = {})
     @query = query
     @api_base_url = options[:url]
@@ -41,7 +45,7 @@ class ContributorSearchService
       {
         'id' => account.id.to_s,
         'username' => account.username,
-        'display_name' => account.display_name,
+        'display_name' => render_custom_emojis(account.display_name),
         'domain' => account.domain,
         'note' => account.note,
         'avatar_url' => account.avatar_url,

@@ -25,13 +25,13 @@ module Api
           hashtag = params.require(:community_hashtag).require(:hashtag).gsub('#', '')
           perform_hashtag_action(hashtag, @community.id, :follow)
 
-          render json: { message: "Hashtag saved successfully!" }, status: :created
-        rescue CommunityHashtagPostService::InvalidHashtagError => e
-          render json: { error: e.message }, status: :unprocessable_entity
-        rescue ActiveRecord::RecordNotUnique => e
-          render json: { error: "Duplicate entry: Hashtag already exists." }, status: :conflict
-        rescue ActionController::ParameterMissing => e
-          render json: { error: e.message }, status: :bad_request
+          render_created({}, 'api.community_hashtags.messages.created')
+        rescue CommunityHashtagPostService::InvalidHashtagError
+          render_error('api.community_hashtags.errors.invalid_hashtag', :unprocessable_entity)
+        rescue ActiveRecord::RecordNotUnique
+          render_error('api.community_hashtags.errors.duplicate_hashtag', :conflict)
+        rescue ActionController::ParameterMissing
+          render_error('api.community_hashtags.errors.parameter_missing', :bad_request)
         end
       end
 
@@ -39,7 +39,8 @@ module Api
         begin
           hashtag = params.require(:community_hashtag).require(:hashtag).gsub('#', '')
           if hashtag.include?(' ')
-            render json: { error: 'Hashtag cannot contain spaces.' }, status: :unprocessable_entity
+            render_error('api.community_hashtags.errors.cannot_contain_spaces', :unprocessable_entity)
+            return
           end
           return if performed?
 
@@ -48,13 +49,13 @@ module Api
           @community_hashtag.save!
           perform_hashtag_action(@community_hashtag.hashtag, @community.id, :follow)
 
-          render json: { message: "Hashtag updated successfully!" }, status: :ok
-        rescue CommunityHashtagPostService::InvalidHashtagError => e
-          render json: { error: e.message }, status: :unprocessable_entity
-        rescue ActiveRecord::RecordNotUnique => e
-          render json: { error: "Duplicate entry: Hashtag already exists." }, status: :conflict
-        rescue ActionController::ParameterMissing => e
-          render json: { error: e.message }, status: :bad_request
+          render_updated({}, 'api.community_hashtags.messages.updated')
+        rescue CommunityHashtagPostService::InvalidHashtagError
+          render_error('api.community_hashtags.errors.invalid_hashtag', :unprocessable_entity)
+        rescue ActiveRecord::RecordNotUnique
+          render_error('api.community_hashtags.errors.duplicate_hashtag', :conflict)
+        rescue ActionController::ParameterMissing
+          render_error('api.community_hashtags.errors.parameter_missing', :bad_request)
         end
       end
 
@@ -63,9 +64,9 @@ module Api
           return if performed?
           perform_hashtag_action(@community_hashtag.hashtag, nil, :unfollow)
           @community_hashtag.destroy!
-          render json: { message: "Hashtag removed successfully!" }, status: :ok
-        rescue => e
-          render json: { error: e }, status: :internal_server_error
+          render_deleted('api.community_hashtags.messages.deleted')
+        rescue StandardError
+          render_internal_error
         end
       end
 
@@ -74,9 +75,8 @@ module Api
       PER_PAGE = 5
 
       def set_community
-
         if params[:community_id].blank?
-          render json: { error: 'Patchwork community ID is required.' }, status: :bad_request
+          render_error('api.community_hashtags.errors.community_required', :bad_request)
           return
         end
 
@@ -88,7 +88,7 @@ module Api
         end
 
         unless @community
-          render json: { error: 'Patchwork community not found.' }, status: :not_found
+          render_error('api.community_hashtags.errors.community_not_found', :not_found)
           return
         end
 

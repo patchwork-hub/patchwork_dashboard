@@ -27,7 +27,7 @@ module Api
         'Sport',
         'Lifestyle'
       ].freeze
-     
+
       def index
         @all_collections = fetch_all_channels_by_type(type: COLLECTION_TYPES[:channel])
         render_collections(@all_collections, type: COLLECTION_TYPES[:channel])
@@ -148,6 +148,7 @@ module Api
         .exclude_array_ids
         .exclude_incomplete_channels
         .exclude_deleted_channels
+        .exclude_not_recommended
         .ordered_pos_name
       end
 

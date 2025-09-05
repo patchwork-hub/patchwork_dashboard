@@ -60,13 +60,16 @@
                     %td{ style: 'width: 10%;' }
                       %img{ alt: "", src: account.avatar_url, class: "rounded-circle mr-2", style: "width: 70px; height: 70px; border: 2px solid white;" }
                     %td{ style: 'width: 80%;' }
-                      %h6.mb-0= account.username
-                      %p.text-muted.mb-0= raw(account.note)
-                    %td{ style: 'width: 10%;' }
+                      = render_custom_emojis(account.display_name)
+                      - domain = account&.domain.present? ? "https://#{account.domain}" : ENV.fetch('MASTODON_INSTANCE_URL', nil)
+                      %br
+                      %a{ href: "#{account.url}", target: "_blank" }= "@#{account.username}@#{account.domain || 'channel.org'}"
+                    %td{style: "width: 60px;"}
                       = form_with url: unmute_contributor_community_path, method: :post, remote: true, authenticity_token: true do |form|
                         = form.hidden_field :account_id, value: account.id
                         %button.btn.btn-sm.btn-outline-secondary{ type: 'submit' }
                           Unmute
+
           .pagination.pagination-sm.m-0.float-right
             = paginate @muted_accounts, theme: 'bootstrap4'
 

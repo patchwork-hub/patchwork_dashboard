@@ -11,9 +11,13 @@ namespace :api, defaults: { format: :json } do
       result =
         case app_name
         when 'patchwork'
-          { display: true, app_name: 'patchwork' }
+          { display: false, app_name: 'patchwork' }
         when 'newsmast'
           { display: true, app_name: 'newsmast' }
+        when 'channel'
+          { display: true, app_name: 'channel' }
+        when 'mo-me'
+          { display: true, app_name: 'mo-me' }
         else
           { display: true, app_name: app_name }
         end
@@ -34,6 +38,8 @@ namespace :api, defaults: { format: :json } do
         get :channel_feeds
         get :newsmast_channels
         get :bridge_information
+        get :mo_me_channels
+        get :patchwork_demo_channels
       end
     end
 
@@ -97,7 +103,7 @@ namespace :api, defaults: { format: :json } do
     get 'general_icons', to: 'community_links#general'
     get 'social_icons',  to: 'community_links#social'
 
-    resources :app_versions,only: [] do 
+    resources :app_versions,only: [] do
       collection do
         get 'check_version' => 'app_versions#check_version', as: 'check_version'
       end
@@ -108,6 +114,22 @@ namespace :api, defaults: { format: :json } do
         post :upsert
       end
     end
+
+    resources :locales, only: [:index, :show] do
+      collection do
+        post :set
+        post :save_preference
+        get :user_preference
+      end
+      member do
+        get 'translations/:namespace', to: 'locales#translations', as: :translations
+      end
+    end
+
+    resources :statuses, only: [] do
+      collection do
+        post :boost_post
+      end
+    end
   end
 end
-

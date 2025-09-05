@@ -68,13 +68,13 @@ class Community < ApplicationRecord
   attribute :is_custom_domain, :boolean, default: false
 
   validates :name, presence: true,
-    length: { maximum: NAME_LENGTH_LIMIT, too_long: "cannot be longer than %{count} characters" },
-    uniqueness: { case_sensitive: false, message: "has already been taken" }
+    length: { maximum: NAME_LENGTH_LIMIT, too_long: I18n.t('activerecord.errors.models.community.attributes.name.too_long') },
+    uniqueness: { case_sensitive: false, message: I18n.t('activerecord.errors.models.community.attributes.name.taken') }
 
   validates :slug, presence: true,
     length: { minimum: MINIMUM_SLUG_LENGTH, maximum: SLUG_LENGTH_LIMIT,
-              too_short: "must be at least %{count} characters",
-              too_long: "cannot be longer than %{count} characters" }
+              too_short: I18n.t('activerecord.errors.models.community.attributes.slug.too_short'),
+              too_long: I18n.t('activerecord.errors.models.community.attributes.slug.too_long') }
 
   validate :slug_cannot_be_changed, on: :update
 
@@ -91,9 +91,11 @@ class Community < ApplicationRecord
 
     unless slug =~ regex
       message = if custom_domain
-        "must be a valid domain format (e.g., example.com), cannot have consecutive dots or end with a dot"
+        I18n.t('activerecord.errors.models.community.attributes.slug.invalid_domain',
+               default: "must be a valid domain format (e.g., example.com), cannot have consecutive dots or end with a dot")
       else
-        "must start with a letter, can include letters, numbers, and hyphens, but cannot end with a hyphen"
+        I18n.t('activerecord.errors.models.community.attributes.slug.invalid',
+               default: "must start with a letter, can include letters, numbers, and hyphens, but cannot end with a hyphen")
       end
       errors.add(:slug, message)
     end
@@ -102,7 +104,8 @@ class Community < ApplicationRecord
 
   def slug_cannot_be_changed
     if slug_changed? && persisted?
-      errors.add(:slug, "cannot be updated")
+      errors.add(:slug, I18n.t('activerecord.errors.models.community.attributes.slug.immutable',
+                              default: "cannot be updated"))
     end
   end
 
@@ -212,7 +215,7 @@ class Community < ApplicationRecord
       .order('patchwork_community_types.sorting_index ASC')
   }
 
-  scope :ordered_pos_name, -> { order('patchwork_communities.position ASC, patchwork_communities.name ASC') }
+  scope :ordered_pos_name, -> { order('patchwork_communities.name ASC') }
 
   scope :filter_channels, -> { where(patchwork_communities: { channel_type: Community.channel_types[:channel] }).exclude_deleted_channels }
 
@@ -221,6 +224,8 @@ class Community < ApplicationRecord
   scope :filter_newsmast_channels, -> { where(patchwork_communities: { channel_type: Community.channel_types[:newsmast] }).exclude_deleted_channels }
 
   scope :exclude_incomplete_channels, -> { where.not(patchwork_communities: { visibility: nil }).exclude_deleted_channels }
+
+  scope :exclude_not_recommended, -> { where.not(patchwork_communities: { is_recommended: false }) }
 
   scope :exclude_deleted_channels, -> { where(patchwork_communities: { deleted_at: nil }) }
 
@@ -283,7 +288,9 @@ class Community < ApplicationRecord
     duplicate_urls = urls.select { |url| urls.count(url) > 1 }.uniq
 
     if duplicate_urls.any?
-      errors.add(:base, "Links contains duplicate URLs: #{duplicate_urls.join(', ')}")
+      errors.add(:base, I18n.t('activerecord.errors.models.community.attributes.base.duplicate_link_urls', 
+                              urls: duplicate_urls.join(', '), 
+                              default: "Links contains duplicate URLs: #{duplicate_urls.join(', ')}"))
     end
   end
 end

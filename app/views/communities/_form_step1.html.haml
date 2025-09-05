@@ -155,8 +155,10 @@
                   .logo-upload-container
                     .rounded.border.d-inline-flex.align-items-center.justify-content-center{ style: "width: 300px; height: 150px; border: dotted; overflow: hidden;" }
                       - logo_image_url = @community_form.logo_image.present? && @community_form.logo_image.respond_to?(:url) ? @community_form.logo_image.url : ''
-                      %img{ id: "currentlogo", src: logo_image_url, alt: "Logo Preview", style: "display: #{logo_image_url.present? ? 'block' : 'none'}; width: 100%; height: 100%; object-fit: cover; margin-left: 16px;" }
-                      %i.fa-solid.fa-image
+                      - margin_left = logo_image_url.present? ? '0' : '16px'
+                      %img{ id: "currentlogo", src: logo_image_url, alt: "Logo Preview", style: "display: #{logo_image_url.present? ? 'block' : 'none'}; width: 100%; height: 100%; object-fit: cover; margin-left: #{margin_left};" }
+                      - if logo_image_url.blank?
+                        %i.fa-solid.fa-image
                       = f.input :logo_image, as: :file, label: false, input_html: { id: "customFilelogo", class: "form-control-file upload-input", style: "display: none;", accept: "image/*", 'data-preview-id': "currentlogo", 'data-aspect-ratio': "2.1" }
                   .logo-image-upload
                     %button.btn.btn-primary.mt-2{ onclick: "event.preventDefault(); document.getElementById('customFilelogo').click();" } Upload image
@@ -169,8 +171,10 @@
                 .avatar-upload-container
                   .rounded-circle.border.d-inline-flex.align-items-center.justify-content-center{ style: "width: 90px; height: 90px; border: dotted; overflow: hidden;" }
                     - avatar_image_url = @community_form.avatar_image.present? && @community_form.avatar_image.respond_to?(:url) ? @community_form.avatar_image.url : ''
-                    %img{ id: "currentAvatar", src: avatar_image_url, alt: "Avatar Preview", style: "display: #{avatar_image_url.present? ? 'block' : 'none'}; width: 100%; height: 100%; object-fit: cover; margin-left: 16px;" }
-                    %i.fa-solid.fa-image
+                    - margin_left = avatar_image_url.present? ? '0' : '16px'
+                    %img{ id: "currentAvatar", src: avatar_image_url, alt: "Avatar Preview", style: "display: #{avatar_image_url.present? ? 'block' : 'none'}; width: 100%; height: 100%; object-fit: cover; margin-left: #{margin_left};" }
+                    - if avatar_image_url.blank?
+                      %i.fa-solid.fa-image
                     = f.input :avatar_image, as: :file, label: false, input_html: { id: "customFileAvatar", class: "form-control-file upload-input", style: "display: none;", accept: "image/*", 'data-preview-id': "currentAvatar", 'data-aspect-ratio': "1" }
                 .avatar-image-upload
                   %button.btn.btn-primary.mt-2{ onclick: "event.preventDefault(); document.getElementById('customFileAvatar').click();" } Upload image

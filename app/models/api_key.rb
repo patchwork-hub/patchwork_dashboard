@@ -12,10 +12,20 @@
 class ApiKey < ApplicationRecord
   before_validation :set_status # Activated and Deactivated
 
-  validates :key, :secret, :status, presence: true
+  validates :key, presence: true
+  validates :secret, presence: true
+  validates :status, presence: true,
+                     inclusion: { 
+                       in: %w[Activated Deactivated],
+                       message: :invalid
+                     }
 
   def activated?
     !!(status == 'Activated')
+  end
+
+  def deactivated?
+    !!(status == 'Deactivated')
   end
 
   private
