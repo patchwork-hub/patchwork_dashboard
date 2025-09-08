@@ -26,6 +26,12 @@ module AppVersionHelper
     return 'Patchwork' unless app_name_key
 
     humanized_name = app_name_key.humanize.capitalize
-    humanized_name == 'Patchwork' ? 'Channels' : humanized_name
+    
+    # Check if the instance URL contains "channel" and app is Patchwork
+    if humanized_name == 'Patchwork' && ENV['MASTODON_INSTANCE_URL']&.include?('channel')
+      'Channels'
+    else
+      humanized_name
+    end
   end
 end

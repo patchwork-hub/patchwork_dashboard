@@ -11,7 +11,7 @@ namespace :api, defaults: { format: :json } do
       result =
         case app_name
         when 'patchwork'
-          { display: false, app_name: 'patchwork' }
+          { display: true, app_name: 'patchwork' }
         when 'newsmast'
           { display: true, app_name: 'newsmast' }
         when 'channel'
