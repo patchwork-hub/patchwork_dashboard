@@ -1,0 +1,277 @@
+# Russian translations for Patchwork Dashboard
+# Русские переводы для панели управления Patchwork
+
+ru:
+  # Locale information
+  locale:
+    name: "Русский"
+    native_name: "Русский"
+
+  # API responses and messages
+  api:
+    errors:
+      unauthorized: "У вас нет прав для выполнения этого действия"
+      forbidden: "Доступ запрещён"
+      not_found: "Ресурс не найден"
+      unprocessable_entity: "Запрос не может быть обработан"
+      internal_server_error: "Произошла внутренняя ошибка сервера"
+      validation_failed: "Ошибка валидации"
+      invalid_request: "Неверный запрос"
+      rate_limit_exceeded: "Превышен лимит запросов. Попробуйте позже"
+      
+    messages:
+      success: "Операция выполнена успешно"
+      created: "Ресурс успешно создан"
+      updated: "Ресурс успешно обновлён"
+      deleted: "Ресурс успешно удалён"
+      processing: "Запрос обрабатывается"
+
+    community:
+      errors:
+        only_one_channel: "Вы можете создать только один канал."
+        not_found: "Сообщество не найдено."
+        access_denied: "Доступ к этому сообществу запрещён."
+        invalid_slug: "Неверный идентификатор сообщества."
+        name_taken: "Название сообщества уже занято."
+        slug_taken: "Идентификатор сообщества уже занят."
+        invalid_visibility: "Неверная настройка видимости."
+        missing_additional_information: "Отсутствует дополнительная информация."
+        duplicate_link_url: "Дубликат URL ссылки для этого сообщества не разрешён."
+        search_params_required: "Необходимы параметры запроса, URL и токен."
+        
+      messages:
+        created: "Сообщество успешно создано."
+        updated: "Сообщество успешно обновлено."
+        visibility_updated: "Видимость сообщества обновлена."
+        additional_information_updated: "Дополнительная информация успешно обновлена."
+        
+    account:
+      errors:
+        invalid_credentials: "Неверное имя пользователя или пароль"
+        account_not_found: "Аккаунт не найден"
+        account_suspended: "Аккаунт заблокирован"
+        email_not_verified: "Email адрес не подтверждён"
+
+    setting:
+      errors:
+        not_found: "Настройки не найдены."
+        authentication_failed: "Ошибка аутентификации."
+        invalid_app_name: "%{attribute} : Предоставлено неверное имя приложения."
+        validation_failed: "Ошибка валидации настроек."
+        delete_failed: "Не удалось удалить настройки."
+        
+      messages:
+        saved: "Настройки успешно сохранены."
+        deleted: "Настройки успешно удалены."
+
+    domain:
+      errors:
+        missing_parameters: "Домен и IP-адрес обязательны."
+        verification_failed: "Проверка домена не удалась из-за ошибки."
+        
+      messages:
+        dns_verified: "DNS настроен правильно."
+        dns_instructions: "A-запись не найдена. Направьте вашу A-запись на %{ip}."
+
+    api_key:
+      errors:
+        invalid_status: "Неверный статус API ключа"
+        key_not_found: "API ключ не найден"
+        already_deactivated: "API ключ уже деактивирован"
+        already_activated: "API ключ уже активирован"
+        
+      messages:
+        rotated_successfully: "API ключ успешно ротирован"
+        activated_successfully: "API ключ успешно активирован"
+        deactivated_successfully: "API ключ успешно деактивирован"
+
+    wait_list:
+      errors:
+        email_required: "Требуется электронная почта."
+        invitation_code_required: "Требуется код приглашения."
+        invalid_code: "Недействительный код приглашения."
+        validation_failed: "Проверка не удалась!"
+        account_already_registered: "Аккаунт уже зарегистрирован в списке ожидания."
+        
+      messages:
+        created: "Успешно добавлен в список ожидания."
+        invitation_sent: "Код приглашения отправлен на вашу электронную почту."
+        code_valid: "Код приглашения действителен."
+
+    joined_communities:
+      errors:
+        channel_not_found: "Канал не найден"
+        already_favorited: "Вы не можете добавить в избранное свой собственный канал"
+        no_access_set_primary: "У вас нет доступа для установки основного канала"
+        no_favorited_channels: "У вас нет избранных каналов"
+        community_not_found: "Сообщество не найдено"
+        minimum_channels_required: "Вам нужно присоединиться как минимум к 5 каналам, чтобы установить основной"
+        favorited_channel_not_found: "Избранный канал не найден"
+        
+      messages:
+        favorited_successfully: "Канал успешно добавлен в избранное"
+        unfavorited_successfully: "Избранный канал успешно удалён"
+        primary_set_successfully: "Канал успешно установлен как основной"
+        
+    community_hashtags:
+      errors:
+        invalid_hashtag: "Неверный формат хэштега"
+        duplicate_hashtag: "Дублирующаяся запись: Хэштег уже существует"
+        parameter_missing: "Отсутствует обязательный параметр"
+        cannot_contain_spaces: "Хэштег не может содержать пробелы"
+        hashtag_not_found: "Хэштег не найден"
+        community_required: "Требуется ID сообщества Patchwork"
+        community_not_found: "Сообщество Patchwork не найдено"
+        
+      messages:
+        created: "Хэштег успешно сохранен!"
+        updated: "Хэштег успешно обновлен!"
+        deleted: "Хэштег успешно удален!"
+        
+    validation:
+      required: "%{attribute} обязательно для заполнения"
+      too_long: "%{attribute} слишком длинное (максимум %{count} символов)"
+      too_short: "%{attribute} слишком короткое (минимум %{count} символов)"
+      invalid_format: "%{attribute} имеет неверный формат"
+      not_unique: "%{attribute} уже занято" 
+
+  # Model validation messages
+  activerecord:
+    errors:
+      models:
+        community:
+          attributes:
+            name:
+              blank: "Название сообщества не может быть пустым."
+              too_long: "Название сообщества не может быть длиннее %{count} символов."
+              taken: "Название сообщества уже занято."
+            slug:
+              blank: "Идентификатор сообщества не может быть пустым."
+              too_short: "Идентификатор сообщества должен содержать минимум %{count} символов."
+              too_long: "Идентификатор сообщества не может быть длиннее %{count} символов."
+              invalid: "Идентификатор сообщества имеет неверный формат."
+              invalid_domain: "должен быть в правильном формате домена (например, example.com), не может содержать последовательные точки или заканчиваться точкой."
+              taken: "Идентификатор сообщества уже занят."
+              immutable: "Идентификатор сообщества нельзя изменить после создания."
+            description:
+              too_long: "Описание не может быть длиннее %{count} символов."
+            about:
+              too_long: "Раздел 'О нас' не может быть длиннее %{count} символов."
+            base:
+              duplicate_link_urls: "Ссылки содержат дублированные URL: %{urls}."
+              
+        account:
+          attributes:
+            username:
+              blank: "Имя пользователя не может быть пустым"
+              too_short: "Имя пользователя должно содержать минимум %{count} символов"
+              too_long: "Имя пользователя не может быть длиннее %{count} символов"
+              invalid: "Имя пользователя может содержать только буквы, цифры и подчёркивания"
+              taken: "Имя пользователя уже занято"
+            email:
+              blank: "Email не может быть пустым"
+              invalid: "Неверный формат email"
+              taken: "Email уже занят"
+            password:
+              blank: "Пароль не может быть пустым"
+              too_short: "Пароль должен содержать минимум %{count} символов"
+              
+        api_key:
+          attributes:
+            key:
+              blank: "API ключ не может быть пустым"
+              invalid: "Неверный формат API ключа"
+            secret:
+              blank: "API секрет не может быть пустым"
+              invalid: "Неверный формат API секрета"
+            status:
+              blank: "Статус не может быть пустым"
+              invalid: "Статус должен быть Активирован или Деактивирован"
+              inclusion: "Статус должен быть Активирован или Деактивирован"
+
+        user:
+          attributes:
+            locale:
+              invalid: "не является поддерживаемой локалью"
+              inclusion: "должна быть одной из поддерживаемых локалей: %{values}"
+
+        joined_community:
+          attributes:
+            community:
+              blank: "Сообщество должно быть выбрано"
+            account:
+              blank: "Аккаунт должен быть указан"
+              taken: "уже присоединился к этому сообществу"
+            is_primary:
+              only_one_primary: "может быть true только для одного сообщества на аккаунт"
+              
+        community_hashtag:
+          attributes:
+            hashtag:
+              blank: "Хэштег не может быть пустым"
+              taken: "уже добавлен в это сообщество"
+            community:
+              blank: "Сообщество должно быть выбрано"
+
+        wait_list:
+          attributes:
+            invitation_code:
+              blank: "Код приглашения не может быть пустым."
+              taken: "Код приглашения уже занят."
+            email:
+              blank: "Электронная почта не может быть пустой."
+              invalid: "Недействительный формат электронной почты."
+            description:
+              too_long: "Описание не может быть длиннее %{count} символов."
+            channel_type:
+              blank: "Тип канала не может быть пустым."
+              inclusion: "Тип канала должен быть каналом или хабом."
+            account_id:
+              taken: "Аккаунт уже зарегистрирован в списке ожидания."
+
+        setting:
+          attributes:
+            account:
+              blank: "Аккаунт должен быть указан."
+            app_name:
+              blank: "Имя приложения не может быть пустым."
+              inclusion: "Имя приложения должно быть одним из поддерживаемых значений: %{values}."
+            settings:
+              blank: "Настройки не могут быть пустыми."
+              invalid: "Неверный формат настроек."
+
+  # Time and date formats
+  time:
+    formats:
+      default: "%d.%m.%Y %H:%M:%S"
+      short: "%d %b %H:%M"
+      long: "%d %B %Y г. %H:%M"
+      
+  date:
+    formats:
+      default: "%d.%m.%Y"
+      short: "%d %b"
+      long: "%d %B %Y г."
+
+  # General terms
+  general:
+    yes: "Да"
+    no: "Нет"
+    save: "Сохранить"
+    cancel: "Отмена"
+    delete: "Удалить"
+    edit: "Редактировать"
+    create: "Создать"
+    update: "Обновить"
+    submit: "Отправить"
+    loading: "Загрузка..."
+    confirm: "Вы уверены?"
+
+  # Mailer translations
+  mailers:
+    wait_list:
+      send_invitation_code:
+        subject: "Ваш Запрошенный Код Приглашения"
+        greeting: "Уважаемый %{email},"
+        body: "Ваш запрошенный код приглашения приведен ниже:"
+        note: "Если вы не запрашивали это, проигнорируйте это письмо."

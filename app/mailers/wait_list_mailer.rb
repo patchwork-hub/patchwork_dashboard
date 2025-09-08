@@ -6,7 +6,7 @@ class WaitListMailer < ActionMailer::Base
     if params[:email].present? && params[:invitation_code].present?
       @email = params[:email]
       @invitation_code = params[:invitation_code]
-      @subject = 'Requested invitation code'
+      @subject = I18n.t('mailers.wait_list.send_invitation_code.subject')
       mail(to: params[:email], subject: @subject)
     end
   end

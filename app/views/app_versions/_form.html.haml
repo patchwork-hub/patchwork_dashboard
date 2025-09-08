@@ -19,6 +19,13 @@
             .col-md-6
               = label_tag :os_type, 'OS type', class: 'form-label'
               = select_tag :os_type, options_for_select([ 'both', 'android', 'ios'], 'both'), class: 'form-control'
+          
+          .row
+            .col-md-6
+              .mb-3.datetime.required.released_date
+                = f.label :released_date, 'Released date', class: 'form-label datetime required'
+                %abbr{ title: 'required' }*
+                = f.datetime_local_field :released_date, value: (@app_version.released_date || Time.current).strftime('%Y-%m-%dT%H:%M'), class: 'form-control datetime required', required: true, aria: { required: true }
       
               = f.input :app_name, as: :hidden, input_html: { value: params[:app_name] }
           .row.mt-2

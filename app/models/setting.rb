@@ -25,6 +25,8 @@ class Setting < ApplicationRecord
   belongs_to :account, class_name: 'Account'
 
   validates :account, presence: true, uniqueness: { scope: :app_name, case_sensitive: false }
+  validates :app_name, presence: true
+  validates :settings, presence: true
 
   enum app_name: { patchwork: 0, newsmast: 1 } , _default: :patchwork
 

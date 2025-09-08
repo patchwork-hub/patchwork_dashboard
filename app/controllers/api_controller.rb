@@ -1,6 +1,11 @@
 class ApiController < ApplicationController
   respond_to :json
 
+  # Include internationalization support for API controllers
+  include LocaleDetection
+  # Include standardized API response helpers with I18n support
+  include ApiResponseHelper
+
   skip_before_action :authenticate_user!
   skip_before_action :verify_authenticity_token
 
@@ -39,39 +44,53 @@ class ApiController < ApplicationController
     if request.headers['Authorization'].present? && params[:instance_domain].present?
       validate_mastodon_account
     else
-      authenticate_user_from_header if request.headers['Authorization'].present?
+      authenticate_user_from_header
     end
   end
 
   def authenticate_user_from_header
     token = bearer_token
-    return render json: { error: 'Authentication required!' }, status: :unauthorized unless token
+    return render_unauthorized unless token
 
     user_info = validate_token(token)
-
+    
     if user_info
       user = User.find_by(id: user_info["resource_owner_id"])
       if user
         sign_in(user)
       else
-        render json: { error: 'User not found' }, status: :unauthorized
+        render_unauthorized
       end
     else
-      render json: { error: 'Invalid token' }, status: :unauthorized
+      render_forbidden
     end
   end
 
   def validate_mastodon_account
     token = bearer_token
-    return render json: { error: 'Authentication required!' }, status: :unauthorized unless token && !instance_domain.nil?
+    return render_unauthorized unless token && !instance_domain.nil?
 
     acc_id = RemoteAccountVerifyService.new(token, instance_domain).call.fetch_remote_account_id
 
     if acc_id
       @current_remote_account = Account.find_by(id: acc_id)
     else
-      render json: { error: 'Account not found' }, status: :unauthorized
+      render_unauthorized
     end
+  end
+
+  def authenticate_client_credentials
+    client_id = request.headers['client-id']
+    client_secret = request.headers['client-secret']
+
+    # Custom authentication logic for client credentials for old mobile apps
+    return true unless client_id || client_secret
+
+    client = Doorkeeper::Application.find_by(uid: client_id, secret: client_secret)
+    
+    return true if client
+
+    render_unauthorized
   end
 
   private

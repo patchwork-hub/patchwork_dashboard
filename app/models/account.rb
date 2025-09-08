@@ -28,6 +28,7 @@
 #  hide_collections              :boolean
 #  inbox_url                     :string           default(""), not null
 #  indexable                     :boolean          default(FALSE), not null
+#  is_banned                     :boolean          default(FALSE)
 #  last_webfingered_at           :datetime
 #  locked                        :boolean          default(FALSE), not null
 #  memorial                      :boolean          default(FALSE), not null

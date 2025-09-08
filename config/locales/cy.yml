@@ -1,0 +1,277 @@
+# Welsh translations for Patchwork Dashboard
+# Cyfieithiadau Cymraeg ar gyfer Patchwork Dashboard
+
+cy:
+  # Locale information
+  locale:
+    name: "Cymraeg"
+    native_name: "Cymraeg"
+
+  # API responses and messages
+  api:
+    errors:
+      unauthorized: "Nid oes gennych hawl i gyflawni'r weithred hon."
+      forbidden: "Mynediad wedi'i wahardd."
+      not_found: "Ni ddaethpwyd o hyd i'r adnodd."
+      unprocessable_entity: "Ni ellid prosesu'r cais."
+      internal_server_error: "Digwyddodd gwall gweinydd mewnol."
+      validation_failed: "Methodd y dilysu."
+      invalid_request: "Cais annilys."
+      rate_limit_exceeded: "Cyfradd terfyn wedi'i ragori. Rhowch gynnig arall arni yn nes ymlaen."
+      
+    messages:
+      success: "Cwblhawyd y weithrediad yn llwyddiannus."
+      created: "Crëwyd yr adnodd yn llwyddiannus."
+      updated: "Diweddarwyd yr adnodd yn llwyddiannus."
+      deleted: "Dilëwyd yr adnodd yn llwyddiannus."
+      processing: "Mae'r cais yn cael ei brosesu."
+
+    community:
+      errors:
+        only_one_channel: "Gallwch greu un sianel yn unig."
+        not_found: "Ni ddaethpwyd o hyd i'r gymuned."
+        access_denied: "Gwrthodwyd mynediad i'r gymuned hon."
+        invalid_slug: "Dynodydd cymuned annilys."
+        name_taken: "Mae enw'r gymuned eisoes wedi'i gymryd."
+        slug_taken: "Mae dynodydd y gymuned eisoes wedi'i gymryd."
+        invalid_visibility: "Gosodiad gwelededd annilys."
+        missing_additional_information: "Mae gwybodaeth ychwanegol ar goll."
+        duplicate_link_url: "Nid yw URL cyswllt dyblyg ar gyfer y gymuned hon yn cael ei ganiatáu."
+        search_params_required: "Mae angen paramedrau ymholiad, URL a thocyn."
+        
+      messages:
+        created: "Crëwyd y gymuned yn llwyddiannus."
+        updated: "Diweddarwyd y gymuned yn llwyddiannus."
+        visibility_updated: "Diweddarwyd gwelededd y gymuned."
+        additional_information_updated: "Diweddarwyd gwybodaeth ychwanegol yn llwyddiannus."
+        
+    account:
+      errors:
+        invalid_credentials: "Enw defnyddiwr neu gyfrinair annilys."
+        account_not_found: "Ni ddaethpwyd o hyd i'r cyfrif."
+        account_suspended: "Mae'r cyfrif wedi'i atal."
+        email_not_verified: "Nid yw'r cyfeiriad e-bost wedi'i ddilysu."
+
+    setting:
+      errors:
+        not_found: "Ni ddaethpwyd o hyd i osodiadau."
+        authentication_failed: "Methodd y dilysu."
+        invalid_app_name: "%{attribute} : Darparwyd enw ap annilys."
+        validation_failed: "Methodd dilysu'r gosodiadau."
+        delete_failed: "Methodd dileu'r gosodiadau."
+        
+      messages:
+        saved: "Mae'r gosodiadau wedi'u cadw'n llwyddiannus."
+        deleted: "Dilëwyd y gosodiadau'n llwyddiannus."
+
+    domain:
+      errors:
+        missing_parameters: "Mae angen parth a chyfeiriad IP."
+        verification_failed: "Methodd gwirio'r parth oherwydd gwall."
+        
+      messages:
+        dns_verified: "DNS wedi'i ffurfweddu'n gywir."
+        dns_instructions: "Ni ddaethpwyd o hyd i gofnod A. Pwyntiwch eich cofnod A at %{ip}."
+
+    api_key:
+      errors:
+        invalid_status: "Statws allwedd API annilys."
+        key_not_found: "Ni ddaethpwyd o hyd i'r allwedd API."
+        already_deactivated: "Mae'r allwedd API eisoes wedi'i hanactifadu."
+        already_activated: "Mae'r allwedd API eisoes wedi'i actifadu."
+        
+      messages:
+        rotated_successfully: "Cylchdrowyd yr allwedd API yn llwyddiannus."
+        activated_successfully: "Actifadwyd yr allwedd API yn llwyddiannus."
+        deactivated_successfully: "Anactifadwyd yr allwedd API yn llwyddiannus."
+
+    wait_list:
+      errors:
+        email_required: "Mae angen e-bost."
+        invitation_code_required: "Mae angen cod gwahoddiad."
+        invalid_code: "Cod gwahoddiad annilys."
+        validation_failed: "Methodd dilysu!"
+        account_already_registered: "Mae'r cyfrif eisoes wedi'i gofrestru ar y rhestr aros."
+        
+      messages:
+        created: "Ychwanegwyd yn llwyddiannus i'r rhestr aros."
+        invitation_sent: "Anfonwyd cod gwahoddiad i'ch e-bost."
+        code_valid: "Mae'r cod gwahoddiad yn ddilys."
+
+    joined_communities:
+      errors:
+        channel_not_found: "Ni ddaethpwyd o hyd i'r sianel."
+        already_favorited: "Ni allwch ffafrio'ch sianel eich hun."
+        no_access_set_primary: "Nid oes gennych fynediad i osod fel prif sianel."
+        no_favorited_channels: "Nid oes gennych sianeli ffafriol."
+        community_not_found: "Ni ddaethpwyd o hyd i'r gymuned."
+        minimum_channels_required: "Mae angen i chi ymuno ag o leiaf 5 i'w gosod fel prif sianel."
+        favorited_channel_not_found: "Ni ddaethpwyd o hyd i'r sianel ffafriol."
+        
+      messages:
+        favorited_successfully: "Mae'r sianel wedi'i ffafrio'n llwyddiannus."
+        unfavorited_successfully: "Dilëwyd y sianel ffafriol yn llwyddiannus."
+        primary_set_successfully: "Mae'r sianel wedi'i gosod fel prif sianel yn llwyddiannus."
+        
+    community_hashtags:
+      errors:
+        invalid_hashtag: "Fformat hashnod annilys."
+        duplicate_hashtag: "Cofnod dyblyg: Mae'r hashnod yn bodoli eisoes."
+        parameter_missing: "Mae paramedr gofynnol ar goll."
+        cannot_contain_spaces: "Ni all hashnod gynnwys gofodau."
+        hashtag_not_found: "Ni ddaethpwyd o hyd i'r hashnod."
+        community_required: "Mae angen ID cymuned Patchwork."
+        community_not_found: "Ni ddaethpwyd o hyd i gymuned Patchwork."
+        
+      messages:
+        created: "Hashnod wedi'i gadw'n llwyddiannus!"
+        updated: "Hashnod wedi'i ddiweddaru'n llwyddiannus!"
+        deleted: "Hashnod wedi'i ddileu'n llwyddiannus!"
+        
+    validation:
+      required: "Mae %{attribute} yn ofynnol"
+      too_long: "Mae %{attribute} yn rhy hir (uchafswm %{count} nod)"
+      too_short: "Mae %{attribute} yn rhy fyr (lleiafswm %{count} nod)"
+      invalid_format: "Mae gan %{attribute} fformat annilys"
+      not_unique: "Mae %{attribute} eisoes wedi'i gymryd"
+
+  # Model validation messages
+  activerecord:
+    errors:
+      models:
+        community:
+          attributes:
+            name:
+              blank: "Ni all enw'r gymuned fod yn wag."
+              too_long: "Ni all enw'r gymuned fod yn hirach na %{count} nod."
+              taken: "Mae enw'r gymuned eisoes wedi'i gymryd."
+            slug:
+              blank: "Ni all dynodydd y gymuned fod yn wag."
+              too_short: "Rhaid i ddynodydd y gymuned fod o leiaf %{count} nod."
+              too_long: "Ni all dynodydd y gymuned fod yn hirach na %{count} nod."
+              invalid: "Mae fformat dynodydd y gymuned yn annilys."
+              invalid_domain: "rhaid bod yn fformat parth dilys (e.e. enghraifft.com), ni all gael dotiau olynol neu ddiweddu â dot."
+              taken: "Mae dynodydd y gymuned eisoes wedi'i gymryd."
+              immutable: "Ni ellir newid dynodydd y gymuned ar ôl ei greu."
+            description:
+              too_long: "Ni all y disgrifiad fod yn hirach na %{count} nod."
+            about:
+              too_long: "Ni all yr adran 'Amdanom' fod yn hirach na %{count} nod."
+            base:
+              duplicate_link_urls: "Mae'r cysylltiadau'n cynnwys URLau dyblyg: %{urls}."
+              
+        account:
+          attributes:
+            username:
+              blank: "Ni all yr enw defnyddiwr fod yn wag."
+              too_short: "Rhaid i'r enw defnyddiwr fod o leiaf %{count} nod."
+              too_long: "Ni all yr enw defnyddiwr fod yn hirach na %{count} nod."
+              invalid: "Gall yr enw defnyddiwr gynnwys llythrennau, rhifau a thanlinellau yn unig."
+              taken: "Mae'r enw defnyddiwr eisoes wedi'i gymryd."
+            email:
+              blank: "Ni all yr e-bost fod yn wag."
+              invalid: "Mae fformat yr e-bost yn annilys."
+              taken: "Mae'r e-bost eisoes wedi'i gymryd."
+            password:
+              blank: "Ni all y cyfrinair fod yn wag."
+              too_short: "Rhaid i'r cyfrinair fod o leiaf %{count} nod."
+              
+        api_key:
+          attributes:
+            key:
+              blank: "Ni all yr allwedd API fod yn wag."
+              invalid: "Mae fformat yr allwedd API yn annilys."
+            secret:
+              blank: "Ni all cyfrinach yr API fod yn wag."
+              invalid: "Mae fformat cyfrinach yr API yn annilys."
+            status:
+              blank: "Ni all y statws fod yn wag."
+              invalid: "Rhaid i'r statws fod yn Actif neu'n Anactif."
+              inclusion: "Rhaid i'r statws fod yn Actif neu'n Anactif."
+
+        user:
+          attributes:
+            locale:
+              invalid: "nid yw'n locale a gefnogir"
+              inclusion: "rhaid bod yn un o'r locales a gefnogir: %{values}"
+
+        joined_community:
+          attributes:
+            community:
+              blank: "Rhaid dewis cymuned."
+            account:
+              blank: "Rhaid bod cyfrif yn bresennol."
+              taken: "eisoes wedi ymuno â'r gymuned hon."
+            is_primary:
+              only_one_primary: "dim ond yn gallu bod yn wir ar gyfer un gymuned fesul cyfrif."
+              
+        community_hashtag:
+          attributes:
+            hashtag:
+              blank: "Ni all hashnod fod yn wag."
+              taken: "eisoes wedi'i ychwanegu at y gymuned hon."
+            community:
+              blank: "Rhaid dewis cymuned."
+
+        wait_list:
+          attributes:
+            invitation_code:
+              blank: "Ni all cod gwahoddiad fod yn wag."
+              taken: "Mae cod gwahoddiad eisoes wedi'i gymryd."
+            email:
+              blank: "Ni all e-bost fod yn wag."
+              invalid: "Mae fformat e-bost yn annilys."
+            description:
+              too_long: "Ni all disgrifiad fod yn hirach na %{count} nod."
+            channel_type:
+              blank: "Ni all math sianel fod yn wag."
+              inclusion: "Rhaid i fath sianel fod yn sianel neu hyb."
+            account_id:
+              taken: "Mae'r cyfrif eisoes wedi'i gofrestru ar y rhestr aros."
+
+        setting:
+          attributes:
+            account:
+              blank: "Rhaid i'r cyfrif fod yn bresennol."
+            app_name:
+              blank: "Ni all enw'r ap fod yn wag."
+              inclusion: "Rhaid i enw'r ap fod yn un o'r gwerthoedd cefnogedig: %{values}."
+            settings:
+              blank: "Ni all y gosodiadau fod yn wag."
+              invalid: "Mae fformat y gosodiadau'n annilys."
+
+  # Time and date formats
+  time:
+    formats:
+      default: "%d/%m/%Y %H:%M:%S"
+      short: "%d %b %H:%M"
+      long: "%d %B %Y %H:%M"
+      
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      short: "%d %b"
+      long: "%d %B %Y"
+
+  # General terms
+  general:
+    yes: "Ie"
+    no: "Na"
+    save: "Cadw"
+    cancel: "Canslo"
+    delete: "Dileu"
+    edit: "Golygu"
+    create: "Creu"
+    update: "Diweddaru"
+    submit: "Cyflwyno"
+    loading: "Yn llwytho..."
+    confirm: "Ydych chi'n siŵr?"
+
+  # Mailer translations
+  mailers:
+    wait_list:
+      send_invitation_code:
+        subject: "Eich Cod Gwahoddiad a Ofynnwyd"
+        greeting: "Annwyl %{email},"
+        body: "Mae eich cod gwahoddiad a ofynnwyd isod:"
+        note: "Os na wnaethoch chi ofyn am hyn, anwybyddwch yr e-bost hwn."

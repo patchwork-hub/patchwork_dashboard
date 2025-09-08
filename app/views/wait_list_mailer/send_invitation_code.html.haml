@@ -10,13 +10,13 @@
 %tr.text
   %td{align: "center", valign: "middle"}
     %div
-      = "Dear, #{@email}"
+      = t('mailers.wait_list.send_invitation_code.greeting', email: @email)
     
     %div
-      Your requested invitation code is as below:
+      = t('mailers.wait_list.send_invitation_code.body')
     
     #code
       = @invitation_code
     
     .note
-      If you didn't request this, please ignore this email.
+      = t('mailers.wait_list.send_invitation_code.note')

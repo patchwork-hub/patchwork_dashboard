@@ -60,11 +60,11 @@ class Api::V1::CollectionSerializer
 
   def self.default_community_count(object, params)
     if object.slug == "all-collection" && params[:type] == 'channel'
-      Community.filter_channels.exclude_array_ids.exclude_incomplete_channels.exclude_deleted_channels.size
+      Community.filter_channels.exclude_array_ids.exclude_incomplete_channels.exclude_deleted_channels.exclude_not_recommended.size
     elsif object.slug == "all-collection" && params[:type] == 'channel_feed'
-      Community.filter_channel_feeds.exclude_array_ids.exclude_incomplete_channels.exclude_deleted_channels.size
+      Community.filter_channel_feeds.exclude_array_ids.exclude_incomplete_channels.exclude_deleted_channels.exclude_not_recommended.size
     else
-      object.patchwork_communities.exclude_array_ids.filter_channels.exclude_incomplete_channels.exclude_deleted_channels.size
+      object.patchwork_communities.exclude_array_ids.filter_channels.exclude_incomplete_channels.exclude_deleted_channels.exclude_not_recommended.size
     end
   end
 
@@ -94,7 +94,7 @@ class Api::V1::CollectionSerializer
                   else
                     []
                   end
-  
+
     Api::V1::ChannelSerializer.new(communities).serializable_hash
   end
 

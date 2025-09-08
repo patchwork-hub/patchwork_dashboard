@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_11_090953) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_02_101613) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -199,6 +199,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_11_090953) do
     t.boolean "indexable", default: false, null: false
     t.string "attribution_domains", default: [], array: true
     t.string "devices_url"
+    t.boolean "is_banned", default: false
     t.index "(((setweight(to_tsvector('simple'::regconfig, (display_name)::text), 'A'::\"char\") || setweight(to_tsvector('simple'::regconfig, (username)::text), 'B'::\"char\")) || setweight(to_tsvector('simple'::regconfig, (COALESCE(domain, ''::character varying))::text), 'C'::\"char\")))", name: "search_index", using: :gin
     t.index "lower((username)::text), COALESCE(lower((domain)::text), ''::text)", name: "index_accounts_on_username_and_domain_lower", unique: true
     t.index ["domain", "id"], name: "index_accounts_on_domain_and_id"
@@ -815,6 +816,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_11_090953) do
     t.boolean "deprecated", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "released_date", default: -> { "CURRENT_TIMESTAMP" }
     t.index ["app_version_id"], name: "index_patchwork_app_version_histories_on_app_version_id"
   end
 
@@ -902,7 +904,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_11_090953) do
   end
 
   create_table "patchwork_communities_filter_keywords", force: :cascade do |t|
-    t.bigint "patchwork_community_id", null: false
+    t.bigint "patchwork_community_id"
     t.string "keyword", null: false
     t.boolean "is_filter_hashtag", default: false, null: false
     t.datetime "created_at", null: false
@@ -1395,6 +1397,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_11_090953) do
     t.bigint "ordered_media_attachment_ids", array: true
     t.datetime "fetched_replies_at"
     t.integer "quote_approval_policy", default: 0, null: false
+    t.boolean "is_banned", default: false
     t.index ["account_id", "id", "visibility", "updated_at"], name: "index_statuses_20190820", order: { id: :desc }, where: "(deleted_at IS NULL)"
     t.index ["account_id"], name: "index_statuses_on_account_id"
     t.index ["deleted_at"], name: "index_statuses_on_deleted_at", where: "(deleted_at IS NOT NULL)"
@@ -1443,6 +1446,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_11_090953) do
     t.float "max_score"
     t.datetime "max_score_at", precision: nil
     t.string "display_name"
+    t.boolean "is_banned", default: false
     t.index "lower((name)::text) text_pattern_ops", name: "index_tags_on_name_lower_btree", unique: true
   end
 
@@ -1530,6 +1534,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_11_090953) do
     t.string "time_zone"
     t.string "otp_secret"
     t.datetime "age_verified_at"
+    t.string "did_value"
+    t.boolean "bluesky_bridge_enabled", default: false, null: false
     t.index ["account_id"], name: "index_users_on_account_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["created_by_application_id"], name: "index_users_on_created_by_application_id", where: "(created_by_application_id IS NOT NULL)"

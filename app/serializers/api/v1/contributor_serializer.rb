@@ -16,6 +16,15 @@ class Api::V1::ContributorSerializer
     object.id.to_s
   end
 
+  attribute :domain do |object|
+   object.local? ? ENV['LOCAL_DOMAIN'] || Rails.configuration.x.local_domain : object.domain
+  end
+
+  attribute :acct do |object|
+    domain = object.local? ? ENV['LOCAL_DOMAIN'] || Rails.configuration.x.local_domain : object.domain
+    "@#{object.username}@#{domain}"
+  end
+
   attribute :profile_url do |object|
     object.local? ? "#{ENV['MASTODON_INSTANCE_URL']}/@#{object.username}" : object.url
   end

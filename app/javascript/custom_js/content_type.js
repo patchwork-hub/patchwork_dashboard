@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
       })
     }).then(response => {
       if (response.ok) {
-        console.log("Content type created or updated successfully");
       } else {
         console.error("Error creating or updating content type");
       }

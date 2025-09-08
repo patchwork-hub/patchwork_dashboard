@@ -5,16 +5,16 @@ module Api
     class SettingsController < ApiController
       skip_before_action :verify_key!
       before_action :authenticate_and_set_account
-      before_action :validate_and_set_app_name
+      before_action :validate_or_set_app_name
       before_action :set_setting, only: [:destroy]
 
       def index
         @setting = Setting.find_by(account: @account, app_name: @app_name)
 
         if @setting
-          render json: { data: @setting }
+          render_success(@setting)
         else
-          render json: { data: default_setting }, status: 200
+          render_success(default_setting)
         end
       end
 
@@ -22,17 +22,17 @@ module Api
         @setting = Setting.find_or_initialize_by(account: @account, app_name: @app_name)
 
         if @setting.update(setting_params)
-          render json: { message: 'Settings have been saved successfully.' }, status: 200
+          render_success(@setting, 'api.setting.messages.saved')
         else
-          render json: { errors: @setting.errors.to_hash }, status: 422
+          render_validation_failed(@setting.errors, 'api.setting.errors.validation_failed')
         end
       end
 
       def destroy
         if @setting.destroy
-          head :no_content
+          render_deleted('api.setting.messages.deleted')
         else
-          render json: { errors: { base: 'Failed to delete settings.' } }, status: 422
+          render_errors('api.setting.errors.delete_failed', :unprocessable_entity)
         end
       end
 
@@ -40,7 +40,7 @@ module Api
 
       def set_setting
         @setting = Setting.find_by(account: @account, app_name: @app_name)
-        render json: { error: 'Settings not found.' }, status: 404 unless @setting
+        render_not_found('api.setting.errors.not_found') unless @setting
       end
 
       def authenticate_and_set_account
@@ -51,20 +51,21 @@ module Api
           authenticate_user_from_header
           @account = current_account
         end
-      rescue AuthenticationError => e
-        render json: { error: 'Authentication failed: ' + e.message }, status: 401
+      rescue AuthenticationError
+        render_unauthorized('api.setting.errors.authentication_failed')
       end
 
-      def validate_and_set_app_name
+      def validate_or_set_app_name
         app_name_param = params[:app_name]
         if app_name_param.blank?
           @app_name = Setting.column_defaults['app_name']
         elsif Setting.app_names.key?(app_name_param)
           @app_name = app_name_param
         else
-          render json: {
-            errors: { app_name: "'#{app_name_param}' is not a valid app_name. Valid options are: #{Setting.app_names.keys.join(', ')}" }
-          }, status: 400
+          render_errors('api.setting.errors.invalid_app_name', :bad_request, {
+            valid_options: Setting.app_names.keys,
+            attribute: app_name_param
+          })
         end
       end
 

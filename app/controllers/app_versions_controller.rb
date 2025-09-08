@@ -1,6 +1,6 @@
 class AppVersionsController < ApplicationController
   before_action :authorize_master_admin!
-  before_action :set_app_version, only: %i[destroy]
+  before_action :set_app_version, only: %i[update destroy]
   
   PER_PAGE = 10
 
@@ -11,7 +11,7 @@ class AppVersionsController < ApplicationController
     else
       AppVersion.patchwork.ransack(params[:q])
     end
-    @app_versions = scope.result.order(created_at: :asc).page(params[:page]).per(PER_PAGE)
+    @app_versions = scope.result.includes(:app_version_histories).order(created_at: :asc).page(params[:page]).per(PER_PAGE)
   end
 
   def new
@@ -30,9 +30,16 @@ class AppVersionsController < ApplicationController
   end
 
   def update
-    if @app_version.update(app_version_params)
-      redirect_to @app_version, notice: 'App version was successfully updated.'
+    # Update the app version and its history records
+    if @app_version.update(app_version_params.except(:released_date))
+      # Update the released_date in all associated history records
+      if params[:app_version][:released_date].present?
+        @app_version.app_version_histories.update_all(released_date: params[:app_version][:released_date])
+      end
+      redirect_to app_versions_url(app_name: @app_version.app_name_before_type_cast), notice: 'App version was successfully updated.'
     else
+      # Set the released_date for form redisplay
+      @app_version.released_date = params[:app_version][:released_date]
       render :edit
     end
   end
@@ -60,6 +67,6 @@ class AppVersionsController < ApplicationController
   end
 
   def app_version_params
-    params.require(:app_version).permit(:version_name, :app_name)
+    params.require(:app_version).permit(:version_name, :app_name, :released_date)
   end
 end
