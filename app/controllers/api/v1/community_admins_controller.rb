@@ -26,24 +26,23 @@ module Api
           CommunityAdminPostService.new(@community_admin, current_user, @community).call
           render json: Api::V1::CommunityAdminSerializer.new(@community_admin).serializable_hash, status: :ok
         else
-          render json: { errors: @community_admin.errors.full_messages }, status: :unprocessable_entity
+          render_validation_failed(@community_admin.errors)
         end
       end
 
       def modify_account_status
         @community_admin = current_account&.community_admin
         unless @community_admin || params[:account_status].present?
-          render json: { error: 'Account not found' }, status: :not_found
-          return
+          return render_not_found
         end
 
         if @community_admin.update(account_status: params[:account_status])
           handle_account_status_change(@community_admin)
         else
-          render json: { errors: @community_admin.errors.full_messages }, status: :unprocessable_entity
+          render_validation_failed(@community_admin.errors)
         end
       rescue StandardError => e
-        render json: { error: "Unexpected error in modify_account_status: #{e.message}" }, status: :internal_server_error
+        render_error('api.errors.internal_server_error', :internal_server_error, details: e.message)
       end
 
       private
@@ -114,7 +113,7 @@ module Api
       def set_community_admin
         @community_admin = CommunityAdmin.find_by(id: params[:id])
       rescue ActiveRecord::RecordNotFound
-        render json: { error: 'Community admin not found' }, status: :not_found
+        render_not_found
       end
 
       def set_community
@@ -126,11 +125,11 @@ module Api
         case community_admin.account_status
         when 'deleted'
           community_admin.community.update(visibility: nil)
-          render json: { message: 'Account has been successfully deleted.' }, status: :ok
+          render_deleted
         when 'suspended'
-          render json: { message: 'Account has been successfully suspended.' }, status: :ok
+          render_success('api.messages.success', :ok, details: 'suspended')
         else
-          render json: { message: 'Account status updated successfully.' }, status: :ok
+          render_updated
         end
       end
     end

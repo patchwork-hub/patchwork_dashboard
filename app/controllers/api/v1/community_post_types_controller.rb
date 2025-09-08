@@ -28,12 +28,12 @@ module Api
         @community_post_type.assign_attributes(community_post_type_params)
         if @community_post_type.save
           if @community_post_type.previous_changes.present?
-            render json: { message: "Community post type preferences saved successfully!" }, status: :ok
+            render_success({}, 'api.messages.success', :ok)
           else
-            render json: { message: "Community post type preferences created successfully!" }, status: :created
+            render_created
           end
         else
-          render json: { errors: @community_post_type.errors.full_messages }, status: :unprocessable_entity
+          render_validation_failed(@community_post_type.errors)
         end
       end
 

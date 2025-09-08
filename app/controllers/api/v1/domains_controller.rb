@@ -8,12 +8,24 @@ module Api
         domain = params[:domain]
         expected_ip = params[:ipAddress]
 
-        verified = DnsVerifier.valid_a_record?(domain, expected_ip)
-        message = verified ?
-          "DNS configured correctly!" :
-          "A record not found. Please point your A record to #{expected_ip}"
+        if domain.blank? || expected_ip.blank?
+          return render_errors('api.domain.errors.missing_parameters', :bad_request)
+        end
 
-        render json: { verified: verified, message: message }
+        verified = DnsVerifier.valid_a_record?(domain, expected_ip)
+        
+        if verified
+          render_domain_message_key('api.domain.messages.dns_verified', verified)
+        else
+          render_domain_message_key('api.domain.messages.dns_instructions',
+            { verified: verified,
+              attribute: expected_ip 
+            }
+          )
+        end
+      rescue StandardError => e
+        Rails.logger.error "DNS verification failed: #{e.message}"
+        render_errors('api.domain.errors.verification_failed', :unprocessable_entity)
       end
     end
   end

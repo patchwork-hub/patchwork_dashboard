@@ -1,0 +1,277 @@
+# Japanese translations for Patchwork Dashboard
+# パッチワークダッシュボードの日本語翻訳
+
+ja:
+  # Locale information
+  locale:
+    name: "日本語"
+    native_name: "日本語"
+
+  # API responses and messages
+  api:
+    errors:
+      unauthorized: "この操作を実行する権限がありません"
+      forbidden: "アクセスが拒否されました"
+      not_found: "リソースが見つかりません"
+      unprocessable_entity: "リクエストを処理できませんでした"
+      internal_server_error: "内部サーバーエラーが発生しました"
+      validation_failed: "バリデーションに失敗しました"
+      invalid_request: "無効なリクエストです"
+      rate_limit_exceeded: "レート制限を超えました。しばらくしてから再試行してください"
+      
+    messages:
+      success: "操作が正常に完了しました"
+      created: "リソースが正常に作成されました"
+      updated: "リソースが正常に更新されました"
+      deleted: "リソースが正常に削除されました"
+      processing: "リクエストを処理中です"
+
+    community:
+      errors:
+        only_one_channel: "チャンネルは1つまでしか作成できません。"
+        not_found: "コミュニティが見つかりません。"
+        access_denied: "このコミュニティへのアクセスが拒否されました。"
+        invalid_slug: "無効なコミュニティ識別子です。"
+        name_taken: "コミュニティ名は既に使用されています。"
+        slug_taken: "コミュニティ識別子は既に使用されています。"
+        invalid_visibility: "無効な可視性設定です。"
+        missing_additional_information: "追加情報が不足しています。"
+        duplicate_link_url: "このコミュニティでは重複したリンクURLは許可されていません。"
+        search_params_required: "クエリ、URL、およびトークンのパラメータが必要です。"
+        
+      messages:
+        created: "コミュニティが正常に作成されました。"
+        updated: "コミュニティが正常に更新されました。"
+        visibility_updated: "コミュニティの可視性が更新されました。"
+        additional_information_updated: "追加情報が正常に更新されました。"
+        
+    account:
+      errors:
+        invalid_credentials: "無効なユーザー名またはパスワードです。"
+        account_not_found: "アカウントが見つかりません。"
+        account_suspended: "アカウントが停止されています。"
+        email_not_verified: "メールアドレスが確認されていません。"
+
+    setting:
+      errors:
+        not_found: "設定が見つかりません。"
+        authentication_failed: "認証に失敗しました。"
+        invalid_app_name: "%{attribute} : 無効なアプリ名が提供されました。"
+        validation_failed: "設定の検証に失敗しました。"
+        delete_failed: "設定の削除に失敗しました。"
+        
+      messages:
+        saved: "設定が正常に保存されました。"
+        deleted: "設定が正常に削除されました。"
+
+    domain:
+      errors:
+        missing_parameters: "ドメインとIPアドレスが必要です。"
+        verification_failed: "エラーによりドメイン検証に失敗しました。"
+        
+      messages:
+        dns_verified: "DNSが正しく設定されています。"
+        dns_instructions: "Aレコードが見つかりません。Aレコードを %{ip} に向けてください。"
+
+    api_key:
+      errors:
+        invalid_status: "無効なAPIキーステータスです。"
+        key_not_found: "APIキーが見つかりません。"
+        already_deactivated: "APIキーは既に無効化されています。"
+        already_activated: "APIキーは既に有効化されています。"
+        
+      messages:
+        rotated_successfully: "APIキーが正常にローテーションされました。"
+        activated_successfully: "APIキーが正常に有効化されました。"
+        deactivated_successfully: "APIキーが正常に無効化されました。"
+
+    wait_list:
+      errors:
+        email_required: "メールアドレスが必要です。"
+        invitation_code_required: "招待コードが必要です。"
+        invalid_code: "無効な招待コードです。"
+        validation_failed: "バリデーションに失敗しました！"
+        account_already_registered: "アカウントは既にウェイトリストに登録されています。"
+        
+      messages:
+        created: "ウェイトリストに正常に追加されました。"
+        invitation_sent: "招待コードをメールアドレスに送信しました。"
+        code_valid: "招待コードは有効です。"
+
+    joined_communities:
+      errors:
+        channel_not_found: "チャンネルが見つかりません"
+        already_favorited: "自分のチャンネルはお気に入りに登録できません"
+        no_access_set_primary: "プライマリに設定する権限がありません"
+        no_favorited_channels: "お気に入りのチャンネルがありません"
+        community_not_found: "コミュニティが見つかりません"
+        minimum_channels_required: "プライマリに設定するには最低5つのチャンネルに参加する必要があります"
+        favorited_channel_not_found: "お気に入りチャンネルが見つかりません"
+        
+      messages:
+        favorited_successfully: "チャンネルが正常にお気に入りに登録されました"
+        unfavorited_successfully: "お気に入りチャンネルが正常に削除されました"
+        primary_set_successfully: "チャンネルが正常にプライマリに設定されました"
+        
+    community_hashtags:
+      errors:
+        invalid_hashtag: "ハッシュタグの形式が無効です"
+        duplicate_hashtag: "重複エントリ：ハッシュタグは既に存在します"
+        parameter_missing: "必須パラメータがありません"
+        cannot_contain_spaces: "ハッシュタグにスペースを含めることはできません"
+        hashtag_not_found: "ハッシュタグが見つかりません"
+        community_required: "Patchworkコミュニティのidが必要です"
+        community_not_found: "Patchworkコミュニティが見つかりません"
+        
+      messages:
+        created: "ハッシュタグが正常に保存されました！"
+        updated: "ハッシュタグが正常に更新されました！"
+        deleted: "ハッシュタグが正常に削除されました！"
+        
+    validation:
+      required: "%{attribute}は必須です"
+      too_long: "%{attribute}が長すぎます（最大%{count}文字）"
+      too_short: "%{attribute}が短すぎます（最小%{count}文字）"
+      invalid_format: "%{attribute}の形式が無効です"
+      not_unique: "%{attribute}は既に使用されています"
+
+  # Model validation messages
+  activerecord:
+    errors:
+      models:
+        community:
+          attributes:
+            name:
+              blank: "コミュニティ名を入力してください。"
+              too_long: "コミュニティ名は%{count}文字以内で入力してください。"
+              taken: "コミュニティ名は既に使用されています。"
+            slug:
+              blank: "コミュニティ識別子を入力してください。"
+              too_short: "コミュニティ識別子は最低%{count}文字必要です。"
+              too_long: "コミュニティ識別子は%{count}文字以内で入力してください。"
+              invalid: "コミュニティ識別子の形式が無効です。"
+              invalid_domain: "有効なドメイン形式である必要があります（例：example.com）。連続するピリオドやピリオドで終わることはできません。"
+              taken: "コミュニティ識別子は既に使用されています。"
+              immutable: "コミュニティ識別子は作成後に変更できません。"
+            description:
+              too_long: "説明は%{count}文字以内で入力してください。"
+            about:
+              too_long: "概要は%{count}文字以内で入力してください。"
+            base:
+              duplicate_link_urls: "リンクに重複したURLが含まれています：%{urls}。"
+              
+        account:
+          attributes:
+            username:
+              blank: "ユーザー名を入力してください"
+              too_short: "ユーザー名は最低%{count}文字必要です"
+              too_long: "ユーザー名は%{count}文字以内で入力してください"
+              invalid: "ユーザー名は英数字とアンダースコアのみ使用できます"
+              taken: "ユーザー名は既に使用されています"
+            email:
+              blank: "メールアドレスを入力してください"
+              invalid: "メールアドレスの形式が無効です"
+              taken: "メールアドレスは既に使用されています"
+            password:
+              blank: "パスワードを入力してください"
+              too_short: "パスワードは最低%{count}文字必要です"
+              
+        api_key:
+          attributes:
+            key:
+              blank: "APIキーを入力してください。"
+              invalid: "APIキーの形式が無効です。"
+            secret:
+              blank: "APIシークレットを入力してください。"
+              invalid: "APIシークレットの形式が無効です。"
+            status:
+              blank: "ステータスを入力してください。"
+              invalid: "ステータスは有効化または無効化である必要があります。"
+              inclusion: "ステータスは有効化または無効化である必要があります。"
+
+        user:
+          attributes:
+            locale:
+              invalid: "はサポートされていない言語です"
+              inclusion: "サポートされている言語のいずれかである必要があります: %{values}"
+
+        joined_community:
+          attributes:
+            community:
+              blank: "コミュニティを選択してください"
+            account:
+              blank: "アカウントが必要です"
+              taken: "は既にこのコミュニティに参加しています"
+            is_primary:
+              only_one_primary: "アカウントごとに1つのコミュニティのみプライマリに設定できます"
+              
+        community_hashtag:
+          attributes:
+            hashtag:
+              blank: "ハッシュタグは空にできません"
+              taken: "は既にこのコミュニティに追加されています"
+            community:
+              blank: "コミュニティを選択してください"
+
+        wait_list:
+          attributes:
+            invitation_code:
+              blank: "招待コードは空にできません"
+              taken: "招待コードは既に使用されています"
+            email:
+              blank: "メールアドレスは空にできません"
+              invalid: "メールアドレスの形式が無効です"
+            description:
+              too_long: "説明は%{count}文字以内にしてください"
+            channel_type:
+              blank: "チャンネルタイプは空にできません"
+              inclusion: "チャンネルタイプはチャンネルまたはハブのいずれかである必要があります"
+            account_id:
+              taken: "アカウントは既にウェイトリストに登録されています"
+
+        setting:
+          attributes:
+            account:
+              blank: "アカウントが必要です"
+            app_name:
+              blank: "アプリ名は空にできません"
+              inclusion: "アプリ名はサポートされている値のいずれかである必要があります: %{values}"
+            settings:
+              blank: "設定は空にできません"
+              invalid: "設定の形式が無効です"
+
+  # Time and date formats
+  time:
+    formats:
+      default: "%Y年%m月%d日 %H:%M:%S"
+      short: "%m月%d日 %H:%M"
+      long: "%Y年%m月%d日 %H:%M"
+      
+  date:
+    formats:
+      default: "%Y年%m月%d日"
+      short: "%m月%d日"
+      long: "%Y年%m月%d日"
+
+  # General terms
+  general:
+    yes: "はい"
+    no: "いいえ"
+    save: "保存"
+    cancel: "キャンセル"
+    delete: "削除"
+    edit: "編集"
+    create: "作成"
+    update: "更新"
+    submit: "送信"
+    loading: "読み込み中..."
+    confirm: "本当によろしいですか？"
+
+  # Mailer translations
+  mailers:
+    wait_list:
+      send_invitation_code:
+        subject: "招待コードのお知らせ"
+        greeting: "%{email}様"
+        body: "リクエストされた招待コードは以下の通りです："
+        note: "このメールに覚えがない場合は、無視してください。"

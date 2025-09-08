@@ -122,7 +122,7 @@
                         %td{ style: 'width: 10%;' }
                           %img{ alt: "", src: record.avatar_url, class: "rounded-circle mr-2", style: "width: 70px; height: 70px; border: 2px solid white;" }
                         %td{ style: 'width: 80%;' }
-                          = record.display_name
+                          = render_custom_emojis(record.display_name)
                           - domain = record&.domain.present? ? "https://#{record.domain}" : ENV.fetch('MASTODON_INSTANCE_URL', nil)
                           %br
                           %a{ href: "#{record.url}", target: "_blank" }= "@#{record.username}@#{record.domain || 'channel.org'}"

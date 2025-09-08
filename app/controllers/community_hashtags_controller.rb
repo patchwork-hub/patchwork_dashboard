@@ -20,14 +20,17 @@ class CommunityHashtagsController < BaseController
   def update
     begin
       community_hashtag = CommunityHashtag.find(params[:id])
+      old_hashtag = community_hashtag.hashtag
       form_community_hashtag_params = params.require(:form_community_hashtag).permit(:hashtag)
-
-      perform_hashtag_action(community_hashtag.hashtag, nil, :unfollow)
-      hashtag = form_community_hashtag_params[:hashtag].gsub('#', '')
-      community_hashtag.assign_attributes(hashtag: hashtag, name: hashtag)
-      community_hashtag.save!
-      perform_hashtag_action(community_hashtag.hashtag, nil, :follow)
-
+      new_hashtag = form_community_hashtag_params[:hashtag].gsub('#', '')
+  
+      if old_hashtag != new_hashtag
+        perform_hashtag_action(old_hashtag, params[:community_id], :unfollow)
+        community_hashtag.assign_attributes(hashtag: new_hashtag, name: new_hashtag)
+        community_hashtag.save!
+        perform_hashtag_action(new_hashtag, nil, :follow)
+      end
+  
       flash[:notice] = "Hashtag updated successfully!"
     rescue CommunityHashtagPostService::InvalidHashtagError => e
       flash[:error] = e.message

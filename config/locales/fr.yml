@@ -1,0 +1,277 @@
+# French translations for Patchwork Dashboard
+# Traductions françaises pour le tableau de bord Patchwork
+
+fr:
+  # Locale information
+  locale:
+    name: "Français"
+    native_name: "Français"
+
+  # API responses and messages
+  api:
+    errors:
+      unauthorized: "Vous n'êtes pas autorisé à effectuer cette action."
+      forbidden: "Accès refusé."
+      not_found: "Ressource introuvable."
+      unprocessable_entity: "La demande n'a pas pu être traitée."
+      internal_server_error: "Une erreur de serveur interne s'est produite."
+      validation_failed: "La validation a échoué."
+      invalid_request: "Demande invalide."
+      rate_limit_exceeded: "Limite de débit dépassée. Veuillez réessayer plus tard."
+      
+    messages:
+      success: "Opération terminée avec succès."
+      created: "Ressource créée avec succès."
+      updated: "Ressource mise à jour avec succès."
+      deleted: "Ressource supprimée avec succès."
+      processing: "La demande est en cours de traitement."
+
+    community:
+      errors:
+        only_one_channel: "Vous ne pouvez créer qu'un seul canal."
+        not_found: "Communauté introuvable."
+        access_denied: "L'accès à cette communauté est refusé."
+        invalid_slug: "Identifiant de communauté invalide."
+        name_taken: "Le nom de la communauté est déjà pris."
+        slug_taken: "L'identifiant de la communauté est déjà pris."
+        invalid_visibility: "Paramètre de visibilité invalide."
+        missing_additional_information: "Informations supplémentaires manquantes."
+        duplicate_link_url: "L'URL de lien en double pour cette communauté n'est pas autorisée."
+        search_params_required: "Les paramètres de requête, d'URL et de jeton sont requis."
+        
+      messages:
+        created: "Communauté créée avec succès."
+        updated: "Communauté mise à jour avec succès."
+        visibility_updated: "Visibilité de la communauté mise à jour."
+        additional_information_updated: "Informations supplémentaires mises à jour avec succès."
+        
+    account:
+      errors:
+        invalid_credentials: "Nom d'utilisateur ou mot de passe invalide."
+        account_not_found: "Compte introuvable."
+        account_suspended: "Le compte a été suspendu."
+        email_not_verified: "Adresse e-mail non vérifiée."
+
+    setting:
+      errors:
+        not_found: "Paramètres introuvables."
+        authentication_failed: "Échec de l'authentification."
+        invalid_app_name: "%{attribute} : Nom d'application invalide fourni."
+        validation_failed: "La validation des paramètres a échoué."
+        delete_failed: "Échec de la suppression des paramètres."
+        
+      messages:
+        saved: "Les paramètres ont été sauvegardés avec succès."
+        deleted: "Paramètres supprimés avec succès."
+
+    domain:
+      errors:
+        missing_parameters: "Le domaine et l'adresse IP sont requis."
+        verification_failed: "La vérification du domaine a échoué en raison d'une erreur."
+        
+      messages:
+        dns_verified: "DNS configuré correctement."
+        dns_instructions: "Enregistrement A introuvable. Veuillez pointer votre enregistrement A vers %{ip}."
+
+    api_key:
+      errors:
+        invalid_status: "Statut de clé API invalide."
+        key_not_found: "Clé API introuvable."
+        already_deactivated: "La clé API est déjà désactivée."
+        already_activated: "La clé API est déjà activée."
+        
+      messages:
+        rotated_successfully: "Clé API pivotée avec succès."
+        activated_successfully: "Clé API activée avec succès."
+        deactivated_successfully: "Clé API désactivée avec succès."
+
+    wait_list:
+      errors:
+        email_required: "L'e-mail est requis."
+        invitation_code_required: "Le code d'invitation est requis."
+        invalid_code: "Code d'invitation invalide."
+        validation_failed: "La validation a échoué."
+        account_already_registered: "Le compte est déjà enregistré sur la liste d'attente."
+        
+      messages:
+        created: "Ajouté avec succès à la liste d'attente."
+        invitation_sent: "Code d'invitation envoyé à votre e-mail."
+        code_valid: "Le code d'invitation est valide."
+
+    joined_communities:
+      errors:
+        channel_not_found: "Canal introuvable."
+        already_favorited: "Vous ne pouvez pas mettre en favori votre propre canal."
+        no_access_set_primary: "Vous n'avez pas accès pour définir comme principal."
+        no_favorited_channels: "Vous n'avez aucun canal favori."
+        community_not_found: "Communauté introuvable."
+        minimum_channels_required: "Vous devez rejoindre au moins 5 canaux pour en définir un comme principal."
+        favorited_channel_not_found: "Canal favori introuvable."
+        
+      messages:
+        favorited_successfully: "Le canal a été mis en favori avec succès."
+        unfavorited_successfully: "Canal favori supprimé avec succès."
+        primary_set_successfully: "Le canal a été défini comme principal avec succès."
+        
+    community_hashtags:
+      errors:
+        invalid_hashtag: "Format de hashtag invalide."
+        duplicate_hashtag: "Entrée en double : Le hashtag existe déjà."
+        parameter_missing: "Un paramètre requis est manquant."
+        cannot_contain_spaces: "Le hashtag ne peut pas contenir d'espaces."
+        hashtag_not_found: "Hashtag introuvable."
+        community_required: "L'ID de la communauté Patchwork est requis."
+        community_not_found: "Communauté Patchwork introuvable."
+        
+      messages:
+        created: "Hashtag enregistré avec succès !"
+        updated: "Hashtag mis à jour avec succès !"
+        deleted: "Hashtag supprimé avec succès !"
+
+    validation:
+        required: "%{attribute} est requis"
+        too_long: "%{attribute} est trop long (maximum %{count} caractères)"
+        too_short: "%{attribute} est trop court (minimum %{count} caractères)"
+        invalid_format: "%{attribute} a un format invalide"
+        not_unique: "%{attribute} a déjà été pris"
+
+  # Model validation messages
+  activerecord:
+    errors:
+      models:
+        community:
+          attributes:
+            name:
+              blank: "Le nom de la communauté ne peut pas être vide."
+              too_long: "Le nom de la communauté ne peut pas dépasser %{count} caractères."
+              taken: "Le nom de la communauté a déjà été pris."
+            slug:
+              blank: "L'identifiant de la communauté ne peut pas être vide."
+              too_short: "L'identifiant de la communauté doit comporter au moins %{count} caractères."
+              too_long: "L'identifiant de la communauté ne peut pas dépasser %{count} caractères."
+              invalid: "Le format de l'identifiant de la communauté est invalide."
+              invalid_domain: "doit être un format de domaine valide (ex. exemple.com), ne peut pas avoir des points consécutifs ou se terminer par un point."
+              taken: "L'identifiant de la communauté a déjà été pris."
+              immutable: "L'identifiant de la communauté ne peut pas être modifié après création."
+            description:
+              too_long: "La description ne peut pas dépasser %{count} caractères."
+            about:
+              too_long: "La section 'À propos' ne peut pas dépasser %{count} caractères."
+            base:
+              duplicate_link_urls: "Les liens contiennent des URL en double : %{urls}."
+              
+        account:
+          attributes:
+            username:
+              blank: "Le nom d'utilisateur ne peut pas être vide."
+              too_short: "Le nom d'utilisateur doit comporter au moins %{count} caractères."
+              too_long: "Le nom d'utilisateur ne peut pas dépasser %{count} caractères."
+              invalid: "Le nom d'utilisateur ne peut contenir que des lettres, des chiffres et des traits de soulignement."
+              taken: "Le nom d'utilisateur a déjà été pris."
+            email:
+              blank: "L'e-mail ne peut pas être vide."
+              invalid: "Le format de l'e-mail est invalide."
+              taken: "L'e-mail a déjà été pris."
+            password:
+              blank: "Le mot de passe ne peut pas être vide."
+              too_short: "Le mot de passe doit comporter au moins %{count} caractères."
+              
+        api_key:
+          attributes:
+            key:
+              blank: "La clé API ne peut pas être vide."
+              invalid: "Le format de la clé API est invalide."
+            secret:
+              blank: "Le secret API ne peut pas être vide."
+              invalid: "Le format du secret API est invalide."
+            status:
+              blank: "Le statut ne peut pas être vide."
+              invalid: "Le statut doit être soit Activé soit Désactivé."
+              inclusion: "Le statut doit être soit Activé soit Désactivé."
+
+        user:
+          attributes:
+            locale:
+              invalid: "n'est pas une locale supportée"
+              inclusion: "doit être l'une des locales supportées : %{values}"
+
+        joined_community:
+          attributes:
+            community:
+              blank: "La communauté doit être sélectionnée."
+            account:
+              blank: "Le compte doit être présent."
+              taken: "a déjà rejoint cette communauté."
+            is_primary:
+              only_one_primary: "ne peut être vrai que pour une seule communauté par compte."
+              
+        community_hashtag:
+          attributes:
+            hashtag:
+              blank: "Le hashtag ne peut pas être vide."
+              taken: "a déjà été ajouté à cette communauté."
+            community:
+              blank: "La communauté doit être sélectionnée."
+
+        wait_list:
+          attributes:
+            invitation_code:
+              blank: "Le code d'invitation ne peut pas être vide."
+              taken: "Le code d'invitation a déjà été pris."
+            email:
+              blank: "L'e-mail ne peut pas être vide."
+              invalid: "Le format de l'e-mail est invalide."
+            description:
+              too_long: "La description ne peut pas dépasser %{count} caractères."
+            channel_type:
+              blank: "Le type de canal ne peut pas être vide."
+              inclusion: "Le type de canal doit être soit canal soit hub."
+            account_id:
+              taken: "Le compte est déjà enregistré sur la liste d'attente."
+
+        setting:
+          attributes:
+            account:
+              blank: "Le compte doit être présent."
+            app_name:
+              blank: "Le nom de l'application ne peut pas être vide."
+              inclusion: "Le nom de l'application doit être l'une des valeurs supportées : %{values}."
+            settings:
+              blank: "Les paramètres ne peuvent pas être vides."
+              invalid: "Le format des paramètres est invalide."
+
+  # Time and date formats
+  time:
+    formats:
+      default: "%d/%m/%Y %H:%M:%S"
+      short: "%d %b %H:%M"
+      long: "%d %B %Y à %H:%M"
+      
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      short: "%d %b"
+      long: "%d %B %Y"
+
+  # General terms
+  general:
+    yes: "Oui"
+    no: "Non"
+    save: "Enregistrer"
+    cancel: "Annuler"
+    delete: "Supprimer"
+    edit: "Modifier"
+    create: "Créer"
+    update: "Mettre à jour"
+    submit: "Soumettre"
+    loading: "Chargement..."
+    confirm: "Êtes-vous sûr ?"
+
+  # Mailer translations
+  mailers:
+    wait_list:
+      send_invitation_code:
+        subject: "Votre Code d'Invitation Demandé"
+        greeting: "Cher %{email},"
+        body: "Votre code d'invitation demandé est ci-dessous :"
+        note: "Si vous n'avez pas demandé ceci, veuillez ignorer cet e-mail."

@@ -5,12 +5,14 @@
 #  id                        :bigint           not null, primary key
 #  age_verified_at           :datetime
 #  approved                  :boolean          default(TRUE), not null
+#  bluesky_bridge_enabled    :boolean          default(FALSE), not null
 #  chosen_languages          :string           is an Array
 #  confirmation_sent_at      :datetime
 #  confirmation_token        :string
 #  confirmed_at              :datetime
 #  consumed_timestep         :integer
 #  current_sign_in_at        :datetime
+#  did_value                 :string
 #  disabled                  :boolean          default(FALSE), not null
 #  email                     :string           default(""), not null
 #  encrypted_otp_secret      :string
@@ -70,6 +72,14 @@ class User < ApplicationRecord
   devise :database_authenticatable, stretches: 13
 
   validates :email, uniqueness: true, presence: true
+
+  # Validate locale field to ensure it's one of the supported locales
+  validates :locale, inclusion: { 
+    in: -> (user) { I18n.available_locales.map(&:to_s) },
+    message: I18n.t('activerecord.errors.models.user.attributes.locale.invalid', 
+                   default: "is not a supported locale"),
+    allow_blank: true
+  }
 
   def master_admin?
     role.name == 'MasterAdmin'

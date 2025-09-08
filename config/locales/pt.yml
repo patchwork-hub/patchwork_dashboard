@@ -1,0 +1,277 @@
+# Portuguese translations for Patchwork Dashboard
+# Traduções em português para o Patchwork Dashboard
+
+pt:
+  # Locale information
+  locale:
+    name: "Português"
+    native_name: "Português"
+
+  # API responses and messages
+  api:
+    errors:
+      unauthorized: "Não tem autorização para executar esta acção."
+      forbidden: "Acesso negado."
+      not_found: "Recurso não encontrado."
+      unprocessable_entity: "O pedido não pôde ser processado."
+      internal_server_error: "Ocorreu um erro interno do servidor."
+      validation_failed: "A validação falhou."
+      invalid_request: "Pedido inválido."
+      rate_limit_exceeded: "Limite de taxa excedido. Tente novamente mais tarde."
+      
+    messages:
+      success: "Operação concluída com sucesso."
+      created: "Recurso criado com sucesso."
+      updated: "Recurso actualizado com sucesso."
+      deleted: "Recurso eliminado com sucesso."
+      processing: "O pedido está a ser processado."
+
+    community:
+      errors:
+        only_one_channel: "Apenas pode criar um canal."
+        not_found: "Comunidade não encontrada."
+        access_denied: "Acesso a esta comunidade negado."
+        invalid_slug: "Identificador da comunidade inválido."
+        name_taken: "O nome da comunidade já foi utilizado."
+        slug_taken: "O identificador da comunidade já foi utilizado."
+        invalid_visibility: "Configuração de visibilidade inválida."
+        missing_additional_information: "Informações adicionais em falta."
+        duplicate_link_url: "URL de ligação duplicado para esta comunidade não é permitido."
+        search_params_required: "Parâmetros de consulta, URL e token são necessários."
+        
+      messages:
+        created: "Comunidade criada com sucesso."
+        updated: "Comunidade actualizada com sucesso."
+        visibility_updated: "Visibilidade da comunidade actualizada."
+        additional_information_updated: "Informações adicionais actualizadas com sucesso."
+        
+    account:
+      errors:
+        invalid_credentials: "Nome de utilizador ou palavra-passe inválidos."
+        account_not_found: "Conta não encontrada."
+        account_suspended: "A conta foi suspensa."
+        email_not_verified: "Endereço de correio electrónico não verificado."
+
+    setting:
+      errors:
+        not_found: "Configurações não encontradas."
+        authentication_failed: "Falha na autenticação."
+        invalid_app_name: "%{attribute} : Nome da aplicação inválido fornecido."
+        validation_failed: "Falha na validação das configurações."
+        delete_failed: "Falha ao eliminar as configurações."
+        
+      messages:
+        saved: "As configurações foram guardadas com sucesso."
+        deleted: "Configurações eliminadas com sucesso."
+
+    domain:
+      errors:
+        missing_parameters: "Domínio e endereço IP são obrigatórios."
+        verification_failed: "Verificação do domínio falhou devido a um erro."
+        
+      messages:
+        dns_verified: "DNS configurado correctamente."
+        dns_instructions: "Registo A não encontrado. Aponte o seu registo A para %{ip}."
+
+    api_key:
+      errors:
+        invalid_status: "Estado da chave da API inválido."
+        key_not_found: "Chave da API não encontrada."
+        already_deactivated: "A chave da API já está desactivada."
+        already_activated: "A chave da API já está activada."
+        
+      messages:
+        rotated_successfully: "Chave da API rotacionada com sucesso."
+        activated_successfully: "Chave da API activada com sucesso."
+        deactivated_successfully: "Chave da API desactivada com sucesso."
+
+    wait_list:
+      errors:
+        email_required: "E-mail é obrigatório."
+        invitation_code_required: "Código de convite é obrigatório."
+        invalid_code: "Código de convite inválido."
+        validation_failed: "Validação falhada!"
+        account_already_registered: "Conta já está registrada na lista de espera."
+        
+      messages:
+        created: "Adicionado com sucesso à lista de espera."
+        invitation_sent: "Código de convite enviado para seu e-mail."
+        code_valid: "Código de convite é válido."
+
+    joined_communities:
+      errors:
+        channel_not_found: "Canal não encontrado."
+        already_favorited: "Não pode adicionar aos favoritos o seu próprio canal."
+        no_access_set_primary: "Não tem acesso para definir como principal."
+        no_favorited_channels: "Não possui canais favoritos."
+        community_not_found: "Comunidade não encontrada."
+        minimum_channels_required: "Precisa de participar em pelo menos 5 canais para definir um como principal."
+        favorited_channel_not_found: "Canal favorito não encontrado."
+        
+      messages:
+        favorited_successfully: "Canal foi adicionado aos favoritos com sucesso."
+        unfavorited_successfully: "Canal favorito removido com sucesso."
+        primary_set_successfully: "Canal foi definido como principal com sucesso."
+        
+    community_hashtags:
+      errors:
+        invalid_hashtag: "Formato de hashtag inválido."
+        duplicate_hashtag: "Entrada duplicada: A hashtag já existe."
+        parameter_missing: "Parâmetro obrigatório está em falta."
+        cannot_contain_spaces: "Hashtag não pode conter espaços."
+        hashtag_not_found: "Hashtag não encontrada."
+        community_required: "ID da comunidade Patchwork é obrigatório."
+        community_not_found: "Comunidade Patchwork não encontrada."
+        
+      messages:
+        created: "Hashtag guardada com sucesso!"
+        updated: "Hashtag atualizada com sucesso!"
+        deleted: "Hashtag removida com sucesso!"
+
+    validation:
+      required: "%{attribute} é obrigatório"
+      too_long: "%{attribute} é demasiado longo (máximo de %{count} caracteres)"
+      too_short: "%{attribute} é demasiado curto (mínimo de %{count} caracteres)"
+      invalid_format: "%{attribute} tem formato inválido"
+      not_unique: "%{attribute} já foi utilizado"
+
+  # Model validation messages
+  activerecord:
+    errors:
+      models:
+        community:
+          attributes:
+            name:
+              blank: "O nome da comunidade não pode estar vazio."
+              too_long: "O nome da comunidade não pode ter mais que %{count} caracteres."
+              taken: "O nome da comunidade já foi utilizado."
+            slug:
+              blank: "O identificador da comunidade não pode estar vazio."
+              too_short: "O identificador da comunidade deve ter pelo menos %{count} caracteres."
+              too_long: "O identificador da comunidade não pode ter mais que %{count} caracteres."
+              invalid: "O formato do identificador da comunidade é inválido."
+              invalid_domain: "deve ser um formato de domínio válido (ex. exemplo.com), não pode ter pontos consecutivos ou terminar com um ponto."
+              taken: "O identificador da comunidade já foi utilizado."
+              immutable: "O identificador da comunidade não pode ser alterado após a criação."
+            description:
+              too_long: "A descrição não pode ter mais que %{count} caracteres."
+            about:
+              too_long: "A secção 'Acerca' não pode ter mais que %{count} caracteres."
+            base:
+              duplicate_link_urls: "As ligações contêm URLs duplicados: %{urls}."
+              
+        account:
+          attributes:
+            username:
+              blank: "O nome de utilizador não pode estar vazio."
+              too_short: "O nome de utilizador deve ter pelo menos %{count} caracteres."
+              too_long: "O nome de utilizador não pode ter mais que %{count} caracteres."
+              invalid: "O nome de utilizador pode conter apenas letras, números e sublinhados."
+              taken: "O nome de utilizador já foi utilizado."
+            email:
+              blank: "O correio electrónico não pode estar vazio."
+              invalid: "O formato do correio electrónico é inválido."
+              taken: "O correio electrónico já foi utilizado."
+            password:
+              blank: "A palavra-passe não pode estar vazia."
+              too_short: "A palavra-passe deve ter pelo menos %{count} caracteres."
+              
+        api_key:
+          attributes:
+            key:
+              blank: "A chave da API não pode estar vazia."
+              invalid: "O formato da chave da API é inválido."
+            secret:
+              blank: "O segredo da API não pode estar vazio."
+              invalid: "O formato do segredo da API é inválido."
+            status:
+              blank: "O estado não pode estar vazio."
+              invalid: "O estado deve ser Activado ou Desactivado."
+              inclusion: "O estado deve ser Activado ou Desactivado."
+
+        user:
+          attributes:
+            locale:
+              invalid: "não é um idioma suportado"
+              inclusion: "deve ser um dos idiomas suportados: %{values}"
+
+        joined_community:
+          attributes:
+            community:
+              blank: "A comunidade deve ser seleccionada."
+            account:
+              blank: "A conta deve estar presente."
+              taken: "já participou nesta comunidade."
+            is_primary:
+              only_one_primary: "só pode ser verdadeiro para uma comunidade por conta."
+              
+        community_hashtag:
+          attributes:
+            hashtag:
+              blank: "A hashtag não pode estar em branco."
+              taken: "já foi adicionada a esta comunidade."
+            community:
+              blank: "A comunidade deve ser seleccionada."
+
+        wait_list:
+          attributes:
+            invitation_code:
+              blank: "Código de convite não pode estar em branco."
+              taken: "Código de convite já foi usado."
+            email:
+              blank: "E-mail não pode estar em branco."
+              invalid: "Formato do e-mail é inválido."
+            description:
+              too_long: "Descrição não pode ter mais de %{count} caracteres."
+            channel_type:
+              blank: "Tipo de canal não pode estar em branco."
+              inclusion: "Tipo de canal deve ser canal ou hub."
+            account_id:
+              taken: "Conta já está registrada na lista de espera."
+
+        setting:
+          attributes:
+            account:
+              blank: "A conta deve estar presente."
+            app_name:
+              blank: "O nome da aplicação não pode estar em branco."
+              inclusion: "O nome da aplicação deve ser um dos valores suportados: %{values}."
+            settings:
+              blank: "As configurações não podem estar em branco."
+              invalid: "O formato das configurações é inválido."
+
+  # Time and date formats
+  time:
+    formats:
+      default: "%d/%m/%Y %H:%M:%S"
+      short: "%d %b %H:%M"
+      long: "%d de %B de %Y às %H:%M"
+      
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      short: "%d %b"
+      long: "%d de %B de %Y"
+
+  # General terms
+  general:
+    yes: "Sim"
+    no: "Não"
+    save: "Guardar"
+    cancel: "Cancelar"
+    delete: "Eliminar"
+    edit: "Editar"
+    create: "Criar"
+    update: "Actualizar"
+    submit: "Submeter"
+    loading: "A carregar..."
+    confirm: "Tem a certeza?"
+
+  # Mailer translations
+  mailers:
+    wait_list:
+      send_invitation_code:
+        subject: "Seu Código de Convite Solicitado"
+        greeting: "Caro %{email},"
+        body: "Seu código de convite solicitado está abaixo:"
+        note: "Se você não solicitou isto, por favor ignore este e-mail."

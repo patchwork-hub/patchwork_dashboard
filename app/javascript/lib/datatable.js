@@ -26,6 +26,12 @@ const COLUMNS = {
 const COLUMN_DEFS = {};
 
 jQuery(function() {
+  // Show preview modal if show_preview param is present in URL
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('show_preview') === 'true') {
+    $('#previewCommunityModal').modal('show');
+  }
+
   $('#datatable').css('width', '100%');
 
   let url = $('#datatable').data('url');
@@ -246,10 +252,7 @@ jQuery(function() {
   if (saveAndPreviewBtn) {
     saveAndPreviewBtn.addEventListener("click", function(event) {
       event.preventDefault();
-
       form.submit();
-
-      $('#previewCommunityModal').modal('show');
     });
   }
 

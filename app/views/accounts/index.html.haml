@@ -29,7 +29,7 @@
                 %td
                   = check_box_tag "selected_accounts[]", account.id, false, class: 'select_account'
                 %td= account.username
-                %td= account.display_name
+                %td= render_custom_emojis(account.display_name)
                 %td= account.user ? account.user.email : "-"
                 %td= account.created_at.strftime('%Y-%m-%d %H:%M:%S')
                 %td= account.domain ? account.domain : ENV['MASTODON_INSTANCE_URL']

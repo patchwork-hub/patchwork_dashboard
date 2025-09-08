@@ -29,72 +29,72 @@
 
       .card-body
         %p.text-muted Here you can see a list of all the #{title.downcase} on your server. From this dashboard, you can easily import #{title.downcase} hosted on other servers, create new ones hosted here or manage your existing #{title.downcase}.
-        %table.table.no-side-borders.top-bottom-border{data: {url: accounts_url, type: 'account'}}
-          %thead
-            %tr
-              %th.align-left{ style: "width: 40px;" }
-                = check_box_tag :select_all, '', false, id: 'select_all'
-              %th{ style: "width: 80px;"} #{title}
-              %th{ style: "width: 100px;"} Username
-              - if channel_type_param.eql?('channel') || channel_type_param.eql?('hub')
-                %th{ style: "width: 100px;"} Address
-              %th{ style: "width: 50px;"} Followers
-              %th{ style: "width: 100px;"} Type
-              %th{ style: "width: 110px;"} Status
-              %th{ style: "width: 80px;"} Actions
-          %tbody
-            - if @records.size == 0
+        .table-responsive
+          %table.table.no-side-borders.top-bottom-border{data: {url: accounts_url, type: 'account'}}
+            %thead
               %tr
-                %td.text-center.info-box-content{colspan: "100%"}
-                  %p.text-muted.small You haven’t added any #{title.downcase} yet
-                  - unless hide_add_button
-                    %a.text-danger.small{ href: create_path } Click here to add one
-            - @records.each do |community|
-            - account = community&.community_admins&.first&.account
-              %tr
-                %td.text-center{ style: "width: 40px;" }
-                  = check_box_tag "selected_communities[]", community.id, false, class: 'select_community'
-                %td{ style: "width: 80px;"}= community.name
-                %td{ style: "width: 100px;"}
-                  - if account.present?
-                    %span.copyable-text{title: "Click to copy", style: "cursor: pointer;", onclick: "copyToClipboard('#{account_url(account)}')"}= "@#{username(account)}@#{domain(account)}"
-                  - else
-                    %span.text-muted -
+                %th.align-left{ style: "width: 40px;" }
+                  = check_box_tag :select_all, '', false, id: 'select_all'
+                %th{ style: "width: 80px;"} #{title}
+                %th{ style: "width: 100px;"} Username
                 - if channel_type_param.eql?('channel') || channel_type_param.eql?('hub')
+                  %th{ style: "width: 100px;"} Address
+                %th{ style: "width: 50px;"} Followers
+                %th{ style: "width: 100px;"} Type
+                %th{ style: "width: 110px;"} Status
+                %th{ style: "width: 80px;"} Actions
+            %tbody
+              - if @records.size == 0
+                %tr
+                  %td.text-center.info-box-content{colspan: "100%"}
+                    %p.text-muted.small You haven’t added any #{title.downcase} yet
+                    - unless hide_add_button
+                      %a.text-danger.small{ href: create_path } Click here to add one
+              - @records.each do |community|
+              - account = community&.community_admins&.first&.account
+                %tr
+                  %td.text-center{ style: "width: 40px;" }
+                    = check_box_tag "selected_communities[]", community.id, false, class: 'select_community'
+                  %td{ style: "width: 80px;"}= community.name
                   %td{ style: "width: 100px;"}
-                    - if address_url(community).present?
-                      %p
-                        = link_to address_url(community).sub('/public', ''), address_url(community), target: '_blank'
+                    - if account.present?
+                      %span.copyable-text{title: "Click to copy", style: "cursor: pointer;", onclick: "copyToClipboard('#{account_url(account)}')"}= "@#{username(account)}@#{domain(account)}"
                     - else
-                      %p.text-muted -
-                %td{ style: "width: 50px;"}
-                  - if account&.follower_count && account&.follower_count > 0
-                    %a{ href: follower_list_community_url(id: community), title: "view followers", style: "display: flex; align-items: center;" }
-                      = image_tag("icons/eye.svg", width: "20", height: "20", style: "margin-right: 5px;")
-                      = account&.follower_count
-                  - else
-                    %a{ href: "#", title: "no followers", style: "display: flex; align-items: center; pointer-events: none; color: gray !important;" }
-                      = image_tag("icons/eye.svg", width: "20", height: "20", style: "margin-right: 5px;")
-                      0
-                %td{ style: "width: 100px;"}= get_channel_content_type(community)
-                %td{ style: "width: 110px;"}
-                  - if community.visibility.present?
-                    %span.badge.badge-pill.badge-success Complete
-                  - else
-                    %span.badge.badge-pill.badge-warning Incomplete
-                %td{ style: "width: 80px;"}
-                  - if community.deleted_at.present?
-                    = link_to recover_community_path(community, channel_type_param: channel_type_param), method: :post, data: { confirm: "Are you sure you want to recover this #{keyword}?" } do
-                      = image_tag("icons/recover.svg", title: "Recover", class: "ml-2", width: "16", height: "16")
-                  - else
-                    = link_to edit_community_path(channel_type_param, community) do
-                      = image_tag("icons/edit-btn.svg", title: "Edit", class: "ml-2", width: "16", height: "16")
-                    = link_to community_path(community, channel_type_param: channel_type_param), method: :delete, data: { confirm: "Are you sure you want to delete this #{keyword}?" } do
-                      = image_tag("icons/trash-can.svg", title: "Delete", class: "ml-2", width: "16", height: "16")
-                    - if community.channel_type == 'channel_feed'
-                      = link_to upgrade_community_path(community), method: :post, data: { confirm: "Are you sure you want to upgrade this channel to a community?" } do
-                        = image_tag("icons/upgrade.svg", title: "Upgrade to Community", class: "ml-2", width: "16", height: "16")
-
+                      %span.text-muted -
+                  - if channel_type_param.eql?('channel') || channel_type_param.eql?('hub')
+                    %td{ style: "width: 100px;"}
+                      - if address_url(community).present?
+                        %p
+                          = link_to address_url(community).sub('/public', ''), address_url(community), target: '_blank'
+                      - else
+                        %p.text-muted -
+                  %td{ style: "width: 50px;"}
+                    - if account&.follower_count && account&.follower_count > 0
+                      %a{ href: follower_list_community_url(id: community), title: "view followers", style: "display: flex; align-items: center;" }
+                        = image_tag("icons/eye.svg", width: "20", height: "20", style: "margin-right: 5px;")
+                        = account&.follower_count
+                    - else
+                      %a{ href: "#", title: "no followers", style: "display: flex; align-items: center; pointer-events: none; color: gray !important;" }
+                        = image_tag("icons/eye.svg", width: "20", height: "20", style: "margin-right: 5px;")
+                        0
+                  %td{ style: "width: 100px;"}= get_channel_content_type(community)
+                  %td{ style: "width: 110px;"}
+                    - if community.visibility.present?
+                      %span.badge.badge-pill.badge-success Complete
+                    - else
+                      %span.badge.badge-pill.badge-warning Incomplete
+                  %td{ style: "width: 80px;"}
+                    - if community.deleted_at.present?
+                      = link_to recover_community_path(community, channel_type_param: channel_type_param), method: :post, data: { confirm: "Are you sure you want to recover this #{keyword}?" } do
+                        = image_tag("icons/recover.svg", title: "Recover", class: "ml-2", width: "16", height: "16")
+                    - else
+                      = link_to edit_community_path(channel_type_param, community) do
+                        = image_tag("icons/edit-btn.svg", title: "Edit", class: "ml-2", width: "16", height: "16")
+                      = link_to community_path(community, channel_type_param: channel_type_param), method: :delete, data: { confirm: "Are you sure you want to delete this #{keyword}?" } do
+                        = image_tag("icons/trash-can.svg", title: "Delete", class: "ml-2", width: "16", height: "16")
+                      - if community.channel_type == 'channel_feed'
+                        = link_to upgrade_community_path(community), method: :post, data: { confirm: "Are you sure you want to upgrade this channel to a community?" } do
+                          = image_tag("icons/upgrade.svg", title: "Upgrade to Community", class: "ml-2", width: "16", height: "16")
 
         - if master_admin?
           .row.mt-2

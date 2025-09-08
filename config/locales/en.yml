@@ -1,33 +1,277 @@
-# Files in the config/locales directory are used for internationalization
-# and are automatically loaded by Rails. If you want to use locales other
-# than English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# The following keys must be escaped otherwise they will not be retrieved by
-# the default I18n backend:
-#
-# true, false, on, off, yes, no
-#
-# Instead, surround them with single quotes.
-#
-# en:
-#   "true": "foo"
-#
-# To learn more, please read the Rails Internationalization guide
-# available at https://guides.rubyonrails.org/i18n.html.
+# English translations for Patchwork Dashboard
+# This file contains all English translations for the application
 
 en:
-  hello: "Hello world"
+  # Locale information
+  locale:
+    name: "English"
+    native_name: "English"
+
+  # API responses and messages
+  api:
+    errors:
+      unauthorized: "You are not authorized to perform this action."
+      forbidden: "Access denied!"
+      not_found: "Resource not found."
+      unprocessable_entity: "The request could not be processed."
+      internal_server_error: "An internal server error occurred."
+      validation_failed: "Validation failed!"
+      invalid_request: "Invalid request!"
+      rate_limit_exceeded: "Rate limit exceeded. Please try again later"
+      
+    messages:
+      success: "Operation completed successfully"
+      created: "Resource created successfully"
+      updated: "Resource updated successfully"
+      deleted: "Resource deleted successfully"
+      processing: "Request is being processed."
+
+    community:
+      errors:
+        only_one_channel: "You can only create one channel."
+        not_found: "Community not found."
+        access_denied: "Access to this community is denied."
+        invalid_slug: "Invalid community identifier."
+        name_taken: "Community name is already taken."
+        slug_taken: "Community identifier is already taken."
+        invalid_visibility: "Invalid visibility setting."
+        missing_additional_information: "Missing additional information."
+        duplicate_link_url: "Duplicate link URL for this community is not allowed."
+        search_params_required: "Query, URL, and token parameters are required."
+        
+      messages:
+        created: "Community created successfully."
+        updated: "Community updated successfully."
+        visibility_updated: "Community visibility updated."
+        additional_information_updated: "Additional information updated successfully."
+        
+    account:
+      errors:
+        invalid_credentials: "Invalid username or password"
+        account_not_found: "Account not found"
+        account_suspended: "Account has been suspended"
+        email_not_verified: "Email address not verified"
+
+    setting:
+      errors:
+        not_found: "Settings not found."
+        authentication_failed: "Authentication failed."
+        invalid_app_name: "%{attribute} : Invalid app name provided"
+        validation_failed: "Settings validation failed."
+        delete_failed: "Failed to delete settings."
+        
+      messages:
+        saved: "Settings have been saved successfully."
+        deleted: "Settings deleted successfully."
+    
+    domain:
+      errors:
+        missing_parameters: "Domain and IP address are required."
+        verification_failed: "Domain verification failed due to an error."
+
+      messages:
+        dns_verified: "DNS is correctly configured."
+        dns_instructions: "A record not found. Please point your A record to %{ip}."
+
+    api_key:
+      errors:
+        invalid_status: "Invalid API key status"
+        key_not_found: "API key not found"
+        already_deactivated: "API key is already deactivated"
+        already_activated: "API key is already activated"
+        
+      messages:
+        rotated_successfully: "API key rotated successfully"
+        activated_successfully: "API key activated successfully"
+        deactivated_successfully: "API key deactivated successfully"
+
+    wait_list:
+      errors:
+        email_required: "Email is required."
+        invitation_code_required: "Invitation code is required."
+        invalid_code: "Invalid invitation code."
+        validation_failed: "Validation failed!"
+        account_already_registered: "Account is already registered on wait list."
+        
+      messages:
+        created: "Successfully added to wait list."
+        invitation_sent: "Invitation code sent to your email."
+        code_valid: "Invitation code is valid."
+
+    joined_communities:
+      errors:
+        channel_not_found: "Channel not found"
+        already_favorited: "You can't favorite own channel"
+        no_access_set_primary: "You have no access to set primary"
+        no_favorited_channels: "You have no favourited channels"
+        community_not_found: "Community not found"
+        minimum_channels_required: "You need to join at least 5 to set as primary"
+        favorited_channel_not_found: "Favourited channel not found"
+        
+      messages:
+        favorited_successfully: "Channel has been favorited successfully"
+        unfavorited_successfully: "Favourited channel successfully deleted"
+        primary_set_successfully: "Channel has been set as primary successfully"
+        
+    community_hashtags:
+      errors:
+        invalid_hashtag: "Invalid hashtag format"
+        duplicate_hashtag: "Duplicate entry: Hashtag already exists"
+        parameter_missing: "Required parameter is missing"
+        cannot_contain_spaces: "Hashtag cannot contain spaces"
+        hashtag_not_found: "Hashtag not found"
+        community_required: "Patchwork community ID is required"
+        community_not_found: "Patchwork community not found"
+        
+      messages:
+        created: "Hashtag saved successfully!"
+        updated: "Hashtag updated successfully!"
+        deleted: "Hashtag removed successfully!"
+        
+    validation:
+      required: "%{attribute} is required"
+      too_long: "%{attribute} is too long (maximum %{count} characters)"
+      too_short: "%{attribute} is too short (minimum %{count} characters)"
+      invalid_format: "%{attribute} has invalid format"
+      not_unique: "%{attribute} has already been taken"
+
+  # Model validation messages
+  activerecord:
+    errors:
+      models:
+        community:
+          attributes:
+            name:
+              blank: "Community name cannot be blank."
+              too_long: "Community name cannot be longer than %{count} characters."
+              taken: "Community name has already been taken."
+            slug:
+              blank: "Community identifier cannot be blank."
+              too_short: "Community identifier must be at least %{count} characters."
+              too_long: "Community identifier cannot be longer than %{count} characters."
+              invalid: "Community identifier format is invalid."
+              invalid_domain: "must be a valid domain format (e.g., example.com), cannot have consecutive dots or end with a dot."
+              taken: "Community identifier has already been taken."
+              immutable: "Community identifier cannot be changed after creation."
+            description:
+              too_long: "Description cannot be longer than %{count} characters."
+            about:
+              too_long: "About section cannot be longer than %{count} characters."
+            base:
+              duplicate_link_urls: "Links contain duplicate URLs: %{urls}."
+              
+        account:
+          attributes:
+            username:
+              blank: "Username cannot be blank"
+              too_short: "Username must be at least %{count} characters"
+              too_long: "Username cannot be longer than %{count} characters"
+              invalid: "Username can only contain letters, numbers, and underscores"
+              taken: "Username has already been taken"
+            email:
+              blank: "Email cannot be blank"
+              invalid: "Email format is invalid"
+              taken: "Email has already been taken"
+            password:
+              blank: "Password cannot be blank"
+              too_short: "Password must be at least %{count} characters"
+              
+        api_key:
+          attributes:
+            key:
+              blank: "API key cannot be blank"
+              invalid: "API key format is invalid"
+            secret:
+              blank: "API secret cannot be blank"
+              invalid: "API secret format is invalid"
+            status:
+              blank: "Status cannot be blank"
+              invalid: "Status must be either Activated or Deactivated"
+              inclusion: "Status must be either Activated or Deactivated"
+
+        setting:
+          attributes:
+            account:
+              blank: "Account must be present"
+            app_name:
+              blank: "App name cannot be blank"
+              inclusion: "App name must be one of the supported values: %{values}"
+            settings:
+              blank: "Settings cannot be blank"
+              invalid: "Settings format is invalid"
+
+        user:
+          attributes:
+            locale:
+              invalid: "is not a supported locale"
+              inclusion: "must be one of the supported locales: %{values}"
+
+        joined_community:
+          attributes:
+            community:
+              blank: "Community must be selected"
+            account:
+              blank: "Account must be present"
+              taken: "has already joined this community"
+            is_primary:
+              only_one_primary: "can only be true for one community per account"
+              
+        community_hashtag:
+          attributes:
+            hashtag:
+              blank: "Hashtag cannot be blank"
+              taken: "has already been added to this community"
+            community:
+              blank: "Community must be selected"
+
+        wait_list:
+          attributes:
+            invitation_code:
+              blank: "Invitation code cannot be blank"
+              taken: "Invitation code has already been taken"
+            email:
+              blank: "Email cannot be blank"
+              invalid: "Email format is invalid"
+            description:
+              too_long: "Description cannot be longer than %{count} characters"
+            channel_type:
+              blank: "Channel type cannot be blank"
+              inclusion: "Channel type must be either channel or hub"
+            account_id:
+              taken: "Account is already registered on wait list"
+
+  # Time and date formats
+  time:
+    formats:
+      default: "%Y-%m-%d %H:%M:%S"
+      short: "%d %b %H:%M"
+      long: "%B %d, %Y %H:%M"
+      
+  date:
+    formats:
+      default: "%Y-%m-%d"
+      short: "%b %d"
+      long: "%B %d, %Y"
+
+  # General terms
+  general:
+    yes: "Yes"
+    no: "No"
+    save: "Save"
+    cancel: "Cancel"
+    delete: "Delete"
+    edit: "Edit"
+    create: "Create"
+    update: "Update"
+    submit: "Submit"
+    loading: "Loading..."
+    confirm: "Are you sure?"
+
+  # Mailer translations
+  mailers:
+    wait_list:
+      send_invitation_code:
+        subject: "Your Requested Invitation Code"
+        greeting: "Dear %{email},"
+        body: "Your requested invitation code is as below:"
+        note: "If you didn't request this, please ignore this email."

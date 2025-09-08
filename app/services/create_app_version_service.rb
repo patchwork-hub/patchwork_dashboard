@@ -1,15 +1,17 @@
 class CreateAppVersionService
   include ActiveModel::Model
 
-  attr_accessor :version_name, :app_name, :os_type
+  attr_accessor :version_name, :app_name, :os_type, :released_date
 
   validates :version_name, presence: true
+  validates :released_date, presence: true
   validate :valid_app_name
 
   def initialize(params = {})
     @version_name = params[:version_name]
     @app_name = params[:app_name]
     @os_type = params[:os_type]&.strip&.downcase
+    @released_date = params[:released_date]
   end
 
   def call
@@ -41,6 +43,7 @@ class CreateAppVersionService
     {
       app_version_id: @app_version.id,
       os_type: os,
+      released_date: @released_date,
       deprecated: false,
       created_at: Time.current,
       updated_at: Time.current

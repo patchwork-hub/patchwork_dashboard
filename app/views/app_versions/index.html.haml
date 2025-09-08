@@ -25,6 +25,7 @@
           %thead
             %tr
               %th Version name
+              %th Released date
               %th Android
               %th Deprecated
               %th iOS
@@ -39,6 +40,7 @@
             - @app_versions.each do |app_version|
               %tr
                 %td= app_version.version_name
+                %td= app_version&.app_version_histories.first&.released_date&.strftime('%b %-d, %Y, %I:%M %p')
                 - android_data = os_type_android(app_version.app_version_histories)
                 - unless android_data[:id].nil?
                   %td= "#{android_data[:string]}"

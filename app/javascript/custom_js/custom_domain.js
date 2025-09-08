@@ -51,21 +51,17 @@ $(document).ready(function () {
     function handleDomainSwitch() {
       const isCustomDomain = $(this).is(":checked");
       state.isSubdomainMode = !isCustomDomain;
-      console.log("isCustomDomain", isCustomDomain);
-      console.log("state.isSubdomainMode", state.isSubdomainMode);
       toggleSections(isCustomDomain);
       updateContinueButton();
 
       if (isCustomDomain) {
         const customVal = $customDomainInput.val().trim();
         if (customVal !== "") {
-          console.log("customVal", customVal);
           state.currentDomain = customVal;
           $("#domain_text").text(customVal);
           toggleDomainUI(true);
           verifyDomain(customVal);
         } else {
-          console.log("customVal", customVal);
           state.currentDomain = "";
           toggleDomainUI(false);
         }
