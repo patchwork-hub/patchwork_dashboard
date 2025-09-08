@@ -3,7 +3,7 @@
 # Table name: patchwork_app_versions
 #
 #  id           :bigint           not null, primary key
-#  app_name     :integer          default("patchwork"), not null
+#  app_name     :integer          default("mo_me"), not null
 #  version_name :string
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
