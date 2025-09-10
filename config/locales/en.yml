@@ -51,6 +51,7 @@ en:
         account_not_found: "Account not found"
         account_suspended: "Account has been suspended"
         email_not_verified: "Email address not verified"
+        unable_to_bridge: "User does not meet Bluesky Bridge requirements. Must have username, display_name, avatar, and header."
 
     setting:
       errors:

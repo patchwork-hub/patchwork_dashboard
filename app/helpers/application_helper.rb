@@ -113,4 +113,22 @@ module ApplicationHelper
       end
     end.html_safe
   end
+
+  def is_channel_dashboard?
+    if Rails.env.development?
+      return false
+    end
+
+    mastodon_url = ENV['MASTODON_INSTANCE_URL']
+    return false if mastodon_url.nil?
+
+    case mastodon_url
+    when /channel/
+      true
+    when /staging\.patchwork\.online/
+      true
+    else
+      false
+    end
+  end
 end

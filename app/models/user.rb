@@ -4,12 +4,14 @@
 #
 #  id                        :bigint           not null, primary key
 #  approved                  :boolean          default(TRUE), not null
+#  bluesky_bridge_enabled    :boolean          default(FALSE), not null
 #  chosen_languages          :string           is an Array
 #  confirmation_sent_at      :datetime
 #  confirmation_token        :string
 #  confirmed_at              :datetime
 #  consumed_timestep         :integer
 #  current_sign_in_at        :datetime
+#  did_value                 :string
 #  disabled                  :boolean          default(FALSE), not null
 #  email                     :string           default(""), not null
 #  encrypted_otp_secret      :string

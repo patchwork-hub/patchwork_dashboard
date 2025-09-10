@@ -24,6 +24,10 @@ if ServerSetting.count == 0
     {
       name: 'Plug-ins',
       options: []
+    },
+    {
+      name: 'Bluesky Bridge',
+      options: ['Enable bluesky bridge']
     }
   ]
 

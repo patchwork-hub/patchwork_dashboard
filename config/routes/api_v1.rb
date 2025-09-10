@@ -131,5 +131,7 @@ namespace :api, defaults: { format: :json } do
         post :boost_post
       end
     end
+
+    post 'users/bluesky_bridge', to: 'users#update_bluesky_bridge_setting'
   end
 end

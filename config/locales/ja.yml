@@ -51,6 +51,7 @@ ja:
         account_not_found: "アカウントが見つかりません。"
         account_suspended: "アカウントが停止されています。"
         email_not_verified: "メールアドレスが確認されていません。"
+        unable_to_bridge: "ユーザーはBluesky Bridgeの要件を満たしていません。ユーザー名、表示名、アバター、およびヘッダーが必要です。"
 
     setting:
       errors:

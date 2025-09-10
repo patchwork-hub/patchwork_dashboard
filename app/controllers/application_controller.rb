@@ -77,8 +77,6 @@ class ApplicationController < ActionController::Base
   end
 
   def current_account
-    return @current_account if defined?(@current_account)
-
-    @current_account = current_user&.account
+    @current_account ||= current_user&.account
   end
 end
