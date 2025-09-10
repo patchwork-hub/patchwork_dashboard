@@ -32,8 +32,9 @@ class WaitList < ApplicationRecord
   
   validates :account_id, uniqueness: true, allow_nil: true
   validates :invitation_code, presence: true, uniqueness: true
-  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP, message: :invalid }, allow_blank: true
   validates :description, length: { maximum: 255 }, allow_blank: true
+  validates :channel_type, presence: true, inclusion: { in: channel_types.keys }
 
   def generate_invitation_code
     loop do

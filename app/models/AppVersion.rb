@@ -23,6 +23,9 @@ class AppVersion < ApplicationRecord
 
   enum app_name: { patchwork: 0, newsmast: 1 }
 
+  # Virtual attribute for form handling
+  attr_accessor :released_date
+
   private
   def version_name_format
     return if version_name.blank?

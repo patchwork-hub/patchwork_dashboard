@@ -70,6 +70,14 @@ class User < ApplicationRecord
 
   validates :email, uniqueness: true, presence: true
 
+  # Validate locale field to ensure it's one of the supported locales
+  validates :locale, inclusion: { 
+    in: -> (user) { I18n.available_locales.map(&:to_s) },
+    message: I18n.t('activerecord.errors.models.user.attributes.locale.invalid', 
+                   default: "is not a supported locale"),
+    allow_blank: true
+  }
+
   def master_admin?
     role.name == 'MasterAdmin'
   end

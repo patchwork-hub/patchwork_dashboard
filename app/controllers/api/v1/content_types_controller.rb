@@ -17,7 +17,7 @@ module Api
         if content_type.save
           render json: Api::V1::ContentTypeSerializer.new(content_type).serializable_hash, status: :ok
         else
-          render json: { errors: content_type.errors.full_messages }, status: :unprocessable_entity
+          render_validation_failed(content_type.errors)
         end
       end
 

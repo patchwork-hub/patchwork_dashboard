@@ -325,9 +325,6 @@ document.addEventListener('DOMContentLoaded', function () {
           }
           return response.json();
         })
-        .then((data) => {
-          console.log('Updated successfully:', data);
-        })
         .catch((error) => {
           console.error('Error:', error);
           checkbox.checked = !deprecated; // Revert checkbox state on error

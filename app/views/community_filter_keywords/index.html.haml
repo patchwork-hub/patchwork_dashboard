@@ -1,0 +1,39 @@
+- title = "Global filters"
+
+- content_for :title do
+  = #{title}
+
+.row
+  .col-12
+    .card
+      .card-header
+        %h3.card-title #{title}
+        .card-tools.d-flex.justify-content-end.align-items-center
+          = search_form_for @search, url: community_filter_keywords_path, method: :get, html: { class: 'form-inline' } do |f|
+            .input-group.input-group-sm
+              = f.search_field :keyword_cont, class: "form-control", placeholder: "Search"
+              .input-group-append
+                %button.btn.btn-default{type: "submit"}
+                  %i.fas.fa-search
+      .card-body
+        %p.text-muted Here you can see a list of all global keywords.
+        %table.table.no-side-borders.top-bottom-border{data: {url: community_filter_keywords_url, type: 'community_filter_keyword'}}
+          %thead
+            %tr
+              %th{ style: 'width: 45%;' } Name
+              %th{ style: 'width: 45%;' } Hashtag?
+          %tbody
+            - if @keywords.size == 0
+              %tr
+                %td.text-center.info-box-content{colspan: "100%"}
+                  %p.text-muted.small You haven’t added any keywords
+            - @keywords.each do |keyword|
+              %tr
+                %td{ style: 'width: 45%;' }= keyword.keyword
+                %td{ style: 'width: 45%;' }
+                  %i{ class: "fa-solid #{keyword.is_filter_hashtag ? 'fa-check' : 'fa-xmark'}", style: "color: #{keyword.is_filter_hashtag ? 'green' : 'red'}" }
+        - if master_admin?
+          .row.mt-2
+            .col
+              .pagination.pagination-sm.m-0.float-right
+                = paginate @keywords, theme: 'bootstrap4'

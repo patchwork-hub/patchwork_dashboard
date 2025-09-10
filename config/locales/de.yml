@@ -1,0 +1,277 @@
+# German translations for Patchwork Dashboard
+# Deutsche Übersetzungen für das Patchwork Dashboard
+
+de:
+  # Locale information
+  locale:
+    name: "Deutsch"
+    native_name: "Deutsch"
+
+  # API responses and messages
+  api:
+    errors:
+      unauthorized: "Sie sind nicht berechtigt, diese Aktion auszuführen"
+      forbidden: "Zugriff verweigert!"
+      not_found: "Ressource nicht gefunden"
+      unprocessable_entity: "Die Anfrage konnte nicht verarbeitet werden"
+      internal_server_error: "Ein interner Serverfehler ist aufgetreten"
+      validation_failed: "Validierung fehlgeschlagen!"
+      invalid_request: "Ungültige Anfrage!"
+      rate_limit_exceeded: "Rate-Limit überschritten. Bitte versuchen Sie es später erneut."
+      
+    messages:
+      success: "Vorgang erfolgreich abgeschlossen."
+      created: "Ressource erfolgreich erstellt."
+      updated: "Ressource erfolgreich aktualisiert."
+      deleted: "Ressource erfolgreich gelöscht."
+      processing: "Anfrage wird verarbeitet."
+
+    community:
+      errors:
+        only_one_channel: "Sie können nur einen Kanal erstellen."
+        not_found: "Community nicht gefunden."
+        access_denied: "Zugriff auf diese Community verweigert."
+        invalid_slug: "Ungültiger Community-Bezeichner."
+        name_taken: "Community-Name ist bereits vergeben."
+        slug_taken: "Community-Bezeichner ist bereits vergeben."
+        invalid_visibility: "Ungültige Sichtbarkeitseinstellung."
+        missing_additional_information: "Zusätzliche Informationen fehlen."
+        duplicate_link_url: "Doppelte Link-URL für diese Community ist nicht erlaubt."
+        search_params_required: "Abfrage-, URL- und Token-Parameter sind erforderlich."
+        
+      messages:
+        created: "Community erfolgreich erstellt."
+        updated: "Community erfolgreich aktualisiert."
+        visibility_updated: "Community-Sichtbarkeit aktualisiert."
+        additional_information_updated: "Zusätzliche Informationen erfolgreich aktualisiert."
+        
+    account:
+      errors:
+        invalid_credentials: "Ungültiger Benutzername oder Passwort."
+        account_not_found: "Konto nicht gefunden."
+        account_suspended: "Konto wurde gesperrt."
+        email_not_verified: "E-Mail-Adresse nicht verifiziert."
+
+    setting:
+      errors:
+        not_found: "Einstellungen nicht gefunden."
+        authentication_failed: "Authentifizierung fehlgeschlagen."
+        invalid_app_name: "%{attribute} : Ungültiger App-Name angegeben."
+        validation_failed: "Validierung der Einstellungen fehlgeschlagen."
+        delete_failed: "Löschen der Einstellungen fehlgeschlagen."
+        
+      messages:
+        saved: "Einstellungen wurden erfolgreich gespeichert."
+        deleted: "Einstellungen erfolgreich gelöscht."
+
+    domain:
+      errors:
+        missing_parameters: "Domain und IP-Adresse sind erforderlich."
+        verification_failed: "Domain-Verifizierung fehlgeschlagen aufgrund eines Fehlers."
+        
+      messages:
+        dns_verified: "DNS korrekt konfiguriert."
+        dns_instructions: "A-Record nicht gefunden. Bitte richten Sie Ihren A-Record auf %{ip} aus."
+
+    api_key:
+      errors:
+        invalid_status: "Ungültiger API-Schlüssel-Status."
+        key_not_found: "API-Schlüssel nicht gefunden."
+        already_deactivated: "API-Schlüssel ist bereits deaktiviert."
+        already_activated: "API-Schlüssel ist bereits aktiviert."
+        
+      messages:
+        rotated_successfully: "API-Schlüssel erfolgreich rotiert."
+        activated_successfully: "API-Schlüssel erfolgreich aktiviert."
+        deactivated_successfully: "API-Schlüssel erfolgreich deaktiviert."
+
+    wait_list:
+      errors:
+        email_required: "E-Mail ist erforderlich."
+        invitation_code_required: "Einladungscode ist erforderlich."
+        invalid_code: "Ungültiger Einladungscode."
+        validation_failed: "Validierung fehlgeschlagen!"
+        account_already_registered: "Konto ist bereits auf der Warteliste registriert."
+        
+      messages:
+        created: "Erfolgreich zur Warteliste hinzugefügt."
+        invitation_sent: "Einladungscode an Ihre E-Mail gesendet."
+        code_valid: "Einladungscode ist gültig."
+
+    joined_communities:
+      errors:
+        channel_not_found: "Kanal nicht gefunden."
+        already_favorited: "Sie können Ihren eigenen Kanal nicht favorisieren."
+        no_access_set_primary: "Sie haben keine Berechtigung, einen primären Kanal zu setzen."
+        no_favorited_channels: "Sie haben keine favorisierten Kanäle."
+        community_not_found: "Community nicht gefunden."
+        minimum_channels_required: "Sie müssen mindestens 5 Kanälen beitreten, um einen als primär zu setzen."
+        favorited_channel_not_found: "Favorisierter Kanal nicht gefunden."
+        
+      messages:
+        favorited_successfully: "Kanal wurde erfolgreich favorisiert."
+        unfavorited_successfully: "Favorisierter Kanal wurde erfolgreich gelöscht."
+        primary_set_successfully: "Kanal wurde erfolgreich als primär gesetzt."
+        
+    community_hashtags:
+      errors:
+        invalid_hashtag: "Ungültiges Hashtag-Format."
+        duplicate_hashtag: "Doppelter Eintrag: Hashtag existiert bereits."
+        parameter_missing: "Erforderlicher Parameter fehlt."
+        cannot_contain_spaces: "Hashtag darf keine Leerzeichen enthalten."
+        hashtag_not_found: "Hashtag nicht gefunden."
+        community_required: "Patchwork Community-ID ist erforderlich."
+        community_not_found: "Patchwork Community nicht gefunden."
+        
+      messages:
+        created: "Hashtag erfolgreich gespeichert!"
+        updated: "Hashtag erfolgreich aktualisiert!"
+        deleted: "Hashtag erfolgreich entfernt!"
+
+    validation:
+      required: "%{attribute} ist erforderlich"
+      too_long: "%{attribute} ist zu lang (maximal %{count} Zeichen)"
+      too_short: "%{attribute} ist zu kurz (mindestens %{count} Zeichen)"
+      invalid_format: "%{attribute} hat ein ungültiges Format"
+      not_unique: "%{attribute} ist bereits vergeben"
+
+  # Model validation messages
+  activerecord:
+    errors:
+      models:
+        community:
+          attributes:
+            name:
+              blank: "Community-Name darf nicht leer sein."
+              too_long: "Community-Name darf nicht länger als %{count} Zeichen sein."
+              taken: "Community-Name ist bereits vergeben."
+            slug:
+              blank: "Community-Bezeichner darf nicht leer sein."
+              too_short: "Community-Bezeichner muss mindestens %{count} Zeichen haben."
+              too_long: "Community-Bezeichner darf nicht länger als %{count} Zeichen sein."
+              invalid: "Community-Bezeichner hat ein ungültiges Format."
+              invalid_domain: "muss ein gültiges Domänenformat sein (z.B. beispiel.com), darf keine aufeinanderfolgenden Punkte haben oder mit einem Punkt enden."
+              taken: "Community-Bezeichner ist bereits vergeben."
+              immutable: "Community-Bezeichner kann nach der Erstellung nicht geändert werden."
+            description:
+              too_long: "Beschreibung darf nicht länger als %{count} Zeichen sein."
+            about:
+              too_long: "Über-Bereich darf nicht länger als %{count} Zeichen sein."
+            base:
+              duplicate_link_urls: "Links enthalten doppelte URLs: %{urls}."
+              
+        account:
+          attributes:
+            username:
+              blank: "Benutzername darf nicht leer sein"
+              too_short: "Benutzername muss mindestens %{count} Zeichen haben"
+              too_long: "Benutzername darf nicht länger als %{count} Zeichen sein"
+              invalid: "Benutzername darf nur Buchstaben, Zahlen und Unterstriche enthalten"
+              taken: "Benutzername ist bereits vergeben"
+            email:
+              blank: "E-Mail darf nicht leer sein"
+              invalid: "E-Mail-Format ist ungültig"
+              taken: "E-Mail ist bereits vergeben"
+            password:
+              blank: "Passwort darf nicht leer sein."
+              too_short: "Passwort muss mindestens %{count} Zeichen haben."
+              
+        api_key:
+          attributes:
+            key:
+              blank: "API-Schlüssel darf nicht leer sein."
+              invalid: "API-Schlüssel-Format ist ungültig."
+            secret:
+              blank: "API-Geheimnis darf nicht leer sein."
+              invalid: "API-Geheimnis-Format ist ungültig."
+            status:
+              blank: "Status darf nicht leer sein."
+              invalid: "Status muss entweder Aktiviert oder Deaktiviert sein."
+              inclusion: "Status muss entweder Aktiviert oder Deaktiviert sein."
+
+        user:
+          attributes:
+            locale:
+              invalid: "ist keine unterstützte Sprache"
+              inclusion: "muss eine der unterstützten Sprachen sein: %{values}"
+
+        joined_community:
+          attributes:
+            community:
+              blank: "Community muss ausgewählt werden."
+            account:
+              blank: "Konto muss vorhanden sein."
+              taken: "ist dieser Community bereits beigetreten."
+            is_primary:
+              only_one_primary: "kann nur für eine Community pro Konto wahr sein."
+              
+        community_hashtag:
+          attributes:
+            hashtag:
+              blank: "Hashtag darf nicht leer sein."
+              taken: "wurde bereits zu dieser Community hinzugefügt."
+            community:
+              blank: "Community muss ausgewählt werden."
+
+        wait_list:
+          attributes:
+            invitation_code:
+              blank: "Einladungscode darf nicht leer sein."
+              taken: "Einladungscode wurde bereits vergeben."
+            email:
+              blank: "E-Mail darf nicht leer sein."
+              invalid: "E-Mail-Format ist ungültig."
+            description:
+              too_long: "Beschreibung darf nicht länger als %{count} Zeichen sein."
+            channel_type:
+              blank: "Kanaltyp darf nicht leer sein."
+              inclusion: "Kanaltyp muss entweder Kanal oder Hub sein."
+            account_id:
+              taken: "Konto ist bereits auf der Warteliste registriert."
+
+        setting:
+          attributes:
+            account:
+              blank: "Konto muss vorhanden sein."
+            app_name:
+              blank: "App-Name darf nicht leer sein."
+              inclusion: "App-Name muss einer der unterstützten Werte sein: %{values}."
+            settings:
+              blank: "Einstellungen dürfen nicht leer sein."
+              invalid: "Einstellungsformat ist ungültig."
+
+  # Time and date formats
+  time:
+    formats:
+      default: "%d.%m.%Y %H:%M:%S"
+      short: "%d. %b %H:%M"
+      long: "%d. %B %Y %H:%M"
+      
+  date:
+    formats:
+      default: "%d.%m.%Y"
+      short: "%d. %b"
+      long: "%d. %B %Y"
+
+  # General terms
+  general:
+    yes: "Ja"
+    no: "Nein"
+    save: "Speichern"
+    cancel: "Abbrechen"
+    delete: "Löschen"
+    edit: "Bearbeiten"
+    create: "Erstellen"
+    update: "Aktualisieren"
+    submit: "Absenden"
+    loading: "Wird geladen..."
+    confirm: "Sind Sie sicher?"
+
+  # Mailer translations
+  mailers:
+    wait_list:
+      send_invitation_code:
+        subject: "Ihr angeforderter Einladungscode"
+        greeting: "Liebe/r %{email},"
+        body: "Ihr angeforderter Einladungscode ist unten aufgeführt:"
+        note: "Wenn Sie dies nicht angefordert haben, ignorieren Sie diese E-Mail bitte."

@@ -1,5 +1,5 @@
 module ApplicationHelper
-  include BlueskyAccountBridgeHleper
+  include BlueskyAccountBridgeHelper
   include CommunityHelper
   include AppVersionHelper
 
@@ -24,11 +24,20 @@ module ApplicationHelper
         { path: communities_path(channel_type: 'newsmast'), id: 'communities-link', header: 'Newsmast channels', icon: 'newsmast.svg', text: 'Newsmast channels', active_if: newsmast_active },
         { path: collections_path, id: 'collections-link', header: 'Collections', icon: 'collection.svg', text: 'Collections', active_if: 'collections' },
         { path: master_admins_path, id: 'master_admins-link', header: 'Master admin', icon: 'administrator.svg', text: 'Master admins', active_if: 'master_admins' },
+        { path: community_filter_keywords_path(community_id: nil), id: 'global_filters-link', header: 'Global filters', icon: 'globe-white.svg', text: 'Global filters', active_if: 'global_filters' },
         # { path: accounts_path, id: 'accounts-link', header: 'Users', icon: 'users.svg', text: 'Users', active_if: 'accounts' },
         { path: resources_path, id: 'resources-link', header: 'Resources', icon: 'folder.svg', text: 'Resources', active_if: 'resources' },
         { path: api_keys_path, id: 'resources-link', header: 'API Key', icon: 'key.svg', text: 'API Key', active_if: 'api_keys' },
         { path: wait_lists_path, id: 'invitation-codes-link', header: 'Invitation codes', icon: 'invitation_code.svg', text: 'Invitation codes', active_if: 'wait_lists' },
         { path: app_versions_path(app_name: AppVersion.app_names['patchwork']), id: 'app-versions-link', header: 'App versions', icon: 'sliders.svg', text: 'App versions', active_if: 'app_versions' },
+        *(
+          if ["patchwork.io", "mo-me.social", "newsmast.social"].any? { |domain| ENV['MASTODON_INSTANCE_URL']&.include?(domain) }
+            [
+              { path: "#{ENV['MASTODON_INSTANCE_URL']}/admin/dashboard", id: 'administration-link', header: 'Administration', icon: 'administrator.svg', text: 'Administration', target: '_blank' },
+              { path: "#{ENV['MASTODON_INSTANCE_URL']}/admin/reports", id: 'moderation-link', header: 'Moderation', icon: 'users.svg', text: 'Moderation', target: '_blank' },
+            ]
+          end
+        ),
         { path: "/sidekiq", id: 'sidekiq-link', header: 'Sidekiq', icon: 'smile-1.svg', text: 'Sidekiq', target: '_blank' },
         { path: '#', id: 'help-support-link', header: 'Help & Support', icon: 'question.svg', text: 'Help & Support', active_if: 'help_support' }
       ]
@@ -90,5 +99,18 @@ module ApplicationHelper
 
   def newsmast_admin?
     current_user && policy(current_user).newsmast_admin?
+  end
+
+  def render_custom_emojis(text)
+    emoji_map = MastodonEmoji.fetch_and_cache_emojis
+
+    pattern = /:([a-zA-Z0-9_+-]+):/
+    text.gsub(pattern) do |match|
+      if emoji_map[match]
+        image_tag emoji_map[match], alt: match, class: "custom-emoji"
+      else
+        match
+      end
+    end.html_safe
   end
 end

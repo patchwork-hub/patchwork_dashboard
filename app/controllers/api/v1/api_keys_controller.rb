@@ -5,9 +5,9 @@ module Api
       def rotate
         @api_key.assign_attributes(api_key_params)
         if @api_key.save(validate: false)
-          render json: {message: 'Success!'}, status: 200
+          render_updated({}, 'api.api_key.messages.rotated_successfully')
         else
-          render json: {error: @api_key.errors.full_messages}, status: 422
+          render_validation_failed(@api_key.errors, 'api.errors.validation_failed')
         end
       end
 

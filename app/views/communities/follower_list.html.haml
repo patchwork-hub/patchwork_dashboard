@@ -29,7 +29,7 @@
                   %p.text-muted.small There's no follower.
             - @records.each do |account|
               %tr
-                %td= account&.display_name.present? ? account&.display_name : " - " 
+                %td= account&.display_name.present? ? render_custom_emojis(account.display_name) : " - " 
                 %td
                   - if account.present?
                     %span.copyable-text{title: "Click to copy", style: "cursor: pointer;", onclick: "copyToClipboard('#{account_url(account)}')"}= "@#{username(account)}@#{domain(account)}"
