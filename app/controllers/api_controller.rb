@@ -107,7 +107,7 @@ class ApiController < ApplicationController
 
   def validate_token(token)
     begin
-      url = "https://#{ENV['LOCAL_DOMAIN']}/oauth/token/info"
+      url = "#{ENV['MASTODON_INSTANCE_URL']}/oauth/token/info"
       response = HTTParty.get(url, headers: { 'Authorization' => "Bearer #{token}" })
       JSON.parse(response.body)
     rescue HTTParty::Error => e
