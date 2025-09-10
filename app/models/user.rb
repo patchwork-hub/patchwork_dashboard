@@ -63,7 +63,7 @@
 class User < ApplicationRecord
   devise :database_authenticatable, :validatable
 
-  belongs_to :role, class_name: 'UserRole', inverse_of: :users
+  belongs_to :role, class_name: 'UserRole', inverse_of: :users, optional: true
 
   belongs_to :account, inverse_of: :user
 
