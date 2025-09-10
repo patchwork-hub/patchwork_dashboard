@@ -23,7 +23,7 @@ module ApiResponseHelper
   end
 
   def render_created(data = {}, message_key = 'api.messages.created')
-    render_success(data, message_key, :created)
+    render_success(data, message_key, :ok)
   end
 
   def render_updated(data = {}, message_key = 'api.messages.updated')

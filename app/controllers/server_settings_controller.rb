@@ -1,7 +1,8 @@
 class ServerSettingsController < ApplicationController
+  include ApplicationHelper
+
   before_action :authorize_master_admin!
   before_action :set_keyword_filter_group, only: [:index]
-
   def index
     @server_settings = prepare_server_setting
   end
@@ -34,15 +35,15 @@ class ServerSettingsController < ApplicationController
   end
 
   def prepare_server_setting
-    @parent_settings = ENV['MASTODON_INSTANCE_URL']&.include?('channel') ? ServerSetting.where(parent_id: nil).includes(:children).order(:id) : ServerSetting.where(parent_id: nil).order(:id)
+    @parent_settings = is_channel_dashboard? ? ServerSetting.where(parent_id: nil).includes(:children).order(:id) : ServerSetting.where(parent_id: nil).order(:id)
 
     @parent_settings = @parent_settings.where("lower(name) LIKE ?", "%#{@q.downcase}%") if @q.present?
 
-    desired_order = ['Local Features', 'User Management', 'Content filters', 'Spam filters', 'Federation', 'Plug-ins']
-    desired_child_name = ['Spam filters', 'Content filters', 'Bluesky', 'Search opt-out', 'Long posts and markdown', 'e-Newsletters']
+    desired_order = ['Local Features', 'User Management', 'Content filters', 'Spam filters', 'Federation', 'Plug-ins', 'Bluesky Bridge']
+    desired_child_name = ['Spam filters', 'Content filters', 'Bluesky', 'Search opt-out', 'Long posts and markdown', 'e-Newsletters', 'Enable bluesky bridge']
 
     @data = @parent_settings.map do |parent_setting|
-      child_setting_query = ENV['MASTODON_INSTANCE_URL']&.include?('channel') ? parent_setting.children.sort_by(&:position) : parent_setting.children.where(name: desired_child_name).sort_by(&:position)
+      child_setting_query = is_channel_dashboard? ? parent_setting.children.sort_by(&:position) : parent_setting.children.where(name: desired_child_name).sort_by(&:position)
       {
         name: parent_setting.name,
         settings: child_setting_query.map do |child_setting|

@@ -51,6 +51,7 @@ ru:
         account_not_found: "Аккаунт не найден"
         account_suspended: "Аккаунт заблокирован"
         email_not_verified: "Email адрес не подтверждён"
+        unable_to_bridge: "Пользователь не соответствует требованиям Bluesky Bridge. Должен иметь имя пользователя, отображаемое имя, аватар и заголовок."
 
     setting:
       errors:

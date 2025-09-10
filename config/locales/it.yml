@@ -51,6 +51,7 @@ it:
         account_not_found: "Account non trovato."
         account_suspended: "L'account è stato sospeso."
         email_not_verified: "Indirizzo email non verificato."
+        unable_to_bridge: "L'utente non soddisfa i requisiti di Bluesky Bridge. Deve avere nome utente, nome visualizzato, avatar e intestazione."
 
     setting:
       errors:
