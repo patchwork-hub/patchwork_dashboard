@@ -39,7 +39,7 @@ class ServerSettingsController < ApplicationController
     @parent_settings = @parent_settings.where("lower(name) LIKE ?", "%#{@q.downcase}%") if @q.present?
 
     desired_order = ['Local Features', 'User Management', 'Content filters', 'Spam filters', 'Federation', 'Plug-ins']
-    desired_child_name = ['Spam filters', 'Content filters', 'Bluesky', 'Custom theme', 'Search opt-out', 'Long posts and markdown', 'e-Newsletters']
+    desired_child_name = ['Spam filters', 'Content filters', 'Bluesky', 'Search opt-out', 'Long posts and markdown', 'e-Newsletters']
 
     @data = @parent_settings.map do |parent_setting|
       child_setting_query = ENV['MASTODON_INSTANCE_URL']&.include?('channel') ? parent_setting.children.sort_by(&:position) : parent_setting.children.where(name: desired_child_name).sort_by(&:position)
