@@ -51,6 +51,7 @@ cy:
         account_not_found: "Ni ddaethpwyd o hyd i'r cyfrif."
         account_suspended: "Mae'r cyfrif wedi'i atal."
         email_not_verified: "Nid yw'r cyfeiriad e-bost wedi'i ddilysu."
+        unable_to_bridge: "Nid yw'r defnyddiwr yn bodloni gofynion Pont Bluesky. Rhaid cael enw defnyddiwr, enw arddangos, afatar a phennawd."
 
     setting:
       errors:

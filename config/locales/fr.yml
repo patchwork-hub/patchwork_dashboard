@@ -51,6 +51,7 @@ fr:
         account_not_found: "Compte introuvable."
         account_suspended: "Le compte a été suspendu."
         email_not_verified: "Adresse e-mail non vérifiée."
+        unable_to_bridge: "L'utilisateur ne répond pas aux exigences du pont Bluesky. Doit avoir un nom d'utilisateur, un nom d'affichage, un avatar et un en-tête."
 
     setting:
       errors:
