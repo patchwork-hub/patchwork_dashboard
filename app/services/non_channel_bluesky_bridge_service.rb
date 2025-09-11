@@ -60,7 +60,11 @@ class NonChannelBlueskyBridgeService
     while retries >= 0
       result = ContributorSearchService.new(query, url: ENV['MASTODON_INSTANCE_URL'], token: token).call
       if result.any?
-        return result.last['id']
+        # Find the account that matches "bsky.brid.gy"
+        bsky_bridge_account = result.find { |account| account['username'] == 'bsky.brid.gy' }
+        if bsky_bridge_account
+          return bsky_bridge_account['id']
+        end
       end
       retries -= 1
     end
