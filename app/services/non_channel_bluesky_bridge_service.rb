@@ -123,7 +123,7 @@ class NonChannelBlueskyBridgeService
 
   def create_direct_message(token, account)
 
-    name = "#{account&.username}@#{ENV['LOCAL_DOMAIN']}"
+    name = "#{account&.username}.#{ENV['LOCAL_DOMAIN']}"
 
     status_params = {
       "in_reply_to_id": nil,
