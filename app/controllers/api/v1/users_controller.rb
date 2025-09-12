@@ -29,6 +29,12 @@ module Api
         end
       end
 
+      def index
+        return render_not_found unless @account
+
+        render_success({ id: current_user.id, bluesky_bridge_enabled: current_user.bluesky_bridge_enabled })
+      end
+
     private
 
       def parse_boolean_param(value)
