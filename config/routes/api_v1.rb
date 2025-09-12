@@ -133,5 +133,6 @@ namespace :api, defaults: { format: :json } do
     end
 
     post 'users/bluesky_bridge', to: 'users#update_bluesky_bridge_setting'
+    get 'users/bluesky_bridge', to: 'users#index'
   end
 end
