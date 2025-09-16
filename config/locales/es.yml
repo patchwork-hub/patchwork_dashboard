@@ -1,6 +1,3 @@
-# Spanish translations for Patchwork Dashboard
-# This file contains all Spanish translations for the application
-
 es:
   # Locale information
   locale:
@@ -38,6 +35,7 @@ es:
         missing_additional_information: "Falta información adicional."
         duplicate_link_url: "No se permite una URL de enlace duplicada para esta comunidad."
         search_params_required: "Se requieren los parámetros de consulta, URL y token."
+        no_image_to_remove: "No hay imagen para eliminar."
         
       messages:
         created: "Comunidad creada con éxito."

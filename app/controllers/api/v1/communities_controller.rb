@@ -6,7 +6,7 @@ module Api
       
       skip_before_action :verify_key!
       before_action :check_authorization_header
-      before_action :set_community, only: %i[show update set_visibility manage_additional_information]
+      before_action :set_community, only: %i[show update set_visibility manage_additional_information remove_avatar remove_banner]
       before_action :validate_patchwork_community_id, only: %i[contributor_list mute_contributor_list hashtag_list]
       before_action :set_content_and_channel_type, only: %i[index create update]
       
@@ -140,6 +140,24 @@ module Api
           render json: { ip_address: ip_address.ip, id: ip_address.id }, status: :ok
         else
           render_not_found
+        end
+      end
+
+      def remove_avatar
+        if @community.avatar_image.present?
+          @community.update(avatar_image: nil)
+          render_success({}, 'api.messages.success', :ok)
+        else
+          render_errors('api.community.errors.no_image_to_remove', :unprocessable_entity)
+        end
+      end
+
+      def remove_banner
+        if @community.banner_image.present?
+          @community.update(banner_image: nil)
+          render_success({}, 'api.messages.success', :ok)
+        else
+          render_errors('api.community.errors.no_image_to_remove', :unprocessable_entity)
         end
       end
 

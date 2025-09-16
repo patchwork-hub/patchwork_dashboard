@@ -130,14 +130,14 @@ module ApplicationHelper
 
   def is_channel_dashboard?
     if Rails.env.development?
-      return false
+      return true
     end
 
     mastodon_url = ENV['MASTODON_INSTANCE_URL']
     return false if mastodon_url.nil?
 
     case mastodon_url
-    when /channel/
+    when %r{^(https://)?channel\.org(?=/|$)}
       true
     when /staging\.patchwork\.online/
       true

@@ -1,6 +1,3 @@
-# French translations for Patchwork Dashboard
-# Traductions françaises pour le tableau de bord Patchwork
-
 fr:
   # Locale information
   locale:
@@ -38,7 +35,8 @@ fr:
         missing_additional_information: "Informations supplémentaires manquantes."
         duplicate_link_url: "L'URL de lien en double pour cette communauté n'est pas autorisée."
         search_params_required: "Les paramètres de requête, d'URL et de jeton sont requis."
-        
+        no_image_to_remove: "Aucune image à supprimer."
+
       messages:
         created: "Communauté créée avec succès."
         updated: "Communauté mise à jour avec succès."
