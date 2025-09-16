@@ -1,6 +1,3 @@
-# German translations for Patchwork Dashboard
-# Deutsche Übersetzungen für das Patchwork Dashboard
-
 de:
   # Locale information
   locale:
@@ -38,6 +35,7 @@ de:
         missing_additional_information: "Zusätzliche Informationen fehlen."
         duplicate_link_url: "Doppelte Link-URL für diese Community ist nicht erlaubt."
         search_params_required: "Abfrage-, URL- und Token-Parameter sind erforderlich."
+        no_image_to_remove: "Kein Bild zum Entfernen."
         
       messages:
         created: "Community erfolgreich erstellt."

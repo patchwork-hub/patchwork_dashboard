@@ -1,6 +1,3 @@
-# Brazilian Portuguese translations for Patchwork Dashboard
-# Traduções em português brasileiro para o Patchwork Dashboard
-
 pt_BR:
   # Locale information
   locale:
@@ -38,6 +35,7 @@ pt_BR:
         missing_additional_information: "Informações adicionais em falta."
         duplicate_link_url: "URL de link duplicado para esta comunidade não é permitido."
         search_params_required: "Parâmetros de consulta, URL e token são necessários."
+        no_image_to_remove: "Nenhuma imagem para remover."
         
       messages:
         created: "Comunidade criada com sucesso."

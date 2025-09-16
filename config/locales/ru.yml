@@ -1,6 +1,3 @@
-# Russian translations for Patchwork Dashboard
-# Русские переводы для панели управления Patchwork
-
 ru:
   # Locale information
   locale:
@@ -38,6 +35,7 @@ ru:
         missing_additional_information: "Отсутствует дополнительная информация."
         duplicate_link_url: "Дубликат URL ссылки для этого сообщества не разрешён."
         search_params_required: "Необходимы параметры запроса, URL и токен."
+        no_image_to_remove: "Нет изображения для удаления."
         
       messages:
         created: "Сообщество успешно создано."

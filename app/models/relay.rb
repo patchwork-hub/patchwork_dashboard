@@ -10,4 +10,5 @@
 #  follow_activity_id :string
 #
 class Relay < ApplicationRecord
+  enum :state, { idle: 0, pending: 1, accepted: 2, rejected: 3 }
 end
