@@ -60,7 +60,11 @@ class NonChannelBlueskyBridgeService
     while retries >= 0
       result = ContributorSearchService.new(query, url: ENV['MASTODON_INSTANCE_URL'], token: token).call
       if result.any?
-        return result.last['id']
+        # Find the account that matches "bsky.brid.gy"
+        bsky_bridge_account = result.find { |account| account['username'] == 'bsky.brid.gy' }
+        if bsky_bridge_account
+          return bsky_bridge_account['id']
+        end
       end
       retries -= 1
     end
@@ -119,7 +123,7 @@ class NonChannelBlueskyBridgeService
 
   def create_direct_message(token, account)
 
-    name = "#{account&.username}@#{ENV['LOCAL_DOMAIN']}"
+    name = "#{account&.username}.#{ENV['LOCAL_DOMAIN']}"
 
     status_params = {
       "in_reply_to_id": nil,

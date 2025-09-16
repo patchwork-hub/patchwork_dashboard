@@ -4,11 +4,18 @@ require 'httparty'
 require 'nokogiri'
 
 class FetchDidValueService < BaseService
+  include ApplicationHelper
+
   def call(account, community)
     @account = account
     @community = community
 
-    did_value = fetch_did_value(account_url) || fetch_did_value(community_slug_url) || fetch_did_value(community_name_url)
+
+    did_value = if is_channel_dashboard?
+      [account_url, community_slug_url, community_name_url].find { |url| fetch_did_value(url) }
+    else
+      fetch_did_value(account_url)
+    end
     did_value
   end
 
@@ -16,24 +23,21 @@ class FetchDidValueService < BaseService
 
   def account_url
     return unless @account&.username
-    puts "[FetchDidValueService] url: https://fed.brid.gy/ap/@#{@account.username}@channel.org"
 
-    "https://fed.brid.gy/ap/@#{@account.username}@channel.org"
+    "https://fed.brid.gy/ap/@#{@account.username}@#{ENV['LOCAL_DOMAIN']}"
   end
 
   def community_slug_url
     return unless @community&.slug
-    domain = @community.is_custom_domain? ? @community.slug : "#{@community.slug}.channel.org"
-    puts "[FetchDidValueService] url: https://fed.brid.gy/ap/@#{domain}"
+    domain = @community.is_custom_domain? ? @community.slug : "#{@community.slug}.#{ENV['LOCAL_DOMAIN']}"
 
     "https://fed.brid.gy/ap/@#{domain}"
   end
 
   def community_name_url
     return unless @community&.name
-    puts "[FetchDidValueService] url: https://fed.brid.gy/ap/@#{@community.name}@channel.org"
 
-    "https://fed.brid.gy/ap/@#{@community.name}@channel.org"
+    "https://fed.brid.gy/ap/@#{@community.name}@#{ENV['LOCAL_DOMAIN']}"
   end
 
   def fetch_did_value(url)

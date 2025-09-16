@@ -107,15 +107,7 @@ class ApiController < ApplicationController
 
   def validate_token(token)
     begin
-      env = ENV.fetch('RAILS_ENV', nil)
-      url = case env
-        when 'staging'
-          'https://staging.patchwork.online/oauth/token/info'
-        when 'production'
-          'https://channel.org/oauth/token/info'
-        else
-          'http://localhost:3001/oauth/token/info'
-        end
+      url = "#{ENV['MASTODON_INSTANCE_URL']}/oauth/token/info"
       response = HTTParty.get(url, headers: { 'Authorization' => "Bearer #{token}" })
       JSON.parse(response.body)
     rescue HTTParty::Error => e
