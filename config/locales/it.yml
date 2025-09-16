@@ -1,6 +1,3 @@
-# Italian translations for Patchwork Dashboard
-# Traduzioni italiane per il Patchwork Dashboard
-
 it:
   # Locale information
   locale:
@@ -38,6 +35,7 @@ it:
         missing_additional_information: "Informazioni aggiuntive mancanti."
         duplicate_link_url: "URL di collegamento duplicato per questa comunità non è consentito."
         search_params_required: "Sono richiesti i parametri di query, URL e token."
+        no_image_to_remove: "Nessuna immagine da rimuovere."
         
       messages:
         created: "Comunità creata con successo."

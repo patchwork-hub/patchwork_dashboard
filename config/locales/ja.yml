@@ -1,6 +1,3 @@
-# Japanese translations for Patchwork Dashboard
-# パッチワークダッシュボードの日本語翻訳
-
 ja:
   # Locale information
   locale:
@@ -38,6 +35,7 @@ ja:
         missing_additional_information: "追加情報が不足しています。"
         duplicate_link_url: "このコミュニティでは重複したリンクURLは許可されていません。"
         search_params_required: "クエリ、URL、およびトークンのパラメータが必要です。"
+        no_image_to_remove: "削除する画像がありません。"
         
       messages:
         created: "コミュニティが正常に作成されました。"

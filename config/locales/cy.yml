@@ -1,6 +1,3 @@
-# Welsh translations for Patchwork Dashboard
-# Cyfieithiadau Cymraeg ar gyfer Patchwork Dashboard
-
 cy:
   # Locale information
   locale:
@@ -38,6 +35,7 @@ cy:
         missing_additional_information: "Mae gwybodaeth ychwanegol ar goll."
         duplicate_link_url: "Nid yw URL cyswllt dyblyg ar gyfer y gymuned hon yn cael ei ganiatáu."
         search_params_required: "Mae angen paramedrau ymholiad, URL a thocyn."
+        no_image_to_remove: "Dim delwedd i'w thynnu."
         
       messages:
         created: "Crëwyd y gymuned yn llwyddiannus."
