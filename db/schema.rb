@@ -199,7 +199,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_10_000001) do
     t.boolean "indexable", default: false, null: false
     t.string "attribution_domains", default: [], array: true
     t.string "devices_url"
-    t.boolean "is_banned", default: false
     t.index "(((setweight(to_tsvector('simple'::regconfig, (display_name)::text), 'A'::\"char\") || setweight(to_tsvector('simple'::regconfig, (username)::text), 'B'::\"char\")) || setweight(to_tsvector('simple'::regconfig, (COALESCE(domain, ''::character varying))::text), 'C'::\"char\")))", name: "search_index", using: :gin
     t.index "lower((username)::text), COALESCE(lower((domain)::text), ''::text)", name: "index_accounts_on_username_and_domain_lower", unique: true
     t.index ["domain", "id"], name: "index_accounts_on_domain_and_id"
@@ -682,9 +681,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_10_000001) do
     t.integer "thumbnail_file_size"
     t.datetime "thumbnail_updated_at", precision: nil
     t.string "thumbnail_remote_url"
-    t.bigint "patchwork_drafted_status_id"
     t.index ["account_id", "status_id"], name: "index_media_attachments_on_account_id_and_status_id", order: { status_id: :desc }
-    t.index ["patchwork_drafted_status_id"], name: "index_media_attachments_on_patchwork_drafted_status_id", where: "(patchwork_drafted_status_id IS NOT NULL)"
     t.index ["scheduled_status_id"], name: "index_media_attachments_on_scheduled_status_id", where: "(scheduled_status_id IS NOT NULL)"
     t.index ["shortcode"], name: "index_media_attachments_on_shortcode", unique: true, opclass: :text_pattern_ops, where: "(shortcode IS NOT NULL)"
     t.index ["status_id"], name: "index_media_attachments_on_status_id"
@@ -911,6 +908,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_10_000001) do
     t.datetime "updated_at", null: false
     t.string "filter_type", default: "filter_out", null: false
     t.index ["keyword", "is_filter_hashtag", "patchwork_community_id"], name: "index_on_keyword_is_filter_hashtag_and_patchwork_community_id", unique: true
+    t.index ["keyword", "is_filter_hashtag"], name: "idx_on_keyword_is_filter_hashtag_de4b77f0f4", unique: true
     t.index ["patchwork_community_id"], name: "idx_on_patchwork_community_id_eadde3c87b"
   end
 
@@ -995,11 +993,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_10_000001) do
 
   create_table "patchwork_community_types", force: :cascade do |t|
     t.string "name", null: false
-    t.string "slug", null: false
     t.integer "sorting_index", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["slug"], name: "index_patchwork_community_types_on_slug", unique: true
+    t.string "slug"
   end
 
   create_table "patchwork_content_types", force: :cascade do |t|
@@ -1009,14 +1006,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_10_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["patchwork_community_id"], name: "index_patchwork_content_types_on_patchwork_community_id"
-  end
-
-  create_table "patchwork_drafted_statuses", force: :cascade do |t|
-    t.bigint "account_id"
-    t.jsonb "params"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["account_id"], name: "index_patchwork_drafted_statuses_on_account_id"
   end
 
   create_table "patchwork_joined_communities", force: :cascade do |t|
@@ -1395,9 +1384,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_10_000001) do
     t.datetime "edited_at", precision: nil
     t.boolean "trendable"
     t.bigint "ordered_media_attachment_ids", array: true
-    t.datetime "fetched_replies_at"
-    t.integer "quote_approval_policy", default: 0, null: false
-    t.boolean "is_banned", default: false
     t.index ["account_id", "id", "visibility", "updated_at"], name: "index_statuses_20190820", order: { id: :desc }, where: "(deleted_at IS NULL)"
     t.index ["account_id"], name: "index_statuses_on_account_id"
     t.index ["deleted_at"], name: "index_statuses_on_deleted_at", where: "(deleted_at IS NOT NULL)"
@@ -1661,7 +1647,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_10_000001) do
   add_foreign_key "login_activities", "users", on_delete: :cascade
   add_foreign_key "markers", "users", on_delete: :cascade
   add_foreign_key "media_attachments", "accounts", name: "fk_96dd81e81b", on_delete: :nullify
-  add_foreign_key "media_attachments", "patchwork_drafted_statuses", on_delete: :nullify
   add_foreign_key "media_attachments", "scheduled_statuses", on_delete: :nullify
   add_foreign_key "media_attachments", "statuses", on_delete: :nullify
   add_foreign_key "mentions", "accounts", name: "fk_970d43f9d1", on_delete: :cascade
@@ -1697,7 +1682,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_10_000001) do
   add_foreign_key "patchwork_community_post_types", "patchwork_communities", on_delete: :cascade
   add_foreign_key "patchwork_community_rules", "patchwork_communities", on_delete: :cascade, validate: false
   add_foreign_key "patchwork_content_types", "patchwork_communities", on_delete: :cascade
-  add_foreign_key "patchwork_drafted_statuses", "accounts", on_delete: :cascade
   add_foreign_key "patchwork_joined_communities", "accounts", on_delete: :cascade, validate: false
   add_foreign_key "patchwork_joined_communities", "patchwork_communities", on_delete: :cascade, validate: false
   add_foreign_key "patchwork_notification_tokens", "accounts", on_delete: :cascade

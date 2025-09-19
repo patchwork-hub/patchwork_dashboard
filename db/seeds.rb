@@ -12,3 +12,6 @@ end
 
 # Run the domain_block import rake task
 Rake::Task['domain_block:import'].invoke
+
+# Run default community types
+Rake::Task['community_types:create'].invoke

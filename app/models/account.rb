@@ -28,7 +28,6 @@
 #  hide_collections              :boolean
 #  inbox_url                     :string           default(""), not null
 #  indexable                     :boolean          default(FALSE), not null
-#  is_banned                     :boolean          default(FALSE)
 #  last_webfingered_at           :datetime
 #  locked                        :boolean          default(FALSE), not null
 #  memorial                      :boolean          default(FALSE), not null
@@ -150,4 +149,10 @@ class Account < ApplicationRecord
     (follow_ids + follow_request_ids).uniq
   end
 
+  def self.update_all_discoverability(value = false)
+    update_all(
+      discoverable: !value,
+      indexable: !value
+    )
+  end
 end

@@ -20,7 +20,9 @@ class ServerSetting < ApplicationRecord
   belongs_to :parent, class_name: "ServerSetting", optional: true
   has_many :children, class_name: "ServerSetting", foreign_key: "parent_id", dependent: :destroy
 
-  after_update :invoke_keyword_schedule, if: :saved_change_to_value?, if: :content_or_spam_filters?
+  after_update :invoke_keyword_schedule, if: -> { saved_change_to_value? && content_or_spam_filters? }
+
+  after_update :update_accounts_discoverable, if: -> { saved_change_to_value? && search_opt_out_filter? }
 
   after_commit :sync_setting
 
@@ -44,5 +46,13 @@ class ServerSetting < ApplicationRecord
 
   def sync_setting
     SyncSettingService.new(self).call if saved_change_to_value? && has_parent?
+  end
+
+  def search_opt_out_filter?
+    name == "Search opt-out"
+  end
+
+  def update_accounts_discoverable
+    UpdateAccountsDiscoverabilityJob.perform_later(value)
   end
 end
