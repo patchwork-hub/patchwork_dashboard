@@ -141,10 +141,29 @@ jQuery(function() {
     nestedFields.find('input[type="text"]').val('');
   }
 
+  // Add this function to handle modal button visibility
+  function toggleModalButtons(inputValue) {
+    const closeButton = document.querySelector('#maxCharsModal .btn-secondary');
+    const crossButton = document.querySelector('#maxCharsModal .close');
+    
+    if (inputValue && inputValue.trim() !== '') {
+      // Show buttons when input has value
+      if (closeButton) closeButton.style.display = 'block';
+      if (crossButton) crossButton.style.display = 'block';
+    } else {
+      // Hide buttons when input is empty
+      if (closeButton) closeButton.style.display = 'none';
+      if (crossButton) crossButton.style.display = 'none';
+    }
+  }
+
   window.handleEditClick = function(element) {
     var maxCharsValue = element.getAttribute('data-optional-value');
     var maxCharsInput = document.getElementById('max_chars_value');
     maxCharsInput.value = maxCharsValue || '';
+
+    // Toggle buttons based on initial value
+    toggleModalButtons(maxCharsValue);
   };
 
   function updateSetting(checkbox) {
@@ -154,6 +173,36 @@ jQuery(function() {
 
     sendPatchRequest(`/server_settings/${settingId}`, data);
   }
+
+  // Update the existing modal show event handler
+  $('#maxCharsModal').on('show.bs.modal', function() {
+    const maxCharsInput = document.getElementById('max_chars_value');
+    
+    // Initially hide buttons if no value
+    toggleModalButtons(maxCharsInput ? maxCharsInput.value : '');
+    
+    // Add event listener for input changes
+    if (maxCharsInput) {
+      maxCharsInput.addEventListener('input', function() {
+        toggleModalButtons(this.value);
+      });
+      
+      // Also listen for keyup to catch all changes
+      maxCharsInput.addEventListener('keyup', function() {
+        toggleModalButtons(this.value);
+      });
+    }
+  });
+
+  // Reset button visibility when modal is hidden
+  $('#maxCharsModal').on('hidden.bs.modal', function() {
+    const closeButton = document.querySelector('#maxCharsModal .btn-secondary');
+    const crossButton = document.querySelector('#maxCharsModal .close');
+    
+    // Reset to visible state for next time
+    if (closeButton) closeButton.style.display = 'block';
+    if (crossButton) crossButton.style.display = 'block';
+  });
 
   function showModalIfNeeded(checkbox) {
     const settingName = checkbox.getAttribute('data-setting-name').toLowerCase();
@@ -180,7 +229,7 @@ jQuery(function() {
   if (saveMaxCharsButton) {
     saveMaxCharsButton.addEventListener('click', function() {
       const maxCharsInput = document.getElementById('max_chars_value');
-      const newValue = maxCharsInput ? maxCharsInput.value : '';
+      const newValue = maxCharsInput ? maxCharsInput.value || '500' : '';
 
       const settingElement = Array.from(document.querySelectorAll('.setting-input'))
         .find(el => el.getAttribute('data-setting-name').toLowerCase() === 'long posts and markdown');

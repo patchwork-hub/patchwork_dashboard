@@ -1,0 +1,27 @@
+name: Build container release images
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-image:
+    uses: ./.github/workflows/build-container-image.yml
+    with:
+      file_to_build: Dockerfile
+      push_to_images: |
+        newsmast/patchwork_dashboard
+        ghcr.io/patchwork-hub/patchwork_dashboard
+      # Do not use cache when building releases, so apt update is always ran and the release always contain the latest packages
+      cache: false
+      # Tag with latest for all releases
+      flavor: |
+        latest=true
+      tags: |
+        type=pep440,pattern={{raw}}
+        type=pep440,pattern=v{{major}}.{{minor}}
+    secrets: inherit
