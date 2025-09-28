@@ -32,10 +32,8 @@ class FollowService < BaseService
                              body: payload.to_json,
                              headers: headers)
 
-    if response.code == 200
-      puts "Follow request successful: #{response.body}"
-    else
-      puts "Failed to follow account: #{response.body}"
+    unless response.code == 200
+      Rails.logger.error("Failed to follow account: #{response.body}")
     end
 
     response

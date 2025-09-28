@@ -46,8 +46,8 @@ Connect your Channels hosted on your server with the wider social web and bring 
 ### [Patchwork App](https://github.com/patchwork-hub/patchwork_dashboard/wiki/Apps)
 End-users on Patchwork servers are supported with a full suite of apps for desktop, web, iOS & Android straight out of the box. These are built with Patchwork in mind, offering the fullest experience - celebrating connections and communities, and dropping addictive algorithms and engagement hunting.
 
-### [Patchwork Hooks](https://github.com/patchwork-hub/patchwork_dashboard/wiki/Hooks)
-Hooks are small code changes that can be made to any Fediverse app which will allow them to process and render the unique features of a Patchwork enhanced server. This means end-users can still get the benefits of Patchwork features from their favourite app.
+### [Patchwork Plug-ins](https://github.com/patchwork-hub/patchwork_dashboard/wiki/Patchwork-Plug%E2%80%90ins)
+Plug-ins are small code changes that can be made to any Fediverse app which will allow them to process and render the unique features of a Patchwork enhanced server. This means end-users can still get the benefits of Patchwork features from their favourite app.
 
 ## [Is Patchwork for me?](https://github.com/patchwork-hub/patchwork_dashboard/wiki/Is-Patchwork-for-me%3F)
 Patchwork is a little like a classic lego kit - a lot of pieces that can be arranged in various ways to produce unique outcomes. But there are themes throughout all the technology - community, connectivity & safety.
@@ -104,4 +104,5 @@ Stay tuned - we will update our contributions policy soon.
 
 ## Licenses
 Patchwork is an open source project, licensed under AGPL-3.0. Have fun!
+
 

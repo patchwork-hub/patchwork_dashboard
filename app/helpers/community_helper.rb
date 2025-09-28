@@ -148,14 +148,7 @@ module CommunityHelper
   private
 
   def default_domain
-    case ENV.fetch('RAILS_ENV', nil)
-    when 'staging'
-      'staging.patchwork.online'
-    when 'production'
-      'channel.org'
-    else
-      'localhost.3000'
-    end
+    ENV.fetch('LOCAL_DOMAIN', nil)
   end
 
   def valid_address?(community)

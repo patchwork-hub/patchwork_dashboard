@@ -95,8 +95,6 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.base_url = 'https://hub.patchwork.online/api/v1/'
-
   config.paperclip_defaults = {
     storage: :s3,
     s3_credentials: {
@@ -112,7 +110,7 @@ Rails.application.configure do
   }
 
     # Configure AWS
-    require_relative '../../app/services/aws_service'
-    AwsService.configure_aws
+    # require_relative '../../app/services/aws_service'
+    # AwsService.configure_aws
 
 end
