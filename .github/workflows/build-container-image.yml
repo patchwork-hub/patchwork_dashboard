@@ -37,6 +37,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Debug inputs
+        run: |
+          echo "=== DEBUG: Inputs received ==="
+          echo "push_to_images: ${{ inputs.push_to_images }}"
+          echo "version_prerelease: ${{ inputs.version_prerelease }}"
+          echo "flavor: ${{ inputs.flavor }}"
+          echo "tags: ${{ inputs.tags }}"
+          echo "labels: ${{ inputs.labels }}"
+          echo "============================"
+
       - name: Prepare
         env:
           PUSH_TO_IMAGES: ${{ inputs.push_to_images }}
@@ -72,6 +82,7 @@ jobs:
         with:
           images: ${{ inputs.push_to_images }}
           flavor: ${{ inputs.flavor }}
+          tags: ${{ inputs.tags }}
           labels: ${{ inputs.labels }}
 
       - name: Build and push by digest

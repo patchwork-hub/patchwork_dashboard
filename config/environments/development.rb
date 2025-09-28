@@ -61,8 +61,6 @@ Rails.application.configure do
 
   config.assets.debug = false
 
-  config.base_url= 'http://localhost:3001/api/v1/'
-
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 
@@ -77,7 +75,7 @@ Rails.application.configure do
   }
 
   # Configure AWS
-  require_relative '../../app/services/aws_service'
-  AwsService.configure_aws
+  # require_relative '../../app/services/aws_service'
+  # AwsService.configure_aws
 
 end

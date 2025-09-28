@@ -20,11 +20,26 @@ jobs:
         uses: actions/checkout@v4
       - id: version_vars
         run: |
-          echo patchwork_dashboard_version_metadata=pr-${{ github.event.pull_request.number }}-$(git rev-parse --short ${{github.event.pull_request.head.sha}}) >> $GITHUB_OUTPUT
-          echo patchwork_dashboard_short_sha=$(git rev-parse --short ${{github.event.pull_request.head.sha}}) >> $GITHUB_OUTPUT
+          # Determine image repo based on target branch
+          TARGET_BRANCH="${{ github.event.pull_request.base.ref }}"
+          PR_SUFFIX="pr-${{ github.event.pull_request.number }}-$(git rev-parse --short ${{github.event.pull_request.head.sha}})"
+          
+          if [[ "$TARGET_BRANCH" == "basic" ]]; then
+            echo "patchwork_dashboard_version_metadata=${PR_SUFFIX}-basic" >> $GITHUB_OUTPUT
+            echo "ghcr_repo=ghcr.io/patchwork-hub/patchwork_dashboard_basic" >> $GITHUB_OUTPUT
+          elif [[ "$TARGET_BRANCH" == "mvp" ]]; then
+            echo "patchwork_dashboard_version_metadata=${PR_SUFFIX}-mvp" >> $GITHUB_OUTPUT
+            echo "ghcr_repo=ghcr.io/patchwork-hub/patchwork_dashboard_mvp" >> $GITHUB_OUTPUT
+          else
+            echo "patchwork_dashboard_version_metadata=${PR_SUFFIX}" >> $GITHUB_OUTPUT
+            echo "ghcr_repo=ghcr.io/patchwork-hub/patchwork_dashboard" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "patchwork_dashboard_short_sha=$(git rev-parse --short ${{github.event.pull_request.head.sha}})" >> $GITHUB_OUTPUT
     outputs:
       metadata: ${{ steps.version_vars.outputs.patchwork_dashboard_version_metadata }}
       short_sha: ${{ steps.version_vars.outputs.patchwork_dashboard_short_sha }}
+      ghcr_repo: ${{ steps.version_vars.outputs.ghcr_repo }}
 
   build-image:
     needs: compute-suffix
@@ -32,7 +47,7 @@ jobs:
     with:
       file_to_build: Dockerfile
       push_to_images: |
-        ghcr.io/patchwork-hub/patchwork_dashboard
+        ${{ needs.compute-suffix.outputs.ghcr_repo }}
       version_metadata: ${{ needs.compute-suffix.outputs.metadata }}
       flavor: |
         latest=auto

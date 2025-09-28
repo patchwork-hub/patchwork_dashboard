@@ -5,12 +5,9 @@ on:
   push:
     branches:
       - 'main'
-      - 'stable-*'
-      - 'feat/opensource'
   pull_request:
     branches:
       - 'main'
-      - 'stable-*'
   schedule:
     - cron: '22 6 * * 1'
 

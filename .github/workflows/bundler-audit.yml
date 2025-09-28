@@ -5,7 +5,6 @@ on:
     branches:
       - 'main'
       - 'stable-*'
-      - 'feat/opensource'
     paths:
       - 'Gemfile*'
       - '.ruby-version'
@@ -34,7 +33,11 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
+          ruby-version: '3.3'
           bundler-cache: true
 
+      - name: Install bundler-audit
+        run: gem install bundler-audit
+
       - name: Run bundler-audit
-        run: bin/bundler-audit check --update
+        run: bundler-audit check --update
