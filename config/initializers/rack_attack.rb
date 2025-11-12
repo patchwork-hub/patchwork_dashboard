@@ -9,7 +9,7 @@ class Rack::Attack
   end
 
   # Throttle all requests by IP (60rpm)
-  throttle('req/ip', limit: 60, period: 1.minute) do |req|
+  throttle('req/ip', limit: 20, period: 1.minute) do |req|
     req.ip
   end
 
@@ -20,8 +20,8 @@ class Rack::Attack
 
   # Exponential backoff for repeat offenders
   Rack::Attack.blocklist('penalize-repeat-offenders') do |req|
-    Rack::Attack::Allow2Ban.filter(req.ip, maxretry: 5, findtime: 10.minutes, bantime: 1.hour) do
-      Rack::Attack.cache.count("penalize-#{req.ip}", 10.minutes) > 5
+    Rack::Attack::Allow2Ban.filter(req.ip, maxretry: 20, findtime: 1.minutes, bantime: 6.hour) do
+      Rack::Attack.cache.count("penalize-#{req.ip}", 1.minutes) > 20
     end
   end
 
