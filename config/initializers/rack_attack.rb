@@ -21,10 +21,24 @@ class Rack::Attack
     req.ip == '127.0.0.1' || req.ip == '::1'
   end
 
-  # Throttle all requests by IP (20 requests per minute)
-  throttle('req/ip', limit: 20, period: 5.minute) do |req|
-    req.ip
+  PROTECTED_ENDPOINT_PATHS = %w[
+    /api/v1/channels/my_channel
+    /api/v1/collections/newsmast_collections
+    /api/v1/collections
+    /api/v1/collections/channel_feed_collections
+    /api/v1/community_admins/boost_bot_accounts
+    /api/v1/channels/mo_me_channels
+    /api/v1/channels/channel_feeds
+  ].freeze
+
+  throttle('req/ip/protected-endpoints', limit: 20, period: 1.minute) do |req|
+    req.ip if PROTECTED_ENDPOINT_PATHS.include?(req.path)
   end
+
+  # Throttle all requests by IP (20 requests per minute)
+  # throttle('req/ip', limit: 20, period: 5.minute) do |req|
+  #   req.ip
+  # end
 
   # Block requests from suspicious IPs
   blocklist('block-suspicious-ips') do |req|
@@ -33,10 +47,13 @@ class Rack::Attack
   end
 
   # Exponential backoff for repeat offenders using Allow2Ban
-  blocklist('penalize-repeat-offenders') do |req|
-    Rack::Attack::Allow2Ban.filter(req.ip, maxretry: 20, findtime: 5.minute, bantime: 6.hour) do
-      false
-    end
+  PROTECTED_ENDPOINT_BAN_PREFIX = 'rack::attack:ban:protected-endpoints'.freeze
+
+  blocklist('ban-protected-endpoint-offenders') do |req|
+    next unless PROTECTED_ENDPOINT_PATHS.include?(req.path)
+
+    ban_key = "#{PROTECTED_ENDPOINT_BAN_PREFIX}:#{req.ip}"
+    Rack::Attack.cache.read(ban_key).present?
   end
 
   # Custom response for throttled requests
@@ -66,8 +83,8 @@ class Rack::Attack
 
   # Custom response for blocked requests
   self.blocklisted_responder = lambda do |env|
-    body = { error: 'Forbidden' }.to_json
-    [403, { 'Content-Type' => 'application/json' }, [body]]
+    body = { error: 'Rate limit exceeded. Try again later.' }.to_json
+    [429, { 'Content-Type' => 'application/json' }, [body]]
   end
 
   # Log blocked and throttled requests
@@ -76,10 +93,9 @@ class Rack::Attack
     req = payload[:request]
     match_type = req.env['rack.attack.match_type']
 
-    if match_type == :throttle && req.env['rack.attack.matched'] == 'req/ip'
-      Rack::Attack::Allow2Ban.filter(req.ip, maxretry: 5, findtime: 1.minute, bantime: 6.hour) do
-        true
-      end
+    if match_type == :throttle && req.env['rack.attack.matched'] == 'req/ip/protected-endpoints'
+      ban_key = "#{PROTECTED_ENDPOINT_BAN_PREFIX}:#{req.ip}"
+      Rack::Attack.cache.write(ban_key, true, 6.hours.to_i)
     end
     
     if [:throttle, :blocklist].include?(match_type)
