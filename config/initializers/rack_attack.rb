@@ -35,13 +35,22 @@ class Rack::Attack
 
   # Custom response for throttled requests
   self.throttled_responder = lambda do |env|
-    match_data = env['rack.attack.match_data']
-    now = match_data[:epoch_time]
+    match_data = env['rack.attack.match_data'] || {}
+    now = match_data[:epoch_time] || Time.now.to_i
+    limit = match_data[:limit] || 0
+    period = match_data[:period] || 1
+
+    reset_at =
+      if period.positive?
+        now + (period - now % period)
+      else
+        now
+      end
 
     headers = {
-      'RateLimit-Limit' => match_data[:limit].to_s,
+      'RateLimit-Limit' => limit.to_s,
       'RateLimit-Remaining' => '0',
-      'RateLimit-Reset' => (now + (match_data[:period] - now % match_data[:period])).to_s,
+      'RateLimit-Reset' => reset_at.to_s,
       'Content-Type' => 'application/json'
     }
 
