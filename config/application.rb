@@ -49,6 +49,8 @@ module Dashboard
     config.active_job.queue_adapter = :sidekiq
     config.active_job.queue_name_prefix = "dashboard_#{Rails.env}"
 
+    config.middleware.use Rack::Attack
+
     #  N+1 query logging for Postman and SQL profiling in API responses
     # config.middleware.insert_after ActionDispatch::Executor, BulletLogger
     # config.middleware.insert_before 0, QueryProfiler

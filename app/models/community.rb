@@ -25,6 +25,7 @@
 #  logo_image_file_size        :bigint
 #  logo_image_updated_at       :datetime
 #  name                        :string           not null
+#  no_boost_channel            :boolean          default(FALSE)
 #  participants_count          :integer          default(0)
 #  position                    :integer          default(0)
 #  post_visibility             :integer          default("followers_only"), not null

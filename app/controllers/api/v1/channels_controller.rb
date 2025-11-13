@@ -4,7 +4,7 @@ module Api
   module V1
     class ChannelsController < ApiController
       skip_before_action :verify_key!
-      before_action :check_authorization_header, only: [:channel_detail, :channel_feeds, :newsmast_channels, :my_channel, :mo_me_channels, :patchwork_demo_channels, :toot_channels]
+      before_action :check_authorization_header, only: [:channel_detail, :channel_feeds, :newsmast_channels, :my_channel, :mo_me_channels, :patchwork_demo_channels, :toot_channels, :bristol_cable_channels]
       before_action :set_channel, only: [:channel_detail, :channel_feeds]
 
       DEFAULT_MO_ME_CHANNELS = [
@@ -30,6 +30,16 @@ module Api
       DEFAULT_TOOT_CHANNELS = [
         { slug: 'walesnews', channel_type: Community.channel_types[:channel_feed] },
         { slug: 'newyddion', channel_type: Community.channel_types[:channel_feed] }
+      ].freeze
+
+      DEFAULT_BRISTOL_CABLE_CHANNELS = [
+        { slug: 'bristol', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'trees', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'podcasting', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'greens', channel_type: Community.channel_types[:channel]},
+        { slug: 'fedibookclub', channel_type: Community.channel_types[:channel_feed]},
+        { slug: 'NoticiasBrasil', channel_type: Community.channel_types[:channel_feed]},
+        { slug: 'RenewedResistance', channel_type: Community.channel_types[:channel]}
       ].freeze
 
 
@@ -114,6 +124,10 @@ module Api
 
       def toot_channels
         render_custom_channels(DEFAULT_TOOT_CHANNELS)
+      end
+
+      def bristol_cable_channels
+        render_custom_channels(DEFAULT_BRISTOL_CABLE_CHANNELS)
       end
 
       def starter_packs_channels
