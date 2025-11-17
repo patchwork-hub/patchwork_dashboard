@@ -229,6 +229,7 @@ class CommunityPostService < BaseService
       name: @options[:name],
       description: @options[:bio],
       is_recommended: @options[:is_recommended],
+      no_boost_channel: @options[:no_boost_channel],
       guides: nil,
       position: get_position,
       admin_following_count: 0,

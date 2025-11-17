@@ -10,7 +10,7 @@ class Api::V1::ChannelSerializer
              :patchwork_collection_id, :guides, :participants_count, :is_custom_domain,
              :visibility, :position, :channel_type, :created_at, :no_of_admins, :channel_content_type,
              :registration_mode, :patchwork_community_hashtags, :patchwork_community_rules,
-             :patchwork_community_additional_informations, :patchwork_community_links, :about
+             :patchwork_community_additional_informations, :patchwork_community_links, :about, :no_boost_channel
 
   has_many :patchwork_community_additional_informations, serializer: Api::V1::CommunityAdditionalInformationSerializer
   has_many :patchwork_community_links, serializer: Api::V1::CommunityLinkSerializer
@@ -97,17 +97,17 @@ class Api::V1::ChannelSerializer
 
   def self.favourited_status(channel_id, account)
     return false unless account
-  
+
     JoinedCommunity.exists?(patchwork_community_id: channel_id, account_id: account['id'])
   end
-  
+
   def self.primary_status(channel_id, account)
     return false unless account
-  
+
     JoinedCommunity.exists?(patchwork_community_id: channel_id, is_primary: true, account_id: account['id'])
   end
 
-  def self.favourited_account_counts(channel_id)  
+  def self.favourited_account_counts(channel_id)
     JoinedCommunity.where(patchwork_community_id: channel_id).size
   end
 end

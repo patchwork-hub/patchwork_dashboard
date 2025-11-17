@@ -250,6 +250,7 @@ class CommunitiesController < BaseController
           logo_image: @community.logo_image,
           community_type_id: @community.patchwork_community_type_id,
           is_recommended: @community.is_recommended,
+          no_boost_channel: @community.no_boost_channel,
           is_custom_domain: @community.is_custom_domain,
           ip_address_id: @community.ip_address_id
         }
@@ -287,7 +288,7 @@ class CommunitiesController < BaseController
     params.require(:form_community).permit(
       :id, :name, :slug, :collection_id, :bio,
       :banner_image, :avatar_image, :logo_image,
-      :community_type_id, :is_recommended,
+      :community_type_id, :is_recommended, :no_boost_channel,
       :content_type, :channel_type, :is_custom_domain, :ip_address_id
     )
   end

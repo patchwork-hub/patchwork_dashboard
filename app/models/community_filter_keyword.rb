@@ -12,6 +12,7 @@
 #
 # Indexes
 #
+#  idx_on_keyword_is_filter_hashtag_de4b77f0f4                    (keyword,is_filter_hashtag) UNIQUE
 #  idx_on_patchwork_community_id_eadde3c87b                       (patchwork_community_id)
 #  index_on_keyword_is_filter_hashtag_and_patchwork_community_id  (keyword,is_filter_hashtag,patchwork_community_id) UNIQUE
 #
