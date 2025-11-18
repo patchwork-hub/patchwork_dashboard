@@ -19,7 +19,7 @@ namespace :api, defaults: { format: :json } do
         when 'mo-me'
           { display: true, app_name: 'mo-me' }
         when 'bristol-cable'
-          { display: true, app_name: 'bristol-cable' }
+          { display: false, app_name: 'bristol-cable' }
         else
           { display: true, app_name: app_name }
         end
