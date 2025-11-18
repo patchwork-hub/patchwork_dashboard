@@ -34,6 +34,8 @@ module Api
 
       DEFAULT_BRISTOL_CABLE_CHANNELS = [
         { slug: 'bristol', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'activism-civil-rights', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'climate-change', channel_type: Community.channel_types[:newsmast]},
         { slug: 'trees', channel_type: Community.channel_types[:channel_feed] },
         { slug: 'podcasting', channel_type: Community.channel_types[:channel_feed] },
         { slug: 'greens', channel_type: Community.channel_types[:channel]},
