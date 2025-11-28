@@ -17,8 +17,22 @@ class Rack::Attack
   end
 
   # Allow localhost and trusted IPs from rate limiting
-  safelist('allow-localhost') do |req|
-    req.ip == '127.0.0.1' || req.ip == '::1'
+  # safelist('allow-localhost') do |req|
+  #   req.ip == '127.0.0.1' || req.ip == '::1'
+  # end
+
+  PROTECTED_ENDPOINT_PATHS = %w[
+    /api/v1/channels/my_channel
+    /api/v1/collections/newsmast_collections
+    /api/v1/collections
+    /api/v1/collections/channel_feed_collections
+    /api/v1/community_admins/boost_bot_accounts
+    /api/v1/channels/mo_me_channels
+    /api/v1/channels/channel_feeds
+  ].freeze
+
+  throttle('req/ip/protected-endpoints', limit: 20, period: 1.minute) do |req|
+    req.ip if PROTECTED_ENDPOINT_PATHS.include?(req.path)
   end
 
   PROTECTED_ENDPOINT_PATHS = %w[

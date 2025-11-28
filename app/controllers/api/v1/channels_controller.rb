@@ -29,7 +29,17 @@ module Api
 
       DEFAULT_TOOT_CHANNELS = [
         { slug: 'walesnews', channel_type: Community.channel_types[:channel_feed] },
-        { slug: 'newyddion', channel_type: Community.channel_types[:channel_feed] }
+        { slug: 'newyddion', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'biodiversity-rewilding', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'books-literature', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'football', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'humour', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'movies', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'music', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'nature-wildlife', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'pets', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'photography', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'sport', channel_type: Community.channel_types[:newsmast] }
       ].freeze
 
       DEFAULT_BRISTOL_CABLE_CHANNELS = [
