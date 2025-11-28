@@ -1,17 +1,44 @@
 class Rack::Attack
   # Configure cache store (uses Rails.cache by default)
   # For production, use Redis for distributed rate limiting
-  Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(url: ENV['REDIS_URL'])
+  redis_url = if ENV['REDIS_PASSWORD'].present?
+    "redis://:#{ENV['REDIS_PASSWORD']}@#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT']}"
+  else
+    "redis://#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT']}"
+  end
+
+  if redis_url.present?
+    Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(url: redis_url)
+  else
+    Rack::Attack.cache.store = Rails.cache
+    if Rack::Attack.cache.store.is_a?(ActiveSupport::Cache::NullStore)
+      Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+    end
+  end 
 
   # Allow localhost and trusted IPs from rate limiting
-  safelist('allow-localhost') do |req|
-    req.ip == '127.0.0.1' || req.ip == '::1'
+  # safelist('allow-localhost') do |req|
+  #   req.ip == '127.0.0.1' || req.ip == '::1'
+  # end
+
+  PROTECTED_ENDPOINT_PATHS = %w[
+    /api/v1/channels/my_channel
+    /api/v1/collections/newsmast_collections
+    /api/v1/collections
+    /api/v1/collections/channel_feed_collections
+    /api/v1/community_admins/boost_bot_accounts
+    /api/v1/channels/mo_me_channels
+    /api/v1/channels/channel_feeds
+  ].freeze
+
+  throttle('req/ip/protected-endpoints', limit: 20, period: 1.minute) do |req|
+    req.ip if PROTECTED_ENDPOINT_PATHS.include?(req.path)
   end
 
-  # Throttle all requests by IP (60rpm)
-  throttle('req/ip', limit: 60, period: 1.minute) do |req|
-    req.ip
-  end
+  # Throttle all requests by IP (20 requests per minute)
+  # throttle('req/ip', limit: 20, period: 5.minute) do |req|
+  #   req.ip
+  # end
 
   # Block requests from suspicious IPs
   blocklist('block-suspicious-ips') do |req|
