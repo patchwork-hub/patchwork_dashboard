@@ -35,7 +35,7 @@ module ApplicationHelper
       end
       links << { path: master_admins_path, id: 'master_admins-link', header: 'Master admin', icon: 'administrator.svg', text: 'Master admins', active_if: 'master_admins' }
 
-      if is_channel_dashboard?
+      if is_channel_dashboard? && is_channel_instance?
         links << { path: community_filter_keywords_path(community_id: nil), id: 'global_filters-link', header: 'Global filters', icon: 'globe-white.svg', text: 'Global filters', active_if: 'community_filter_keywords' }
       end
 
@@ -46,7 +46,7 @@ module ApplicationHelper
         { path: api_keys_path, id: 'resources-link', header: 'API Key', icon: 'key.svg', text: 'API Key', active_if: 'api_keys' }
       ]
 
-      if is_channel_instance?
+      if is_channel_instance? && is_channel_instance?
         links << { path: wait_lists_path, id: 'invitation-codes-link', header: 'Invitation codes', icon: 'invitation_code.svg', text: 'Invitation codes', active_if: 'wait_lists' }
       end
 
