@@ -24,16 +24,8 @@ jobs:
           TARGET_BRANCH="${{ github.event.pull_request.base.ref }}"
           PR_SUFFIX="pr-${{ github.event.pull_request.number }}-$(git rev-parse --short ${{github.event.pull_request.head.sha}})"
           
-          if [[ "$TARGET_BRANCH" == "basic" ]]; then
-            echo "patchwork_dashboard_version_metadata=${PR_SUFFIX}-basic" >> $GITHUB_OUTPUT
-            echo "ghcr_repo=ghcr.io/patchwork-hub/patchwork_dashboard_basic" >> $GITHUB_OUTPUT
-          elif [[ "$TARGET_BRANCH" == "mvp" ]]; then
-            echo "patchwork_dashboard_version_metadata=${PR_SUFFIX}-mvp" >> $GITHUB_OUTPUT
-            echo "ghcr_repo=ghcr.io/patchwork-hub/patchwork_dashboard_mvp" >> $GITHUB_OUTPUT
-          else
-            echo "patchwork_dashboard_version_metadata=${PR_SUFFIX}" >> $GITHUB_OUTPUT
-            echo "ghcr_repo=ghcr.io/patchwork-hub/patchwork_dashboard" >> $GITHUB_OUTPUT
-          fi
+          echo "patchwork_dashboard_version_metadata=${PR_SUFFIX}" >> $GITHUB_OUTPUT
+          echo "ghcr_repo=ghcr.io/patchwork-hub/patchwork_dashboard" >> $GITHUB_OUTPUT
           
           echo "patchwork_dashboard_short_sha=$(git rev-parse --short ${{github.event.pull_request.head.sha}})" >> $GITHUB_OUTPUT
     outputs:
