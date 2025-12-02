@@ -153,6 +153,10 @@ module ApplicationHelper
   end
 
   def is_channel_instance?
+    if Rails.env.development?
+      return false
+    end
+
     if  ENV.fetch('LOCAL_DOMAIN', nil) == 'channel.org' || ENV.fetch('LOCAL_DOMAIN', nil) == 'staging.patchwork.online'
       return true
     end
