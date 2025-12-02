@@ -76,30 +76,30 @@
                 .row
                   .mt-auto
                     %p.text-muted.small If the organisation admin role is assigned, the account can be used to access the dashboard system to edit the assigned Channel.
-            .col-auto.mt-3
-              .row
-                %label.mb-0 Progress of Bluesky bridging
-              .row
-                .mt-auto
-                  - if @records.size == 0
-                    %p.text-muted.small Channel admin doesn't exist.
-                  - else
-                    .bluesky-bridge-progress-bar
-                      .bluesky-step
-                        .blue-sky-circle.completed
-                          = image_tag("icons/bluesky.svg", width: "16", height: "16")
-                        .bluesky-step-content
-                          %p Bluesky bridged information:
-                          - if bridged_completely?(@community, @bluesky_info)
-                            %p
-                              = link_to bridged_handle(@community, @bluesky_info), bridged_account_url(@community, @bluesky_info), target: '_blank'
-                          - else
-                            - error_msg = check_account_info(@community)
-                            - if error_msg.nil?
-                              %p.text-warning In progress...
-                            - else
-                              %p.text-danger
-                                = error_msg
+            -# .col-auto.mt-3
+            -#   .row
+            -#     %label.mb-0 Progress of Bluesky bridging
+            -#   .row
+            -#     .mt-auto
+            -#       - if @records.size == 0
+            -#         %p.text-muted.small Channel admin doesn't exist.
+            -#       - else
+            -#         .bluesky-bridge-progress-bar
+            -#           .bluesky-step
+            -#             .blue-sky-circle.completed
+            -#               = image_tag("icons/bluesky.svg", width: "16", height: "16")
+            -#             .bluesky-step-content
+            -#               %p Bluesky bridged information:
+            -#               - if bridged_completely?(@community, @bluesky_info)
+            -#                 %p
+            -#                   = link_to bridged_handle(@community, @bluesky_info), bridged_account_url(@community, @bluesky_info), target: '_blank'
+            -#               - else
+            -#                 - error_msg = check_account_info(@community)
+            -#                 - if error_msg.nil?
+            -#                   %p.text-warning In progress...
+            -#                 - else
+            -#                   %p.text-danger
+            -#                     = error_msg
 
       .row.d-flex.justify-content-between
         .col-auto

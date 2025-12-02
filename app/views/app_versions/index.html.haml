@@ -11,11 +11,12 @@
           %br
           %small.text-muted.pt-2 Here are all the application versions.
         .card-tools.d-flex.justify-content-end.align-items-center
-          = form_with url: app_versions_path, method: :get, local: true, html: { class: 'form-inline mr-2' } do
-            = select_tag :app_name,
-                options_for_select(AppVersion.app_names.map { |k, v| [k.humanize.capitalize, v] }, params[:app_name]),
-                class: "form-control form-control-sm",
-                onchange: "this.form.submit();"
+          - if is_channel_instance?
+            = form_with url: app_versions_path, method: :get, local: true, html: { class: 'form-inline mr-2' } do
+              = select_tag :app_name,
+                  options_for_select(AppVersion.app_names.map { |k, v| [k.humanize.capitalize, v] }, params[:app_name]),
+                  class: "form-control form-control-sm",
+                  onchange: "this.form.submit();"
           %button.btn.btn-danger.d-flex.align-items-center.ml-3{ onclick: "window.location='#{new_app_version_path(app_name: params[:app_name])}'" }
             Create App version
             = image_tag("icons/circle-plus.svg",class: "ml-2", width: "16", height: "16")
