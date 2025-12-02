@@ -1,6 +1,6 @@
-# Patchwork Dashboard (MVP) - Docker Installation Guide
+# Patchwork Dashboard - Docker Installation Guide
 
-This guide provides step-by-step instructions for installing Patchwork Dashboard (MVP) using Docker containers.
+This guide provides step-by-step instructions for installing Patchwork Dashboard using Docker containers.
 
 ## Prerequisites
 
@@ -15,7 +15,7 @@ Before starting, ensure you have:
 
 ```bash
 docker --version
-docker-compose --version
+docker compose version
 ```
 
 ## Step 1: Clone the Repository
@@ -51,20 +51,20 @@ nano .env
 
 ```bash
 # Pull the latest image
-docker-compose -f docker-compose.mvp.yml pull
+docker compose pull
 
 # Start the services in detached mode
-docker-compose -f docker-compose.mvp.yml up -d --build
+docker compose up -d --build
 ```
 
 ### Verify Container Status
 
 ```bash
 # Check if container is running
-docker-compose -f docker-compose.mvp.yml ps
+docker compose ps
 
 # Check container logs
-docker-compose -f docker-compose.mvp.yml logs -f app
+docker compose logs -f dashboard
 ```
 
 ## Step 4: Initialize the Database
@@ -73,10 +73,10 @@ docker-compose -f docker-compose.mvp.yml logs -f app
 
 ```bash
 # Run migrations
-docker-compose -f docker-compose.mvp.yml exec app bundle exec rails db:migrate
+docker compose exec dashboard bundle exec rails db:migrate
 
 # Seed the database (creates initial data and master admin)
-docker-compose -f docker-compose.mvp.yml exec app bundle exec rails db:seed
+docker compose exec dashboard bundle exec rails db:seed
 ```
 
 ## Step 5: Access the Dashboard
@@ -109,17 +109,17 @@ docker-compose -f docker-compose.mvp.yml exec app bundle exec rails db:seed
 curl http://localhost:3001/health_check
 
 # Monitor container health
-docker-compose -f docker-compose.mvp.yml ps
+docker compose ps
 ```
 
 ### View Logs
 
 ```bash
 # View application logs
-docker-compose -f docker-compose.mvp.yml logs -f app
+docker compose logs -f dashboard
 
 # View logs with timestamps
-docker-compose -f docker-compose.mvp.yml logs -f -t app
+docker compose logs -f -t dashboard
 ```
 
 ## Step 8: Maintenance Commands
@@ -128,35 +128,35 @@ docker-compose -f docker-compose.mvp.yml logs -f -t app
 
 ```bash
 # Pull latest image
-docker-compose -f docker-compose.mvp.yml pull
+docker compose pull
 
 # Restart with new image
-docker-compose -f docker-compose.mvp.yml up -d
+docker compose up -d
 ```
 
 ### Backup Data
 
 ```bash
 # Backup volumes
-docker run --rm -v patchwork_mvp_storage:/data -v $(pwd):/backup alpine tar czf /backup/patchwork_storage_backup.tar.gz -C /data .
-docker run --rm -v patchwork_mvp_public:/data -v $(pwd):/backup alpine tar czf /backup/patchwork_public_backup.tar.gz -C /data .
-docker run --rm -v patchwork_mvp_logs:/data -v $(pwd):/backup alpine tar czf /backup/patchwork_logs_backup.tar.gz -C /data .
+docker run --rm -v patchwork_storage:/data -v $(pwd):/backup alpine tar czf /backup/patchwork_storage_backup.tar.gz -C /data .
+docker run --rm -v patchwork_public:/data -v $(pwd):/backup alpine tar czf /backup/patchwork_public_backup.tar.gz -C /data .
+docker run --rm -v patchwork_logs:/data -v $(pwd):/backup alpine tar czf /backup/patchwork_logs_backup.tar.gz -C /data .
 ```
 
 ### Restore Data
 
 ```bash
 # Restore volumes (stop container first)
-docker-compose -f docker-compose.mvp.yml down
-docker run --rm -v patchwork_mvp_storage:/data -v $(pwd):/backup alpine tar xzf /backup/patchwork_storage_backup.tar.gz -C /data
-docker-compose -f docker-compose.mvp.yml up -d
+docker compose down
+docker run --rm -v patchwork_storage:/data -v $(pwd):/backup alpine tar xzf /backup/patchwork_storage_backup.tar.gz -C /data
+docker compose up -d
 ```
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Container won't start**: Check logs with `docker-compose logs app`
+1. **Container won't start**: Check logs with `docker compose logs app`
 2. **Database connection errors**: Verify database credentials in `.env`
 3. **Permission issues**: Ensure Docker has proper permissions
 4. **Port conflicts**: Make sure `EXTERNAL_PORT` is not in use
@@ -165,13 +165,13 @@ docker-compose -f docker-compose.mvp.yml up -d
 
 ```bash
 # Access container shell
-docker-compose -f docker-compose.mvp.yml exec app bash
+docker compose exec dashboard bash
 
 # Check environment variables
-docker-compose -f docker-compose.mvp.yml exec app env
+docker compose exec dashboard env
 
 # Test database connection
-docker-compose -f docker-compose.mvp.yml exec app bundle exec rails runner "puts ActiveRecord::Base.connection.execute('SELECT 1').first"
+docker compose exec dashboard bundle exec rails runner "puts ActiveRecord::Base.connection.execute('SELECT 1').first"
 ```
 
 ## Security Considerations
