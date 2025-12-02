@@ -1,6 +1,6 @@
 class CreateKeywordFilterGroups < ActiveRecord::Migration[7.0]
   def change
-    create_table :keyword_filter_groups do |t|
+    create_table :keyword_filter_groups, if_not_exists: true do |t|
       t.string :name
       t.boolean :is_custom, default: true
       t.boolean :is_active, default: true

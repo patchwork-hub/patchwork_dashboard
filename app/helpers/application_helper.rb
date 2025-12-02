@@ -133,6 +133,10 @@ module ApplicationHelper
     if Rails.env.development?
       return true
     end
+    
+    if ENV.fetch('CHANNELS_ENABLED', nil) == 'true'
+      return true
+    end
 
     mastodon_url = ENV['MASTODON_INSTANCE_URL']
     return false if mastodon_url.nil?
