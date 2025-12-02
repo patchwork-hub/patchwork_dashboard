@@ -1,6 +1,6 @@
 class CreatePatchworkCommunityLinks < ActiveRecord::Migration[7.1]
   def change
-    create_table :patchwork_community_links do |t|
+    create_table :patchwork_community_links, if_not_exists: true do |t|
       t.string :icon
       t.string :name
       t.string :url
