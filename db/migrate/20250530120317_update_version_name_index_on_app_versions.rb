@@ -5,6 +5,8 @@ class UpdateVersionNameIndexOnAppVersions < ActiveRecord::Migration[7.1]
       remove_index :patchwork_app_versions, :version_name
     end
 
-    add_index :patchwork_app_versions, [:version_name, :app_name], unique: true, algorithm: :concurrently
+    unless index_exists?(:patchwork_app_versions, [:version_name, :app_name], name: 'index_patchwork_app_versions_on_version_name_and_app_name')
+      add_index :patchwork_app_versions, [:version_name, :app_name], unique: true, algorithm: :concurrently
+    end
   end
 end
