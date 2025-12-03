@@ -143,18 +143,19 @@
                   %span.ml-2
                     Recommend this channel to users
 
-          .row.mb-4
-            .col-md-12
-              .d-flex.align-items-center
-                %label.form-check-label.switch.mb-0
-                  = f.check_box :no_boost_channel, { class: "form-check-input switch-input" }
-                  %span.switch-slider.round
-                    %span.slider-tick
-                      %i.fa-solid.fa-check
-                    %span.slider-cross
-                      %i.fa-solid.fa-xmark
-                %span.ml-2
-                  No-Boost Channel
+          - unless channel_type_info == 'Community'
+            .row.mb-4
+              .col-md-12
+                .d-flex.align-items-center
+                  %label.form-check-label.switch.mb-0
+                    = f.check_box :no_boost_channel, { class: "form-check-input switch-input" }
+                    %span.switch-slider.round
+                      %span.slider-tick
+                        %i.fa-solid.fa-check
+                      %span.slider-cross
+                        %i.fa-solid.fa-xmark
+                  %span.ml-2
+                    No-Boost Channel
 
           .row
             .col-md-12
