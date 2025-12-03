@@ -112,5 +112,6 @@ Rails.application.configure do
     # Configure AWS
     # require_relative '../../app/services/aws_service'
     # AwsService.configure_aws
+    config.middleware.use Rack::Attack
 
 end

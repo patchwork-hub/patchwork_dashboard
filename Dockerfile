@@ -66,9 +66,9 @@ RUN bundle install --jobs 4
 # Copy the rest of the application
 ADD . $app_path
 
-# Precompile Assets
-RUN bundle exec rake assets:clean
-RUN bundle exec rake assets:precompile
+# Precompile Assets with a dummy SECRET_KEY_BASE (only used during build)
+RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rake assets:clean
+RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rake assets:precompile
 
 # Set Executable Permission for Entrypoint
 RUN chmod +x /usr/app/docker-entrypoint.sh

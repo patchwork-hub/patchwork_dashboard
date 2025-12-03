@@ -10,7 +10,7 @@
       .card-body
         - @server_settings.each do |setting|
           - next if setting[:name] == 'Plug-ins'
-          - next if setting[:name].in?(["Federation", "User Management"]) && !is_channel_dashboard?
+          - next if setting[:name].in?(["Federation", "User Management"]) && (!is_channel_dashboard? || !is_channel_instance?)
           .row.mb-4
             .col-md-5
               %div

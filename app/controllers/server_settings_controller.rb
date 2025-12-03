@@ -83,7 +83,7 @@ class ServerSettingsController < ApplicationController
       'Automatic Bluesky bridging for new users', 'Spam filters', 'Content filters'
     ]
     dashboard_extras = ['Custom theme', 'Guest accounts', 'Analytics', 'Live blocklist', 'Sign up challenge']
-    desired_child_name = is_channel_dashboard? ? base_features + dashboard_extras : base_features
+    desired_child_name = (is_channel_instance? && is_channel_dashboard?) ? base_features + dashboard_extras : base_features
 
     @data = @parent_settings.map do |parent_setting|
       child_setting_query = parent_setting.children.where(name: desired_child_name).sort_by(&:position)
