@@ -28,7 +28,6 @@ module Api
       ].freeze
 
       DEFAULT_TOOT_CHANNELS = [
-        { slug: 'walesnews', channel_type: Community.channel_types[:channel_feed] },
         { slug: 'newyddion', channel_type: Community.channel_types[:channel_feed] },
         { slug: 'biodiversity-rewilding', channel_type: Community.channel_types[:newsmast] },
         { slug: 'books-literature', channel_type: Community.channel_types[:newsmast] },
