@@ -400,37 +400,5 @@
         "verified_at": null
       }
     ]
-  },
-  {
-    "id": "114942742316256644",
-    "username": "blog",
-    "acct": "blog@croeso.toot.wales",
-    "display_name": "tŵt cymru | toot wales",
-    "locked": false,
-    "bot": false,
-    "discoverable": true,
-    "indexable": true,
-    "group": false,
-    "created_at": "2023-04-12T00:00:00.000Z",
-    "note": "\u003cp\u003ead-free, privacy-first social media for Wales and the Welsh, at home and abroad\u003c/p\u003e\n",
-    "url": "https://croeso.toot.wales",
-    "uri": "https://croeso.toot.wales/?author=0",
-    "avatar": "https://toot.wales/system/cache/accounts/avatars/114/942/742/316/256/644/original/ba6541f82abec900.png",
-    "avatar_static": "https://toot.wales/system/cache/accounts/avatars/114/942/742/316/256/644/original/ba6541f82abec900.png",
-    "header": "https://toot.wales/system/cache/accounts/headers/114/942/742/316/256/644/original/545b302e04ec6f9a.png",
-    "header_static": "https://toot.wales/system/cache/accounts/headers/114/942/742/316/256/644/original/545b302e04ec6f9a.png",
-    "followers_count": 13,
-    "following_count": 0,
-    "statuses_count": 4,
-    "last_status_at": "2025-09-29",
-    "hide_collections": true,
-    "emojis": [],
-    "fields": [
-        {
-            "name": "Learn More",
-            "value": "\u003cp\u003e\u003ca href=\"https://croeso.toot.wales\" rel=\"nofollow noopener\" target=\"_blank\"\u003ecroeso.toot.wales\u003c/a\u003e\u003c/p\u003e\u003cp\u003e\u003c/p\u003e",
-            "verified_at": null
-        }
-    ]
   }
 ]
