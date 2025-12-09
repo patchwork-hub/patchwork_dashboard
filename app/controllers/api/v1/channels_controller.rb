@@ -222,9 +222,9 @@ module Api
         return [] unless File.exist?(file_path)
 
         # Derive cache key from filename (remove extension)
-        cache_key = File.basename(filename, '.json')
+        cache_key = filename.gsub('/', '_').gsub('.json', '')
         modified_at = File.mtime(file_path).to_i
-        full_cache_key = "#{cache_key}_#{modified_at}"
+        full_cache_key = "starter_pack_#{cache_key}_#{modified_at}"
 
         Rails.cache.fetch(full_cache_key, expires_in: 1.hour) do
           JSON.parse(File.read(file_path))
