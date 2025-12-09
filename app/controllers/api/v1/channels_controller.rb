@@ -29,6 +29,7 @@ module Api
 
       DEFAULT_TOOT_CHANNELS = [
         { slug: 'newyddion', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'walesnews', channel_type: Community.channel_types[:channel_feed] },
         { slug: 'biodiversity-rewilding', channel_type: Community.channel_types[:newsmast] },
         { slug: 'books-literature', channel_type: Community.channel_types[:newsmast] },
         { slug: 'football', channel_type: Community.channel_types[:newsmast] },
@@ -142,21 +143,21 @@ module Api
       end
 
       def starter_packs_channels
-        starter_packs_channels = load_json_data('starter_pack_list.json')
+        starter_packs_channels = load_json_data(starter_pack_data_path('starter_pack_list.json'))
 
         render json: { data: starter_packs_channels }
       end
 
       def starter_packs_detail
         channel_id = params[:id]
-        starter_packs_channels = load_json_data('starter_pack_list.json')
+        starter_packs_channels = load_json_data(starter_pack_data_path('starter_pack_list.json'))
         channel = starter_packs_channels.find { |ch| ch["id"] == channel_id }
 
         unless channel
           render json: { error: "Channel not found" }, status: :not_found and return
         end
 
-        followers_file = "starter_pack_#{channel_id}.json"
+        followers_file = starter_pack_data_path("starter_pack_#{channel_id}.json")
         followers = load_json_data(followers_file)
 
         render json: {
@@ -227,6 +228,24 @@ module Api
 
         Rails.cache.fetch(full_cache_key, expires_in: 1.hour) do
           JSON.parse(File.read(file_path))
+        end
+      end
+
+      def starter_pack_data_path(filename)
+        File.join(starter_pack_namespace, filename)
+      end
+
+      def starter_pack_namespace
+        source = params[:source]
+        normalized_source = source.present? ? source.to_s.parameterize(separator: '') : nil
+
+        case normalized_source
+        when 'thebristolcable'
+          'thebristolcable'
+        when 'twt'
+          'twt'
+        else
+          'twt'
         end
       end
     end

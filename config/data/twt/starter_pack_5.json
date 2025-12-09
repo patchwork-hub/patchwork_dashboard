@@ -1,0 +1,404 @@
+[
+  {
+    "id": "115503714730582315",
+    "username": "jaz",
+    "acct": "jaz@toot.wales",
+    "display_name": "jaz :twt: :wales_flag:",
+    "locked": false,
+    "bot": false,
+    "discoverable": true,
+    "indexable": true,
+    "group": false,
+    "created_at": "2018-08-24T00:00:00.000Z",
+    "note": "<p>Llanilltud Fawr born and bred. <a href=\"https://toot.wales/tags/Defaidodon\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>Defaidodon</span></a> am byth!</p><p>toot.wales is managed by Tîm Tŵt: <span class=\"h-card\" translate=\"no\"><a href=\"https://toot.wales/@teamtoot\" class=\"u-url mention\" rel=\"nofollow noopener\" target=\"_blank\">@<span>teamtoot</span></a></span></p><p>This is my personal account, see <span class=\"h-card\" translate=\"no\"><a href=\"https://mastodon.iftas.org/@iftas\" class=\"u-url mention\" rel=\"nofollow noopener\" target=\"_blank\">@<span>iftas</span></a></span> for my work supporting <a href=\"https://toot.wales/tags/Moderators\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>Moderators</span></a> &amp; <a href=\"https://toot.wales/tags/TrustAndSafety\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>TrustAndSafety</span></a> in the Fediverse.</p><p>Watch the Westchester woods behind my house: <a href=\"https://mastodon.social/@woodlandwatch\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">mastodon.social/@woodlandwatch</span><span class=\"invisible\"></span></a></p><p>Find a Fediverse Server near you: <a href=\"https://jaz.co.uk/projects/mastodon-near-me/startheresocial/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"ellipsis\">jaz.co.uk/projects/mastodon-ne</span><span class=\"invisible\">ar-me/startheresocial/</span></a></p><p><a href=\"https://toot.wales/tags/Cymru\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>Cymru</span></a> <a href=\"https://toot.wales/tags/Cymraeg\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>Cymraeg</span></a> <a href=\"https://toot.wales/tags/Wales\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>Wales</span></a> <a href=\"https://toot.wales/tags/Welsh\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>Welsh</span></a></p>",
+    "url": "https://toot.wales/@jaz",
+    "uri": "https://toot.wales/users/jaz",
+    "avatar": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/503/714/730/582/315/original/0c9315465f0fb7fa.png",
+    "avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/503/714/730/582/315/original/0c9315465f0fb7fa.png",
+    "header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/503/714/730/582/315/original/914d470ddcebc1e8.jpg",
+    "header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/503/714/730/582/315/original/914d470ddcebc1e8.jpg",
+    "followers_count": 6088,
+    "following_count": 778,
+    "statuses_count": 30523,
+    "last_status_at": "2025-11-07",
+    "hide_collections": false,
+    "emojis": [
+      {
+        "shortcode": "twt",
+        "url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/111/original/e56db8f8996ec72f.png",
+        "static_url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/111/static/e56db8f8996ec72f.png",
+        "visible_in_picker": true
+      },
+      {
+        "shortcode": "wales_flag",
+        "url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/112/original/ccb7da4339fd5d98.png",
+        "static_url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/112/static/ccb7da4339fd5d98.png",
+        "visible_in_picker": true
+      }
+    ],
+    "fields": [
+      {
+        "name": "Tŵt Blog",
+        "value": "<a href=\"https://croeso.toot.wales/en/blog/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">croeso.toot.wales/en/blog/</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      },
+      {
+        "name": "Support Tŵt",
+        "value": "<a href=\"https://opencollective.com/twt-cymru/contribute\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"ellipsis\">opencollective.com/twt-cymru/c</span><span class=\"invisible\">ontribute</span></a>",
+        "verified_at": null
+      },
+      {
+        "name": "Follow my Blog",
+        "value": "<span class=\"h-card\" translate=\"no\"><a href=\"https://jaz.co.uk\" class=\"u-url mention\" rel=\"nofollow noopener\" target=\"_blank\">@<span>blog@jaz.co.uk</span></a></span>",
+        "verified_at": null
+      },
+      {
+        "name": "About Me",
+        "value": "<a href=\"https://jaz.co.uk\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">jaz.co.uk</span><span class=\"invisible\"></span></a>",
+        "verified_at": "2025-11-06T17:17:33.981+00:00"
+      }
+    ]
+  },
+  {
+    "id": "115507404929383181",
+    "username": "davidoclubb",
+    "acct": "davidoclubb@toot.wales",
+    "display_name": "David Clubb",
+    "locked": false,
+    "bot": false,
+    "discoverable": true,
+    "indexable": false,
+    "group": false,
+    "created_at": "2018-11-01T00:00:00.000Z",
+    "note": "<p>🏴󠁧󠁢󠁷󠁬󠁳󠁿🇪🇺🏳️‍🌈<br>Feminist. Physicist. Anti-racist 🦸‍✊🏾 He/Him</p><p><a href=\"https://toot.wales/tags/Wales\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>Wales</span></a> <a href=\"https://toot.wales/tags/Cymru\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>Cymru</span></a> <a href=\"https://toot.wales/tags/RejoinEU\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>RejoinEU</span></a> <a href=\"https://toot.wales/tags/openSource\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>openSource</span></a> </p><p>𝗣𝗮𝗿𝘁𝗻𝗲𝗿 <span class=\"h-card\" translate=\"no\"><a href=\"https://toot.wales/@afallen\" class=\"u-url mention\" rel=\"nofollow noopener\" target=\"_blank\">@<span>afallen</span></a></span><br>𝗖𝗵𝗮𝗶𝗿 @nicw@pix.toot.wales<br>𝗠𝗼𝗱𝗲𝗿𝗮𝘁𝗼𝗿 toot.wales<br>Founder <span class=\"h-card\" translate=\"no\"><a href=\"https://toot.wales/@boardswales\" class=\"u-url mention\" rel=\"nofollow noopener\" target=\"_blank\">@<span>boardswales</span></a></span></p>",
+    "url": "https://toot.wales/@davidoclubb",
+    "uri": "https://toot.wales/users/davidoclubb",
+    "avatar": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/404/929/383/181/original/9170ac45535d3d04.jpg",
+    "avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/404/929/383/181/original/9170ac45535d3d04.jpg",
+    "header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/404/929/383/181/original/1912cc6eb5bc85cf.png",
+    "header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/404/929/383/181/original/1912cc6eb5bc85cf.png",
+    "followers_count": 4039,
+    "following_count": 3027,
+    "statuses_count": 4095,
+    "last_status_at": null,
+    "hide_collections": false,
+    "emojis": [],
+    "fields": [
+      {
+        "name": "Linkstack",
+        "value": "<a href=\"https://clubb.cymru/linkstack/@davidoclubb\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"ellipsis\">clubb.cymru/linkstack/@davidoc</span><span class=\"invisible\">lubb</span></a>",
+        "verified_at": null
+      }
+    ]
+  },
+  {
+    "id": "115507405313652992",
+    "username": "gomez",
+    "acct": "gomez@toot.wales",
+    "display_name": "Gomez :wales_flag: :twt:",
+    "locked": false,
+    "bot": false,
+    "discoverable": true,
+    "indexable": false,
+    "group": false,
+    "created_at": "2019-01-05T00:00:00.000Z",
+    "note": "<p>Old geezer born &amp; bred in the South Wales Valleys.  Leans left.  Runs a training company and talks to people about Health &amp; Safety, Sustainability, Food Safety and Project Management.</p><p>Co runs a social enterprise (Food Adventure) with <span class=\"h-card\" translate=\"no\"><a href=\"https://toot.wales/@BabetteFfest\" class=\"u-url mention\" rel=\"nofollow noopener\" target=\"_blank\">@<span>BabetteFfest</span></a></span> who’s aim is to connect communities and help them prosper through food.</p><p>Into <a href=\"https://toot.wales/tags/IT\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>IT</span></a> <a href=\"https://toot.wales/tags/Linux\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>Linux</span></a> <a href=\"https://toot.wales/tags/food\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>food</span></a> <a href=\"https://toot.wales/tags/cooking\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>cooking</span></a> <a href=\"https://toot.wales/tags/photography\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>photography</span></a> <a href=\"https://toot.wales/tags/jazz\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>jazz</span></a> <a href=\"https://toot.wales/tags/wales\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>wales</span></a> <a href=\"https://toot.wales/tags/sustainability\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>sustainability</span></a> <a href=\"https://toot.wales/tags/inclusion\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>inclusion</span></a> <a href=\"https://toot.wales/tags/diversity\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>diversity</span></a></p><p>Otherwise life seems to centre around our recent addition, rescue kitten Xena WP</p>",
+    "url": "https://toot.wales/@gomez",
+    "uri": "https://toot.wales/users/gomez",
+    "avatar": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/405/313/652/992/original/428dae88dd9f5cfe.jpg",
+    "avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/405/313/652/992/original/428dae88dd9f5cfe.jpg",
+    "header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/405/313/652/992/original/78ebab11762b0817.jpg",
+    "header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/405/313/652/992/original/78ebab11762b0817.jpg",
+    "followers_count": 2464,
+    "following_count": 685,
+    "statuses_count": 4382,
+    "last_status_at": null,
+    "hide_collections": false,
+    "emojis": [
+      {
+        "shortcode": "wales_flag",
+        "url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/112/original/ccb7da4339fd5d98.png",
+        "static_url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/112/static/ccb7da4339fd5d98.png",
+        "visible_in_picker": true
+      },
+      {
+        "shortcode": "twt",
+        "url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/111/original/e56db8f8996ec72f.png",
+        "static_url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/111/static/e56db8f8996ec72f.png",
+        "visible_in_picker": true
+      }
+    ],
+    "fields": [
+      {
+        "name": "Me",
+        "value": "<a href=\"https://www.gomez.org.uk\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://www.</span><span class=\"\">gomez.org.uk</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      },
+      {
+        "name": "Food Adventure",
+        "value": "<a href=\"https://www.foodadventure.co.uk\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://www.</span><span class=\"\">foodadventure.co.uk</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      },
+      {
+        "name": "LinkedIn",
+        "value": "<a href=\"https://www.linkedin.com/in/gomezadams/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://www.</span><span class=\"\">linkedin.com/in/gomezadams/</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      },
+      {
+        "name": "Training",
+        "value": "<a href=\"https://www.bpigroup.co.uk\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://www.</span><span class=\"\">bpigroup.co.uk</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      }
+    ]
+  },
+  {
+    "id": "115507405691545600",
+    "username": "TCMuffin",
+    "acct": "TCMuffin@toot.wales",
+    "display_name": "Jayne :wales_flag:🇪🇺🏳️‍🌈",
+    "locked": true,
+    "bot": false,
+    "discoverable": true,
+    "indexable": false,
+    "group": false,
+    "created_at": "2022-11-08T00:00:00.000Z",
+    "note": "<p>Jayne Samuel-Walker<br>:wales_flag: 🇪🇺 :flag_rainbow: :flag_trans:<br>💻 :twt: :mastodon: :fediverse:</p><p>I’m an old IT pro. Co-mum to Tig and Freddie, rescued Border Collies x Welsh Sheepdogs. They are the latest of our greatly loved and now hugely missed dogs.</p><p><a href=\"https://toot.wales/tags/GTTO\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>GTTO</span></a> <a href=\"https://toot.wales/tags/FBPE\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>FBPE</span></a> <a href=\"https://toot.wales/tags/FBPPR\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>FBPPR</span></a> <a href=\"https://toot.wales/tags/FBIW\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>FBIW</span></a> <a href=\"https://toot.wales/tags/Woke\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>Woke</span></a> <a href=\"https://toot.wales/tags/Wales\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>Wales</span></a></p>",
+    "url": "https://toot.wales/@TCMuffin",
+    "uri": "https://toot.wales/users/TCMuffin",
+    "avatar": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/405/691/545/600/original/19e346cbac6603b6.jpg",
+    "avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/405/691/545/600/original/19e346cbac6603b6.jpg",
+    "header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/405/691/545/600/original/d3ee4ffe95e1c3a2.jpg",
+    "header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/405/691/545/600/original/d3ee4ffe95e1c3a2.jpg",
+    "followers_count": 1528,
+    "following_count": 1931,
+    "statuses_count": 68294,
+    "last_status_at": null,
+    "hide_collections": false,
+    "emojis": [
+      {
+        "shortcode": "wales_flag",
+        "url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/112/original/ccb7da4339fd5d98.png",
+        "static_url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/112/static/ccb7da4339fd5d98.png",
+        "visible_in_picker": true
+      },
+      {
+        "shortcode": "flag_rainbow",
+        "url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/859/original/bb9e99e1aed71d2b.png",
+        "static_url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/859/static/bb9e99e1aed71d2b.png",
+        "visible_in_picker": true
+      },
+      {
+        "shortcode": "flag_trans",
+        "url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/860/original/e4bb021053c0f399.png",
+        "static_url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/860/static/e4bb021053c0f399.png",
+        "visible_in_picker": true
+      },
+      {
+        "shortcode": "twt",
+        "url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/111/original/e56db8f8996ec72f.png",
+        "static_url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/111/static/e56db8f8996ec72f.png",
+        "visible_in_picker": true
+      },
+      {
+        "shortcode": "mastodon",
+        "url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/861/original/ffecc1a16ee89f6b.png",
+        "static_url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/861/static/ffecc1a16ee89f6b.png",
+        "visible_in_picker": true
+      },
+      {
+        "shortcode": "fediverse",
+        "url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/862/original/c0095c15d9aef2ad.png",
+        "static_url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/862/static/c0095c15d9aef2ad.png",
+        "visible_in_picker": true
+      }
+    ],
+    "fields": [
+      {
+        "name": "EU 🇪🇺",
+        "value": "Pro EU.  Hate brexshit.",
+        "verified_at": null
+      },
+      {
+        "name": "Cymru 🏴󠁧󠁢󠁷󠁬󠁳󠁿",
+        "value": "Land of my birth and home.",
+        "verified_at": null
+      },
+      {
+        "name": "LGBT+ 🏳️‍🌈",
+        "value": "This is me!",
+        "verified_at": null
+      },
+      {
+        "name": "Gravatar",
+        "value": "<a href=\"https://gravatar.com/jmswefa97a02404\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">gravatar.com/jmswefa97a02404</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      }
+    ]
+  },
+  {
+    "id": "115507406075435814",
+    "username": "alexisbushnell",
+    "acct": "alexisbushnell@toot.wales",
+    "display_name": "The Pink Fury",
+    "locked": false,
+    "bot": false,
+    "discoverable": true,
+    "indexable": true,
+    "group": false,
+    "created_at": "2022-11-09T00:00:00.000Z",
+    "note": "<p>Alexis Bushnell - she/her.</p><p>Neurodivergent knot untangler - slaying your brain gremlins with practical, personalised help. Open University student.</p><p>Social media manager at <span class=\"h-card\" translate=\"no\"><a href=\"https://kind.social/@time_for_kindness\" class=\"u-url mention\" rel=\"nofollow noopener\" target=\"_blank\">@<span>time_for_kindness</span></a></span>.<br>Social media volunteer at <span class=\"h-card\" translate=\"no\"><a href=\"https://toot.wales/@RepairCafe_Barry\" class=\"u-url mention\" rel=\"nofollow noopener\" target=\"_blank\">@<span>RepairCafe_Barry</span></a></span>.<br>Organiser at <span class=\"h-card\" translate=\"no\"><a href=\"https://toot.wales/@Weirdos_Queerdos\" class=\"u-url mention\" rel=\"nofollow noopener\" target=\"_blank\">@<span>Weirdos_Queerdos</span></a></span>.</p><p>Passionate about accessibility and sustainability.<br>New but huge DND fan &amp; forever DM.</p><p>Autistic. Ambulatory wheelchair user thanks to long covid.</p><p>Posts auto delete after 6 months.</p>",
+    "url": "https://toot.wales/@alexisbushnell",
+    "uri": "https://toot.wales/users/alexisbushnell",
+    "avatar": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/406/075/435/814/original/9560d07e7767c4f4.jpg",
+    "avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/406/075/435/814/original/9560d07e7767c4f4.jpg",
+    "header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/406/075/435/814/original/a49bf5c26aceb8d8.png",
+    "header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/406/075/435/814/original/a49bf5c26aceb8d8.png",
+    "followers_count": 941,
+    "following_count": 777,
+    "statuses_count": 3983,
+    "last_status_at": null,
+    "hide_collections": false,
+    "emojis": [],
+    "fields": [
+      {
+        "name": "Blog",
+        "value": "<a href=\"https://blog.alexisbushnell.com/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">blog.alexisbushnell.com/</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      },
+      {
+        "name": "Storygraph",
+        "value": "<a href=\"https://app.thestorygraph.com/profile/misslexisaurus\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"ellipsis\">app.thestorygraph.com/profile/</span><span class=\"invisible\">misslexisaurus</span></a>",
+        "verified_at": null
+      },
+      {
+        "name": "Website",
+        "value": "<a href=\"https://alexisbushnell.com/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">alexisbushnell.com/</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      },
+      {
+        "name": "Badges",
+        "value": "<a href=\"https://badges.vocalcat.com/recipient/aHR0cHM6Ly90b290LndhbGVzL0BhbGV4aXNidXNobmVsbA\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"ellipsis\">badges.vocalcat.com/recipient/</span><span class=\"invisible\">aHR0cHM6Ly90b290LndhbGVzL0BhbGV4aXNidXNobmVsbA</span></a>=",
+        "verified_at": null
+      }
+    ]
+  },
+  {
+    "id": "115507406369987205",
+    "username": "lexicaleigh",
+    "acct": "lexicaleigh@toot.wales",
+    "display_name": "Cress  🏴󠁧󠁢󠁷󠁬󠁳󠁿 🌻",
+    "locked": false,
+    "bot": false,
+    "discoverable": true,
+    "indexable": false,
+    "group": false,
+    "created_at": "2022-11-05T00:00:00.000Z",
+    "note": "<p>Hi there, I'm Cress (she/her).</p><p>I <a href=\"https://toot.wales/tags/knit\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>knit</span></a> &amp; <a href=\"https://toot.wales/tags/crochet\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>crochet</span></a>, cook, and I love PC <a href=\"https://toot.wales/tags/gaming\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>gaming</span></a> , <a href=\"https://toot.wales/tags/BoardGames\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>BoardGames</span></a> , and more recently, <a href=\"https://toot.wales/tags/DnD\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>DnD</span></a>. I'm an avid drinker of <a href=\"https://toot.wales/tags/tea\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>tea</span></a> (Blue Lady or Ginger Assam), and have just got back into <a href=\"https://toot.wales/tags/reading\" class=\"mention hashtag\" rel=\"nofollow noopener\" target=\"_blank\">#<span>reading</span></a> (medication makes concentration hard).</p><p>Avatar is a pic of me dressed like a cosy yeti. Header is a garden in summer with chairs &amp; tables; to the right, a large inflatable pool.</p><p>TIP YOUR SERVER if you can! <br><a href=\"https://opencollective.com/twt-cymru\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">opencollective.com/twt-cymru</span><span class=\"invisible\"></span></a></p>",
+    "url": "https://toot.wales/@lexicaleigh",
+    "uri": "https://toot.wales/users/lexicaleigh",
+    "avatar": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/406/369/987/205/original/6d270d0f3c82f6c5.jpg",
+    "avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/406/369/987/205/original/6d270d0f3c82f6c5.jpg",
+    "header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/406/369/987/205/original/51b2592cdaf6e5bd.jpg",
+    "header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/406/369/987/205/original/51b2592cdaf6e5bd.jpg",
+    "followers_count": 632,
+    "following_count": 598,
+    "statuses_count": 4191,
+    "last_status_at": null,
+    "hide_collections": false,
+    "emojis": [],
+    "fields": []
+  },
+  {
+    "id": "115507406723063562",
+    "username": "seddon",
+    "acct": "seddon@toot.wales",
+    "display_name": "Seddon :twt:",
+    "locked": false,
+    "bot": false,
+    "discoverable": true,
+    "indexable": false,
+    "group": false,
+    "created_at": "2022-11-14T00:00:00.000Z",
+    "note": "<p>📱 Engineering Manager @ Wikipedia Apps<br>🌍 OSGeoUK committee<br>🚀 space enthusiast<br>:twt: toot.wales moderator</p>",
+    "url": "https://toot.wales/@seddon",
+    "uri": "https://toot.wales/users/seddon",
+    "avatar": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/406/723/063/562/original/7b90a1ec29d50e49.jpg",
+    "avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/406/723/063/562/original/7b90a1ec29d50e49.jpg",
+    "header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/406/723/063/562/original/b05a663fda8bc204.png",
+    "header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/406/723/063/562/original/b05a663fda8bc204.png",
+    "followers_count": 416,
+    "following_count": 297,
+    "statuses_count": 412,
+    "last_status_at": null,
+    "hide_collections": false,
+    "emojis": [
+      {
+        "shortcode": "twt",
+        "url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/111/original/e56db8f8996ec72f.png",
+        "static_url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/111/static/e56db8f8996ec72f.png",
+        "visible_in_picker": true
+      }
+    ],
+    "fields": [
+      {
+        "name": "Website",
+        "value": "<a href=\"https://seddon.tech/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">seddon.tech/</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      }
+    ]
+  },
+  {
+    "id": "115503714989106788",
+    "username": "teamtoot",
+    "acct": "teamtoot@toot.wales",
+    "display_name": "Tîm Tŵt Staff",
+    "locked": false,
+    "bot": false,
+    "discoverable": true,
+    "indexable": true,
+    "group": false,
+    "created_at": "2022-11-29T00:00:00.000Z",
+    "note": "<p>This account is used by the :twt: community team &amp; we encourage all our members to follow this account for service updates and community announcements.</p><p>Starter Packs<br> - Staff: <a href=\"https://fedidevs.com/s/NTc5/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">fedidevs.com/s/NTc5/</span><span class=\"invisible\"></span></a><br> - Dysgu Cymraeg: <a href=\"https://fedidevs.com/s/NTgw/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">fedidevs.com/s/NTgw/</span><span class=\"invisible\"></span></a><br> - News/Weather: <a href=\"https://fedidevs.com/s/NTgx/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">fedidevs.com/s/NTgx/</span><span class=\"invisible\"></span></a><br> - Newyddion/Tywydd: <a href=\"https://fedidevs.com/s/NTgy/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">fedidevs.com/s/NTgy/</span><span class=\"invisible\"></span></a></p><p>Service Status: <a href=\"https://stats.uptimerobot.com/VNZKPi6YQ\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">stats.uptimerobot.com/VNZKPi6YQ</span><span class=\"invisible\"></span></a></p><p>Technical support: help@toot.wales</p>",
+    "url": "https://toot.wales/@teamtoot",
+    "uri": "https://toot.wales/users/teamtoot",
+    "avatar": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/503/714/989/106/788/original/ce65ac7c8e28c6c4.png",
+    "avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/503/714/989/106/788/original/ce65ac7c8e28c6c4.png",
+    "header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/503/714/989/106/788/original/dd8b48ce14605f0b.jpg",
+    "header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/503/714/989/106/788/original/dd8b48ce14605f0b.jpg",
+    "followers_count": 333,
+    "following_count": 353,
+    "statuses_count": 235,
+    "last_status_at": "2025-11-06",
+    "hide_collections": false,
+    "emojis": [
+      {
+        "shortcode": "twt",
+        "url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/111/original/e56db8f8996ec72f.png",
+        "static_url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/111/static/e56db8f8996ec72f.png",
+        "visible_in_picker": true
+      }
+    ],
+    "fields": [
+      {
+        "name": "Technical Support",
+        "value": "<a href=\"https://croeso.toot.wales/en/help/\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">croeso.toot.wales/en/help/</span><span class=\"invisible\"></span></a>",
+        "verified_at": "2025-11-06T16:44:08.484+00:00"
+      },
+      {
+        "name": "Blog",
+        "value": "<a href=\"https://croeso.toot.wales/en/blog/\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">croeso.toot.wales/en/blog/</span><span class=\"invisible\"></span></a>",
+        "verified_at": "2025-11-06T16:44:08.590+00:00"
+      },
+      {
+        "name": "Donations",
+        "value": "<a href=\"https://opencollective.com/twt-cymru\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">opencollective.com/twt-cymru</span><span class=\"invisible\"></span></a>",
+        "verified_at": "2025-11-06T16:44:09.547+00:00"
+      },
+      {
+        "name": "Service Status",
+        "value": "Service Status: <a href=\"https://stats.uptimerobot.com/VNZKPi6YQ\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">stats.uptimerobot.com/VNZKPi6YQ</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      }
+    ]
+  }
+]

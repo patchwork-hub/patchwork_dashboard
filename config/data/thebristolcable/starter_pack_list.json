@@ -1,0 +1,120 @@
+[
+	{
+		"id": "1",
+		"title": "Fun, Funny and Fantastic",
+		"description": "Add some humour and joy to your feed.",
+		"collected_by": {
+			"id": "115503714989106788",
+			"username": "teamthebristolcable",
+			"acct": "@Jaldeep@thebristolcable.social",
+			"display_name": "The Bristol Cable Staff",
+			"locked": false,
+			"bot": false,
+			"discoverable": true,
+			"group": false,
+			"created_at": "2022-11-29T00:00:00.000Z",
+			"note": "<p>This account is used by the :twt: community team &amp; we encourage all our members to follow this account for service updates and community announcements.</p><p>Starter Packs<br> - Staff: <a href=\"https://fedidevs.com/s/NTc5/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">fedidevs.com/s/NTc5/</span><span class=\"invisible\"></span></a><br> - Dysgu Cymraeg: <a href=\"https://fedidevs.com/s/NTgw/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">fedidevs.com/s/NTgw/</span><span class=\"invisible\"></span></a><br> - News/Weather: <a href=\"https://fedidevs.com/s/NTgx/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">fedidevs.com/s/NTgx/</span><span class=\"invisible\"></span></a><br> - Newyddion/Tywydd: <a href=\"https://fedidevs.com/s/NTgy/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">fedidevs.com/s/NTgy/</span><span class=\"invisible\"></span></a></p><p>Service Status: <a href=\"https://stats.uptimerobot.com/VNZKPi6YQ\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">stats.uptimerobot.com/VNZKPi6YQ</span><span class=\"invisible\"></span></a></p><p>Technical support: help@toot.wales</p>",
+			"url": "https://toot.wales/@teamtoot",
+			"uri": "https://toot.wales/users/teamtoot",
+			"avatar": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/503/714/989/106/788/original/ce65ac7c8e28c6c4.png",
+			"avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/503/714/989/106/788/original/ce65ac7c8e28c6c4.png",
+			"header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/503/714/989/106/788/original/dd8b48ce14605f0b.jpg",
+			"header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/503/714/989/106/788/original/dd8b48ce14605f0b.jpg",
+			"followers_count": 332,
+			"following_count": 353,
+			"statuses_count": 237,
+			"last_status_at": "2025-11-06",
+			"hide_collections": false,
+			"emojis": [
+				{
+					"shortcode": "twt",
+					"url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/111/original/e56db8f8996ec72f.png",
+					"static_url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/111/static/e56db8f8996ec72f.png",
+					"visible_in_picker": true
+				}
+			],
+			"fields": [
+				{
+					"name": "Technical Support",
+					"value": "<a href=\"https://croeso.toot.wales/en/help/\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">croeso.toot.wales/en/help/</span><span class=\"invisible\"></span></a>",
+					"verified_at": "2025-11-06T16:34:46.111+00:00"
+				},
+				{
+					"name": "Blog",
+					"value": "<a href=\"https://croeso.toot.wales/en/blog/\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">croeso.toot.wales/en/blog/</span><span class=\"invisible\"></span></a>",
+					"verified_at": "2025-11-06T16:34:46.238+00:00"
+				},
+				{
+					"name": "Donations",
+					"value": "<a href=\"https://opencollective.com/twt-cymru\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">opencollective.com/twt-cymru</span><span class=\"invisible\"></span></a>",
+					"verified_at": "2025-11-06T16:34:47.318+00:00"
+				},
+				{
+					"name": "Service Status",
+					"value": "Service Status: <a href=\"https://stats.uptimerobot.com/VNZKPi6YQ\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">stats.uptimerobot.com/VNZKPi6YQ</span><span class=\"invisible\"></span></a>",
+					"verified_at": null
+				}
+			]
+		},
+		"total_accounts": 24
+	},
+	{
+		"id": "5",
+		"title": "Team The Bristol Cable Staff",
+		"description": "People and accounts related to the toot.wales services",
+		"collected_by": {
+			"id": "115503714989106788",
+			"username": "thebristolcable",
+			"acct": "@Jaldeep@thebristolcable.social",
+			"display_name": "The Bristol Cable Staff",
+			"locked": false,
+			"bot": false,
+			"discoverable": true,
+			"group": false,
+			"created_at": "2022-11-29T00:00:00.000Z",
+			"note": "<p>This account is used by the :twt: community team &amp; we encourage all our members to follow this account for service updates and community announcements.</p><p>Starter Packs<br> - Staff: <a href=\"https://fedidevs.com/s/NTc5/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">fedidevs.com/s/NTc5/</span><span class=\"invisible\"></span></a><br> - Dysgu Cymraeg: <a href=\"https://fedidevs.com/s/NTgw/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">fedidevs.com/s/NTgw/</span><span class=\"invisible\"></span></a><br> - News/Weather: <a href=\"https://fedidevs.com/s/NTgx/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">fedidevs.com/s/NTgx/</span><span class=\"invisible\"></span></a><br> - Newyddion/Tywydd: <a href=\"https://fedidevs.com/s/NTgy/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">fedidevs.com/s/NTgy/</span><span class=\"invisible\"></span></a></p><p>Service Status: <a href=\"https://stats.uptimerobot.com/VNZKPi6YQ\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">stats.uptimerobot.com/VNZKPi6YQ</span><span class=\"invisible\"></span></a></p><p>Technical support: help@toot.wales</p>",
+			"url": "https://toot.wales/@teamtoot",
+			"uri": "https://toot.wales/users/teamtoot",
+			"avatar": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/503/714/989/106/788/original/ce65ac7c8e28c6c4.png",
+			"avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/503/714/989/106/788/original/ce65ac7c8e28c6c4.png",
+			"header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/503/714/989/106/788/original/dd8b48ce14605f0b.jpg",
+			"header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/503/714/989/106/788/original/dd8b48ce14605f0b.jpg",
+			"followers_count": 332,
+			"following_count": 353,
+			"statuses_count": 237,
+			"last_status_at": "2025-11-06",
+			"hide_collections": false,
+			"emojis": [
+				{
+					"shortcode": "thebristolcable",
+					"url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/111/original/e56db8f8996ec72f.png",
+					"static_url": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/custom_emojis/images/000/000/111/static/e56db8f8996ec72f.png",
+					"visible_in_picker": true
+				}
+			],
+			"fields": [
+				{
+					"name": "Technical Support",
+					"value": "<a href=\"https://croeso.toot.wales/en/help/\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">croeso.toot.wales/en/help/</span><span class=\"invisible\"></span></a>",
+					"verified_at": "2025-11-06T16:34:46.111+00:00"
+				},
+				{
+					"name": "Blog",
+					"value": "<a href=\"https://croeso.toot.wales/en/blog/\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">croeso.toot.wales/en/blog/</span><span class=\"invisible\"></span></a>",
+					"verified_at": "2025-11-06T16:34:46.238+00:00"
+				},
+				{
+					"name": "Donations",
+					"value": "<a href=\"https://opencollective.com/twt-cymru\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">opencollective.com/twt-cymru</span><span class=\"invisible\"></span></a>",
+					"verified_at": "2025-11-06T16:34:47.318+00:00"
+				},
+				{
+					"name": "Service Status",
+					"value": "Service Status: <a href=\"https://stats.uptimerobot.com/VNZKPi6YQ\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">stats.uptimerobot.com/VNZKPi6YQ</span><span class=\"invisible\"></span></a>",
+					"verified_at": null
+				}
+			]
+		},
+		"total_accounts": 0
+	}
+]

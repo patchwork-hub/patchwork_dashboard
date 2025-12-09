@@ -1,0 +1,150 @@
+[
+  {
+    "id": "115503715043360005",
+    "username": "golwg",
+    "acct": "golwg@360.cymru",
+    "display_name": "Golwg",
+    "locked": false,
+    "bot": true,
+    "discoverable": true,
+    "indexable": false,
+    "group": false,
+    "created_at": "2023-02-05T00:00:00.000Z",
+    "note": "<p>Newyddion, materion cyfoes, celfyddydau a chwaraeon gan Golwg360 a Chylchgrawn Golwg.</p>",
+    "url": "https://mastodon.360.cymru/@golwg",
+    "uri": "https://mastodon.360.cymru/users/golwg",
+    "avatar": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/503/715/043/360/005/original/33c1d54411a33e16.png",
+    "avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/503/715/043/360/005/original/33c1d54411a33e16.png",
+    "header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/503/715/043/360/005/original/ffd7a2c3ab9b4408.png",
+    "header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/503/715/043/360/005/original/ffd7a2c3ab9b4408.png",
+    "followers_count": 314,
+    "following_count": 0,
+    "statuses_count": 11520,
+    "last_status_at": null,
+    "hide_collections": false,
+    "emojis": [],
+    "fields": [
+      {
+        "name": "Golwg360",
+        "value": "<a href=\"https://golwg.360.cymru\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">golwg.360.cymru</span><span class=\"invisible\"></span></a>",
+        "verified_at": "2025-11-06T16:36:57.468+00:00"
+      },
+      {
+        "name": "Cylchgrawn Golwg",
+        "value": "<a href=\"https://golwg.360.cymru/cylchgrawn\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">golwg.360.cymru/cylchgrawn</span><span class=\"invisible\"></span></a>",
+        "verified_at": "2025-11-06T16:36:57.485+00:00"
+      },
+      {
+        "name": "Tanysgrifio",
+        "value": "<a href=\"https://360.cymru/tanysgrifio/golwg/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">360.cymru/tanysgrifio/golwg/</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      },
+      {
+        "name": "Facebook",
+        "value": "<a href=\"https://www.facebook.com/Golwg360/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://www.</span><span class=\"\">facebook.com/Golwg360/</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      }
+    ]
+  },
+  {
+    "id": "115507361680033322",
+    "username": "calendr",
+    "acct": "calendr@360.cymru",
+    "display_name": "Calendr360",
+    "locked": false,
+    "bot": true,
+    "discoverable": true,
+    "indexable": false,
+    "group": false,
+    "created_at": "2023-02-08T00:00:00.000Z",
+    "note": "<p>Digwyddiadau digidol ac ar draws y wlad</p>",
+    "url": "https://mastodon.360.cymru/@calendr",
+    "uri": "https://mastodon.360.cymru/users/calendr",
+    "avatar": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/361/680/033/322/original/f3d509480ed1db45.png",
+    "avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/361/680/033/322/original/f3d509480ed1db45.png",
+    "header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/361/680/033/322/original/65e9897165ebc157.png",
+    "header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/361/680/033/322/original/65e9897165ebc157.png",
+    "followers_count": 7,
+    "following_count": 0,
+    "statuses_count": 3729,
+    "last_status_at": null,
+    "hide_collections": false,
+    "emojis": [],
+    "fields": [
+      {
+        "name": "Calendr360",
+        "value": "<a href=\"https://calendr.360.cymru\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">calendr.360.cymru</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      },
+      {
+        "name": "Twitter",
+        "value": "<a href=\"https://twitter.com/calendr360\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">twitter.com/calendr360</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      }
+    ]
+  },
+  {
+    "id": "115507361837377278",
+    "username": "swyddi",
+    "acct": "swyddi@360.cymru",
+    "display_name": "Swyddi360",
+    "locked": false,
+    "bot": true,
+    "discoverable": true,
+    "indexable": false,
+    "group": false,
+    "created_at": "2023-02-08T00:00:00.000Z",
+    "note": "<p>Hysbysebion swyddi, cyfleoedd newydd a newyddion am benodiadau</p>",
+    "url": "https://mastodon.360.cymru/@swyddi",
+    "uri": "https://mastodon.360.cymru/users/swyddi",
+    "avatar": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/361/837/377/278/original/71dfd88410fefca9.png",
+    "avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/361/837/377/278/original/71dfd88410fefca9.png",
+    "header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/361/837/377/278/original/6864822f4b2a21ce.png",
+    "header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/361/837/377/278/original/6864822f4b2a21ce.png",
+    "followers_count": 3,
+    "following_count": 0,
+    "statuses_count": 588,
+    "last_status_at": null,
+    "hide_collections": false,
+    "emojis": [],
+    "fields": [
+      {
+        "name": "Swyddi360",
+        "value": "<a href=\"https://swyddi.360.cymru\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">swyddi.360.cymru</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      }
+    ]
+  },
+  {
+    "id": "115507361968547568",
+    "username": "marchnad",
+    "acct": "marchnad@360.cymru",
+    "display_name": "Marchnad360",
+    "locked": false,
+    "bot": true,
+    "discoverable": true,
+    "indexable": false,
+    "group": false,
+    "created_at": "2023-02-08T00:00:00.000Z",
+    "note": "<p>Y lle ar y we i holl fusnesau Cymru</p>",
+    "url": "https://mastodon.360.cymru/@marchnad",
+    "uri": "https://mastodon.360.cymru/users/marchnad",
+    "avatar": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/361/968/547/568/original/324ce3c79ea69a64.png",
+    "avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/361/968/547/568/original/324ce3c79ea69a64.png",
+    "header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/361/968/547/568/original/fbe8fe1318c83d24.png",
+    "header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/361/968/547/568/original/fbe8fe1318c83d24.png",
+    "followers_count": 3,
+    "following_count": 0,
+    "statuses_count": 3,
+    "last_status_at": null,
+    "hide_collections": false,
+    "emojis": [],
+    "fields": [
+      {
+        "name": "Marchnad360",
+        "value": "<a href=\"https://marchnad.360.cymru\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">marchnad.360.cymru</span><span class=\"invisible\"></span></a>",
+        "verified_at": null
+      }
+    ]
+  }
+]
