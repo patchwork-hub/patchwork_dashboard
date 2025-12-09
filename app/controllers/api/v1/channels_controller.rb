@@ -236,7 +236,7 @@ module Api
       end
 
       def starter_pack_namespace
-        source = params[:source]
+        source = params[:starter_pack_source]
         normalized_source = source.present? ? source.to_s.parameterize(separator: '') : nil
 
         case normalized_source
