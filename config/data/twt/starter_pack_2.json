@@ -17,22 +17,22 @@
     "avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/503/715/043/360/005/original/33c1d54411a33e16.png",
     "header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/503/715/043/360/005/original/ffd7a2c3ab9b4408.png",
     "header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/503/715/043/360/005/original/ffd7a2c3ab9b4408.png",
-    "followers_count": 314,
+    "followers_count": 317,
     "following_count": 0,
-    "statuses_count": 11520,
-    "last_status_at": null,
+    "statuses_count": 11892,
+    "last_status_at": "2025-12-09",
     "hide_collections": false,
     "emojis": [],
     "fields": [
       {
         "name": "Golwg360",
         "value": "<a href=\"https://golwg.360.cymru\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">golwg.360.cymru</span><span class=\"invisible\"></span></a>",
-        "verified_at": "2025-11-06T16:36:57.468+00:00"
+        "verified_at": "2025-12-09T10:50:23.162+00:00"
       },
       {
         "name": "Cylchgrawn Golwg",
         "value": "<a href=\"https://golwg.360.cymru/cylchgrawn\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">golwg.360.cymru/cylchgrawn</span><span class=\"invisible\"></span></a>",
-        "verified_at": "2025-11-06T16:36:57.485+00:00"
+        "verified_at": "2025-12-09T10:50:23.182+00:00"
       },
       {
         "name": "Tanysgrifio",
@@ -66,15 +66,15 @@
     "header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/361/680/033/322/original/65e9897165ebc157.png",
     "followers_count": 7,
     "following_count": 0,
-    "statuses_count": 3729,
-    "last_status_at": null,
+    "statuses_count": 4191,
+    "last_status_at": "2025-12-09",
     "hide_collections": false,
     "emojis": [],
     "fields": [
       {
         "name": "Calendr360",
-        "value": "<a href=\"https://calendr.360.cymru\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">calendr.360.cymru</span><span class=\"invisible\"></span></a>",
-        "verified_at": null
+        "value": "<a href=\"https://calendr.360.cymru\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">calendr.360.cymru</span><span class=\"invisible\"></span></a>",
+        "verified_at": "2025-12-09T12:36:13.395+00:00"
       },
       {
         "name": "Twitter",
@@ -101,17 +101,17 @@
     "avatar_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/avatars/115/507/361/837/377/278/original/71dfd88410fefca9.png",
     "header": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/361/837/377/278/original/6864822f4b2a21ce.png",
     "header_static": "https://s3-eu-west-2.amazonaws.com/twt-mstd/cache/accounts/headers/115/507/361/837/377/278/original/6864822f4b2a21ce.png",
-    "followers_count": 3,
+    "followers_count": 4,
     "following_count": 0,
-    "statuses_count": 588,
-    "last_status_at": null,
+    "statuses_count": 604,
+    "last_status_at": "2025-12-09",
     "hide_collections": false,
     "emojis": [],
     "fields": [
       {
         "name": "Swyddi360",
-        "value": "<a href=\"https://swyddi.360.cymru\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">swyddi.360.cymru</span><span class=\"invisible\"></span></a>",
-        "verified_at": null
+        "value": "<a href=\"https://swyddi.360.cymru\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">swyddi.360.cymru</span><span class=\"invisible\"></span></a>",
+        "verified_at": "2025-12-09T12:40:09.448+00:00"
       }
     ]
   },
