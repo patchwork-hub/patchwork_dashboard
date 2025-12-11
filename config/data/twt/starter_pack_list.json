@@ -237,7 +237,7 @@
 	},
 	{
 		"id": "8",
-		"title": "Wales Weather Forecasts",
+		"title": "Local Weather Forecasts",
 		"description": "Find the your nearest weather station and get an updated forecast every six hours courtesy of FediMeteo",
 		"collected_by": {
 			"id": "115503714989106788",
