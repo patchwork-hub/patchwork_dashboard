@@ -1,0 +1,117 @@
+[
+  {
+    "id": "1",
+    "title": "Fun, Funny, and Fantastic",
+    "description": "Add some humour and joy to your feed.",
+    "collected_by": {
+      "id": "109429324912042582",
+      "username": "teamtoot",
+      "acct": "teamtoot",
+      "display_name": "Tîm Tŵt Staff",
+      "locked": false,
+      "bot": false,
+      "discoverable": true,
+      "indexable": true,
+      "group": false,
+      "created_at": "2022-11-29T00:00:00.000Z",
+      "note": "\u003cp\u003eThis account is used by the :twt: community team \u0026amp; we encourage all our members to follow this account for service updates and community announcements.\u003c/p\u003e\u003cp\u003eStarter Packs\u003cbr /\u003e - Staff: \u003ca href=\"https://fedidevs.com/s/NTc5/\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"\u003e\u003cspan class=\"invisible\"\u003ehttps://\u003c/span\u003e\u003cspan class=\"\"\u003efedidevs.com/s/NTc5/\u003c/span\u003e\u003cspan class=\"invisible\"\u003e\u003c/span\u003e\u003c/a\u003e\u003cbr /\u003e - Dysgu Cymraeg: \u003ca href=\"https://fedidevs.com/s/NTgw/\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"\u003e\u003cspan class=\"invisible\"\u003ehttps://\u003c/span\u003e\u003cspan class=\"\"\u003efedidevs.com/s/NTgw/\u003c/span\u003e\u003cspan class=\"invisible\"\u003e\u003c/span\u003e\u003c/a\u003e\u003cbr /\u003e - News/Weather: \u003ca href=\"https://fedidevs.com/s/NTgx/\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"\u003e\u003cspan class=\"invisible\"\u003ehttps://\u003c/span\u003e\u003cspan class=\"\"\u003efedidevs.com/s/NTgx/\u003c/span\u003e\u003cspan class=\"invisible\"\u003e\u003c/span\u003e\u003c/a\u003e\u003cbr /\u003e - Newyddion/Tywydd: \u003ca href=\"https://fedidevs.com/s/NTgy/\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"\u003e\u003cspan class=\"invisible\"\u003ehttps://\u003c/span\u003e\u003cspan class=\"\"\u003efedidevs.com/s/NTgy/\u003c/span\u003e\u003cspan class=\"invisible\"\u003e\u003c/span\u003e\u003c/a\u003e\u003c/p\u003e\u003cp\u003eService Status: \u003ca href=\"https://stats.uptimerobot.com/VNZKPi6YQ\" target=\"_blank\" rel=\"nofollow noopener\" translate=\"no\"\u003e\u003cspan class=\"invisible\"\u003ehttps://\u003c/span\u003e\u003cspan class=\"\"\u003estats.uptimerobot.com/VNZKPi6YQ\u003c/span\u003e\u003cspan class=\"invisible\"\u003e\u003c/span\u003e\u003c/a\u003e\u003c/p\u003e\u003cp\u003eTechnical support: help@toot.wales\u003c/p\u003e",
+      "url": "https://toot.wales/@teamtoot",
+      "uri": "https://toot.wales/users/teamtoot",
+      "avatar": "https://toot.wales/system/accounts/avatars/109/429/324/912/042/582/original/c42386648f059c6c.png",
+      "avatar_static": "https://toot.wales/system/accounts/avatars/109/429/324/912/042/582/original/c42386648f059c6c.png",
+      "header": "https://toot.wales/system/accounts/headers/109/429/324/912/042/582/original/c3f87547251a5204.jpg",
+      "header_static": "https://toot.wales/system/accounts/headers/109/429/324/912/042/582/original/c3f87547251a5204.jpg",
+      "followers_count": 353,
+      "following_count": 29,
+      "statuses_count": 245,
+      "last_status_at": "2025-12-11",
+      "hide_collections": false,
+      "noindex": false,
+      "emojis": [
+        {
+          "shortcode": "twt",
+          "url": "https://toot.wales/system/custom_emojis/images/000/075/894/original/7ff84d510813db7d.png",
+          "static_url": "https://toot.wales/system/custom_emojis/images/000/075/894/static/7ff84d510813db7d.png",
+          "visible_in_picker": true
+        }
+      ],
+      "roles": [],
+      "fields": [
+        {
+          "name": "Technical Support",
+          "value": "\u003ca href=\"https://croeso.toot.wales/en/help/\" target=\"_blank\" rel=\"nofollow noopener me\" translate=\"no\"\u003e\u003cspan class=\"invisible\"\u003ehttps://\u003c/span\u003e\u003cspan class=\"\"\u003ecroeso.toot.wales/en/help/\u003c/span\u003e\u003cspan class=\"invisible\"\u003e\u003c/span\u003e\u003c/a\u003e",
+          "verified_at": "2025-06-03T12:51:27.213+00:00"
+        },
+        {
+          "name": "Blog",
+          "value": "\u003ca href=\"https://croeso.toot.wales/en/blog/\" target=\"_blank\" rel=\"nofollow noopener me\" translate=\"no\"\u003e\u003cspan class=\"invisible\"\u003ehttps://\u003c/span\u003e\u003cspan class=\"\"\u003ecroeso.toot.wales/en/blog/\u003c/span\u003e\u003cspan class=\"invisible\"\u003e\u003c/span\u003e\u003c/a\u003e",
+          "verified_at": "2025-06-03T12:51:27.512+00:00"
+        },
+        {
+          "name": "Donations",
+          "value": "\u003ca href=\"https://opencollective.com/twt-cymru\" target=\"_blank\" rel=\"nofollow noopener me\" translate=\"no\"\u003e\u003cspan class=\"invisible\"\u003ehttps://\u003c/span\u003e\u003cspan class=\"\"\u003eopencollective.com/twt-cymru\u003c/span\u003e\u003cspan class=\"invisible\"\u003e\u003c/span\u003e\u003c/a\u003e",
+          "verified_at": "2025-01-30T20:43:41.808+00:00"
+        },
+        {
+          "name": "Service Status",
+          "value": "Service Status: \u003ca href=\"https://stats.uptimerobot.com/VNZKPi6YQ\" target=\"_blank\" rel=\"nofollow noopener me\" translate=\"no\"\u003e\u003cspan class=\"invisible\"\u003ehttps://\u003c/span\u003e\u003cspan class=\"\"\u003estats.uptimerobot.com/VNZKPi6YQ\u003c/span\u003e\u003cspan class=\"invisible\"\u003e\u003c/span\u003e\u003c/a\u003e",
+          "verified_at": null
+        }
+      ]
+    },
+    "total_accounts": 24
+  },
+  {
+    "id": "2",
+    "title": "Shitposters of the Fediverse",
+    "description": "Posters that primarily post jokes, likely with some level of internet-poisoned brain rot. (Some politics and other interests may be included) Many (but not all) are users who were/are on bluesky.",
+    "collected_by": {
+      "id": "114775941155788481",
+      "username": "gregthemiller",
+      "acct": "gregthemiller@beige.party",
+      "display_name": "Greg the Miller",
+      "locked": false,
+      "bot": false,
+      "discoverable": true,
+      "indexable": true,
+      "group": false,
+      "created_at": "2025-06-30T00:00:00.000Z",
+      "note": "\u003cp\u003e(he/him) bidet and star trek enthusiast. certified cornball.\u003c/p\u003e",
+      "url": "https://beige.party/@gregthemiller",
+      "uri": "https://beige.party/users/gregthemiller",
+      "avatar": "https://files.mastodon.social/cache/accounts/avatars/114/775/941/155/788/481/original/49f841ab1ed6eded.png%22",
+      "avatar_static": "https://files.mastodon.social/cache/accounts/avatars/114/775/941/155/788/481/original/49f841ab1ed6eded.png%22",
+      "header": "https://files.mastodon.social/cache/accounts/headers/114/775/941/155/788/481/original/3abbf3325ea63c36.jpg%22",
+      "header_static": "https://files.mastodon.social/cache/accounts/headers/114/775/941/155/788/481/original/3abbf3325ea63c36.jpg%22",
+      "followers_count": 841,
+      "following_count": 373,
+      "statuses_count": 4900,
+      "last_status_at": "2025-12-11",
+      "hide_collections": false,
+      "emojis": [],
+      "fields": [
+        {
+          "name": "header alt-text",
+          "value": "collage of posts: “I’m getting real close to muting Greg” “greg is the mouth piece of the bidet” “Don’t start with me, GREG” “OMG, GREG. You’re out of the fishing trip” “I can’t believe you Greg” “oh. my. god. GREG! WTH???",
+          "verified_at": null
+        },
+        {
+          "name": "pfp alt-text",
+          "value": "a selfie of a guy with a beard wearing a Mr. Robot white hat, large aviator sunglasses, a brown coat, and a checkered scarf (mimicing Christian Slater) with a crooked grin",
+          "verified_at": null
+        },
+        {
+          "name": "bluesky",
+          "value": "gregthemiller.bsky.social",
+          "verified_at": null
+        },
+        {
+          "name": "shitposters of the fediverse starter pack",
+          "value": "\u003ca href=\"https://fedidevs.com/s/NjQ5/\" rel=\"nofollow noopener\" translate=\"no\" target=\"_blank\"\u003e\u003cspan class=\"invisible\"\u003ehttps://\u003c/span\u003e\u003cspan class=\"\"\u003efedidevs.com/s/NjQ5/\u003c/span\u003e\u003cspan class=\"invisible\"\u003e\u003c/span\u003e\u003c/a\u003e",
+          "verified_at": null
+        }
+      ]
+    },
+    "total_accounts": 102
+  }
+]

@@ -4,7 +4,7 @@ module Api
   module V1
     class ChannelsController < ApiController
       skip_before_action :verify_key!
-      before_action :check_authorization_header, only: [:channel_detail, :channel_feeds, :newsmast_channels, :my_channel, :mo_me_channels, :patchwork_demo_channels, :toot_channels, :bristol_cable_channels]
+      before_action :check_authorization_header, only: [:channel_detail, :channel_feeds, :newsmast_channels, :my_channel, :mo_me_channels, :patchwork_demo_channels, :toot_channels, :bristol_cable_channels, :find_out_channels]
       before_action :set_channel, only: [:channel_detail, :channel_feeds]
 
       DEFAULT_MO_ME_CHANNELS = [
@@ -54,6 +54,15 @@ module Api
         { slug: 'RenewedResistance', channel_type: Community.channel_types[:channel]}
       ].freeze
 
+      DEFAULT_FIND_OUT_CHANNELS = [
+        { slug: 'uspolitics', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'activism-civil-rights', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'climate-change', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'democracy-human-rights', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'journalismandcomment', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'lgbtq', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'ussport', channel_type: Community.channel_types[:newsmast]}
+      ].freeze
 
       def recommend_channels
         @recommended_channels = Community.recommended.exclude_array_ids
@@ -140,6 +149,10 @@ module Api
 
       def bristol_cable_channels
         render_custom_channels(DEFAULT_BRISTOL_CABLE_CHANNELS)
+      end
+
+      def find_out_channels
+        render_custom_channels(DEFAULT_FIND_OUT_CHANNELS)
       end
 
       def starter_packs_channels
@@ -244,6 +257,8 @@ module Api
           'thebristolcable'
         when 'twt'
           'twt'
+        when 'findout'
+          'findout'
         else
           'twt'
         end
