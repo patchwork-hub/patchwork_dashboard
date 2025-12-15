@@ -55,13 +55,13 @@ module Api
       ].freeze
 
       DEFAULT_FIND_OUT_CHANNELS = [
-        { slug: 'uspolitics', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'us-politics', channel_type: Community.channel_types[:newsmast] },
         { slug: 'activism-civil-rights', channel_type: Community.channel_types[:newsmast] },
         { slug: 'climate-change', channel_type: Community.channel_types[:newsmast]},
         { slug: 'democracy-human-rights', channel_type: Community.channel_types[:newsmast]},
-        { slug: 'journalismandcomment', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'news-comment-data', channel_type: Community.channel_types[:newsmast] },
         { slug: 'lgbtq', channel_type: Community.channel_types[:newsmast] },
-        { slug: 'ussport', channel_type: Community.channel_types[:newsmast]}
+        { slug: 'us-sport', channel_type: Community.channel_types[:newsmast]}
       ].freeze
 
       def recommend_channels
