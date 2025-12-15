@@ -6,7 +6,7 @@ module Api
       # get latest print edition
       def bristol_latest_print
         render json: {
-          categoryId: 4468,
+          categoryId: 4482,
           title: 'Latest Print Edition',
           categoryType: 'list'
         }
