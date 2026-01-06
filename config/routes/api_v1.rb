@@ -46,6 +46,7 @@ namespace :api, defaults: { format: :json } do
         get :bristol_cable_channels
         get :starter_packs_channels
         get :find_out_channels
+        get :leicester_channels
       end
       member do
         get :starter_packs_detail

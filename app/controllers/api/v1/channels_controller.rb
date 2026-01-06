@@ -64,6 +64,18 @@ module Api
         { slug: 'us-sport', channel_type: Community.channel_types[:newsmast]}
       ].freeze
 
+      DEFAULT_LEICESTER_CHANNELS = [
+        { slug: 'leicester', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'activism-civil-rights', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'climate-change', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'trees', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'podcasting', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'greens', channel_type: Community.channel_types[:channel]},
+        { slug: 'fedibookclub', channel_type: Community.channel_types[:channel_feed]},
+        { slug: 'NoticiasBrasil', channel_type: Community.channel_types[:channel_feed]},
+        { slug: 'RenewedResistance', channel_type: Community.channel_types[:channel]}
+      ]
+
       def recommend_channels
         @recommended_channels = Community.recommended.exclude_array_ids
         render json: Api::V1::ChannelSerializer.new(@recommended_channels).serializable_hash.to_json
@@ -153,6 +165,10 @@ module Api
 
       def find_out_channels
         render_custom_channels(DEFAULT_FIND_OUT_CHANNELS)
+      end
+
+      def leicester_channels
+        render_custom_channels(DEFAULT_LEICESTER_CHANNELS)
       end
 
       def starter_packs_channels
