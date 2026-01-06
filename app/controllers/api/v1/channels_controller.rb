@@ -65,7 +65,7 @@ module Api
       ].freeze
 
       DEFAULT_LEICESTER_CHANNELS = [
-        { slug: 'leicester', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'Leicester', channel_type: Community.channel_types[:channel_feed] },
         { slug: 'activism-civil-rights', channel_type: Community.channel_types[:newsmast] },
         { slug: 'climate-change', channel_type: Community.channel_types[:newsmast]},
         { slug: 'trees', channel_type: Community.channel_types[:channel_feed] },
