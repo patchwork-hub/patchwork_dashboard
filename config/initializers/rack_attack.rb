@@ -31,7 +31,7 @@ class Rack::Attack
     /api/v1/channels/channel_feeds
   ].freeze
 
-  throttle('req/ip/protected-endpoints', limit: 20, period: 1.minute) do |req|
+  throttle('req/ip/protected-endpoints', limit: 300, period: 1.minute) do |req|
     req.ip if PROTECTED_ENDPOINT_PATHS.include?(req.path)
   end
 
