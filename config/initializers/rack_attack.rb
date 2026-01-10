@@ -47,7 +47,7 @@ class Rack::Attack
   end
 
   # Exponential backoff for repeat offenders using Allow2Ban
-  PROTECTED_ENDPOINT_BAN_PREFIX = 'rack::attack:ban:protected-endpoints'.freeze
+  PROTECTED_ENDPOINT_BAN_PREFIX = 'ban:protected-endpoints'.freeze
 
   blocklist('ban-protected-endpoint-offenders') do |req|
     next unless PROTECTED_ENDPOINT_PATHS.include?(req.path)
@@ -102,5 +102,10 @@ class Rack::Attack
       Rails.logger.warn "[Rack::Attack][#{match_type}] " \
                         "IP: #{req.ip}, Path: #{req.path}, Matched: #{req.env['rack.attack.matched']}"
     end
+  end
+
+  safelist('allow-trusted-ip') do |req|
+    trusted_ips = ['18.134.76.246', '13.41.103.254', '51.24.10.124']
+    trusted_ips.include?(req.ip)
   end
 end
