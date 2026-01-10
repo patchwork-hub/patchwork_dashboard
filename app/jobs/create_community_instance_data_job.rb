@@ -91,7 +91,6 @@ class CreateCommunityInstanceDataJob < ApplicationJob
       sidekiq: calculate_sidekiq_port(community_id),
       upstream_web: "#{community_id}_#{community_slug}_web",
       upstream_stream: "#{community_id}_#{community_slug}_stream",
-      REDIS_NAMESPACE: community_slug,
       WEB_DOMAIN: @domain,
       STREAMING_API_BASE_URL: "wss://#{@domain}",
       LOCAL_DOMAIN: @domain,
