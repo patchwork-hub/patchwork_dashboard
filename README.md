@@ -51,20 +51,34 @@ You can find the instructions to set up a Mastodon server [here](https://docs.jo
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies:
+### Prerequisites
+- Ruby (check `.ruby-version` for required version)
+- PostgreSQL
+- Redis
 
+### Setup
+
+1. Clone the repository and install dependencies:
 ```bash
+git clone https://github.com/patchwork-hub/patchwork_dashboard.git
+cd patchwork_dashboard
 bin/setup
 ```
 
-Run the test suite:
-
+2. Configure environment variables:
 ```bash
-bundle exec rails test
+cp .env.sample .env
+# Edit .env with your configuration
 ```
 
-Start the development server:
+3. Set up the database:
+```bash
+bundle exec rails db:create
+bundle exec rails db:migrate
+bundle exec rails db:seed
+```
 
+4. Start the development server:
 ```bash
 bundle exec rails server
 ```
