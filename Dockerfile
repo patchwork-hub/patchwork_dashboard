@@ -1,22 +1,36 @@
 FROM ruby:3.3.0-slim
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+# Set environment variables early
+ENV DEBIAN_FRONTEND=noninteractive \
+    app_path=/usr/app \
+    RAILS_SERVE_STATIC_FILES=true \
+    RAILS_LOG_TO_STDOUT=true \
+    LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2 \
+    RAILS_ENV="production"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libjemalloc-dev \
     curl \
     gnupg \
     build-essential \
-    software-properties-common
+    ca-certificates \
+    && mkdir -p /etc/apt/keyrings
 
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-  && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
-  && curl -sL https://deb.nodesource.com/setup_14.x | bash -
+# 1. Install Node.js 20 (LTS) - Modern Method
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 
-RUN apt-get install -y --no-install-recommends \
+# 2. Install Yarn - Modern Method (avoiding apt-key)
+RUN curl -fsSL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /etc/apt/keyrings/yarn.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+
+# 3. Install all dependencies in one layer
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    nodejs \
+    yarn \
     bzip2 \
     git \
     shared-mime-info \
-    ca-certificates \
     libffi-dev \
     libpq-dev \
     libgdbm-dev \
@@ -34,8 +48,6 @@ RUN apt-get install -y --no-install-recommends \
     file \
     imagemagick \
     iproute2 \
-    nodejs \
-    yarn \
     ffmpeg \
     supervisor \
     libvips42 \
@@ -45,13 +57,6 @@ RUN apt-get install -y --no-install-recommends \
     vim \
     && rm -rf /var/lib/apt/lists/*
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV app_path=/usr/app
-ENV RAILS_SERVE_STATIC_FILES=true
-ENV RAILS_LOG_TO_STDOUT=true
-ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2 
-ENV RAILS_ENV="production"
-
 WORKDIR $app_path
 
 # Install Bundler
@@ -59,23 +64,21 @@ RUN gem install bundler -v 2.6.6
 
 # Copy Gemfile first for better caching
 COPY Gemfile* ./
-RUN bundle config set --local deployment 'true'
-RUN bundle config set --local without 'development test'
-RUN bundle install --jobs 4
+RUN bundle config set --local deployment 'true' \
+    && bundle config set --local without 'development test' \
+    && bundle install --jobs 4
 
 # Copy the rest of the application
-ADD . $app_path
+COPY . $app_path
 
-# Precompile Assets with a dummy SECRET_KEY_BASE (only used during build)
-RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rake assets:clean
-RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rake assets:precompile
+# Precompile Assets
+RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rake assets:clean \
+    && SECRET_KEY_BASE_DUMMY=1 bundle exec rake assets:precompile
 
 # Set Executable Permission for Entrypoint
 RUN chmod +x /usr/app/docker-entrypoint.sh
 ENTRYPOINT ["/usr/app/docker-entrypoint.sh"]
 
-# Copy supervisord configuration
 COPY ./supervisord.conf /etc/supervisord.conf
 
-# Start supervisord
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
