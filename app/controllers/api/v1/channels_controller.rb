@@ -55,11 +55,11 @@ module Api
       ].freeze
 
       DEFAULT_FIND_OUT_CHANNELS = [
-        { slug: 'us-politics', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'us-politics', channel_type: Community.channel_types[:newsmast] },        
+        { slug: 'newyork', channel_type: Community.channel_types[:channel_feed] },
         { slug: 'activism-civil-rights', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'privacy', channel_type: Community.channel_types[:channel_feed] },
         { slug: 'climate-change', channel_type: Community.channel_types[:newsmast]},
-        { slug: 'democracy-human-rights', channel_type: Community.channel_types[:newsmast]},
-        { slug: 'news-comment-data', channel_type: Community.channel_types[:newsmast] },
         { slug: 'lgbtq', channel_type: Community.channel_types[:newsmast] },
         { slug: 'us-sport', channel_type: Community.channel_types[:newsmast]}
       ].freeze
