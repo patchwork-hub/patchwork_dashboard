@@ -5,7 +5,7 @@ class WaitListsController < ApplicationController
   PER_PAGE = 10
 
   def index
-    @search = WaitList.where(channel_type: WaitList.channel_types[:hub]).ransack(params[:q])
+    @search = WaitList.ransack(params[:q])
     @wait_lists = @search.result.order(used: :asc, created_at: :desc).page(params[:page]).per(PER_PAGE)
   end
 
