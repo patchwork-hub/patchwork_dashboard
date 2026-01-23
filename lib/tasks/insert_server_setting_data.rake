@@ -50,7 +50,7 @@ namespace :db do
         ],
         "Local Features" => [
           { name: "Custom theme", value: false },
-          { name: "Automatic Search Opt-in", value: false },
+          { name: "Automatic Search Opt-out", value: false },
           { name: "Local only posts", value: false },
           { name: "Long posts", value: false },
           { name: "Local quote posts", value: false },
