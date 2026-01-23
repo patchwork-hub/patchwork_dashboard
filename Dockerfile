@@ -20,14 +20,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 
-# 2. Install Yarn - Modern Method (avoiding apt-key)
-RUN curl -fsSL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /etc/apt/keyrings/yarn.gpg \
-    && echo "deb [signed-by=/etc/apt/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+# 2. Install Node.js and enable Yarn via corepack (more reliable than yarn apt package)
+RUN apt-get update && apt-get install -y --no-install-recommends nodejs \
+    && corepack enable \
+    && corepack prepare yarn@stable --activate
 
 # 3. Install all dependencies in one layer
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    nodejs \
-    yarn \
     bzip2 \
     git \
     shared-mime-info \
