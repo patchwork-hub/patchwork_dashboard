@@ -1,7 +1,4 @@
 class NonChannelBlueskyBridgeService
-  # Require AWS service for Route53 client
-  require_relative 'aws_service'
-
   include ApplicationHelper
 
   def initialize
@@ -19,7 +16,7 @@ class NonChannelBlueskyBridgeService
   private
 
   def process_user(user)
-
+    use_local_domain = ActiveModel::Type::Boolean.new.cast(ENV.fetch('USE_LOCAL_DOMAIN', 'true'))
     account = user&.account
     return if account.nil?
 
@@ -49,12 +46,15 @@ class NonChannelBlueskyBridgeService
 
     return unless bluesky_bridge_enabled?(account)
 
-    if account_relationship_array&.last['following'] == true && account_relationship_array&.last['requested'] == false
-      process_did_value(user, token, account)
-    else
+    if account_relationship_array&.last['following'] == false
       FollowService.new.call(account, target_account)
       account_relationship_array = handle_relationship(account, target_account.id)
+    end
+
+    if use_local_domain
       process_did_value(user, token, account) if account_relationship_array.present? && account_relationship_array&.last && account_relationship_array&.last['following']
+    else
+      Rails.logger.info("Skipping DNS record creation for user #{user.account&.username} - using Bridgy Fed default handle")
     end
   end
 
@@ -98,34 +98,26 @@ class NonChannelBlueskyBridgeService
   end
 
   def create_dns_record(did_value, account)
-    route53 = AwsService.route53_client
-    hosted_zones = route53.list_hosted_zones
-
-    channel_zone = hosted_zones.hosted_zones.find { |zone| zone.name == "#{ENV['LOCAL_DOMAIN']}." }
-
-    if channel_zone
-      name = "_atproto.#{account&.username}.#{ENV['LOCAL_DOMAIN']}"
-      route53.change_resource_record_sets({
-        hosted_zone_id:  channel_zone.id,
-        change_batch: {
-          changes: [
-            {
-        action: 'UPSERT',
-        resource_record_set: {
-          name: name,
-          type: 'TXT',
-          ttl: 60,
-          resource_records: [
-            { value: "\"did=#{did_value}\"" },
-          ],
-        },
-            },
-          ],
-        },
-      })
-    else
-      Rails.logger.error("Hosted zone for #{ENV.fetch('RAILS_ENV', nil)} not found.")
+    # Check if we should use local domain DNS or Bridgy Fed default
+    use_local_domain = ActiveModel::Type::Boolean.new.cast(ENV.fetch('USE_LOCAL_DOMAIN', 'true'))
+    
+    # Skip DNS record creation if not using local domain (Bridgy Fed will handle it)
+    unless use_local_domain
+      Rails.logger.info("Skipping DNS record creation for user #{account&.username} - using Bridgy Fed default handle")
+      return
     end
+
+    # Determine the domain and record name for the user account
+    base_domain = ENV['LOCAL_DOMAIN']
+    record_name = "_atproto.#{account&.username}.#{ENV['LOCAL_DOMAIN']}"
+    record_value = "did=#{did_value}"
+
+    # Use DNS provider factory to create records across different providers
+    dns_provider = DnsProviderFactory.create
+    dns_provider.create_or_update_txt_record(base_domain, record_name, record_value)
+  rescue StandardError => e
+    Rails.logger.error("Failed to create DNS record for #{account&.username}: #{e.message}")
+    raise e
   end
 
   def create_direct_message(token, account)
