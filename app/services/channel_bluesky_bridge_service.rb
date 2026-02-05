@@ -69,7 +69,8 @@ class ChannelBlueskyBridgeService
     while retries >= 0
       result = ContributorSearchService.new(query, url: ENV['MASTODON_INSTANCE_URL'], token: token).call
       if result.any?
-        return result.last['id']
+        target_account = result.find { |account| account['username'] == 'bsky.brid.gy' && account['domain'] == 'bsky.brid.gy' }
+        return target_account['id'] if target_account
       end
       retries -= 1
     end
