@@ -97,12 +97,14 @@ class ChannelBlueskyBridgeService
   end
 
   def create_dns_record(did_value, community)
-    did_value = FetchDidValueService.new.call(account, community)
-    return unless did_value
-
     # Determine the domain and record name based on community configuration
     domain_name = determine_domain_name(community)
-    base_domain = community&.is_custom_domain? ? community.slug : ENV['LOCAL_DOMAIN']
+    base_domain = if community&.is_custom_domain?
+                    community.slug
+                  else
+                    domain = ENV['LOCAL_DOMAIN']
+                    domain.split('.').last(2).join('.')
+                  end
     record_name = "_atproto.#{domain_name}"
     record_value = "did=#{did_value}"
 
@@ -139,7 +141,8 @@ class ChannelBlueskyBridgeService
     if community&.is_custom_domain?
       community&.slug
     else
-      "#{community&.slug}.#{ENV['LOCAL_DOMAIN']}"
+      domain = ENV['LOCAL_DOMAIN'].split('.').last(2).join('.')
+      "#{community&.slug}.#{domain}"
     end
   end
 end

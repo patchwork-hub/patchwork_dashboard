@@ -109,8 +109,8 @@ class NonChannelBlueskyBridgeService
     end
 
     # Determine the domain and record name for the user account
-    base_domain = ENV['LOCAL_DOMAIN']
-    record_name = "_atproto.#{account&.username}.#{ENV['LOCAL_DOMAIN']}"
+    base_domain = ENV['LOCAL_DOMAIN'].split('.').last(2).join('.')
+    record_name = "_atproto.#{account&.username}.#{base_domain}"
     record_value = "did=#{did_value}"
 
     # Use DNS provider factory to create records across different providers
@@ -122,8 +122,8 @@ class NonChannelBlueskyBridgeService
   end
 
   def create_direct_message(token, account)
-
-    name = "#{account&.username}@#{ENV['LOCAL_DOMAIN']}"
+    base_domain = ENV['LOCAL_DOMAIN'].split('.').last(2).join('.')
+    name = "#{account&.username}@#{base_domain}"
 
     status_params = {
       "in_reply_to_id": nil,
