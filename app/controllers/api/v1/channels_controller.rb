@@ -55,13 +55,30 @@ module Api
       ].freeze
 
       DEFAULT_FIND_OUT_CHANNELS = [
-        { slug: 'us-politics', channel_type: Community.channel_types[:newsmast] },        
+        { slug: 'findoutpodcast', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'getangry', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'notjackryan', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'magareactions', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'us-politics', channel_type: Community.channel_types[:newsmast] },
         { slug: 'newyork', channel_type: Community.channel_types[:channel_feed] },
         { slug: 'activism-civil-rights', channel_type: Community.channel_types[:newsmast] },
         { slug: 'privacy', channel_type: Community.channel_types[:channel_feed] },
         { slug: 'climate-change', channel_type: Community.channel_types[:newsmast]},
         { slug: 'lgbtq', channel_type: Community.channel_types[:newsmast] },
         { slug: 'us-sport', channel_type: Community.channel_types[:newsmast]}
+      ].freeze
+
+      DEFAULT_FIND_OUT_CATCH_UP = [
+        { slug: 'us-politics', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'us-sport', channel_type: Community.channel_types[:newsmast]},
+      ].freeze
+
+      DEFAULT_FIND_OUT_SPEAK_OUT = [
+        { slug: 'us-politics', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'activism-civil-rights', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'privacy', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'climate-change', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'lgbtq', channel_type: Community.channel_types[:newsmast] },
       ].freeze
 
       DEFAULT_LEICESTER_CHANNELS = [
@@ -165,6 +182,14 @@ module Api
 
       def find_out_channels
         render_custom_channels(DEFAULT_FIND_OUT_CHANNELS)
+      end
+
+      def find_out_catch_up
+        render_custom_channels(DEFAULT_FIND_OUT_CATCH_UP)
+      end
+
+      def find_out_speak_out
+        render_custom_channels(DEFAULT_FIND_OUT_SPEAK_OUT)
       end
 
       def leicester_channels

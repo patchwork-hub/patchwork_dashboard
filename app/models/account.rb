@@ -150,6 +150,10 @@ class Account < ApplicationRecord
     (follow_ids + follow_request_ids).uniq
   end
 
+  # Configures user searchability and discoverability based on the Dashboard's 'search-opt' ServerSetting.
+  #
+  # Enabled search-opt: The user becomes hidden from search results.
+  # Disabled search-opt: The user remains visible and discoverable.
   def self.update_all_discoverability(value = false)
     update_all(
       discoverable: !value,

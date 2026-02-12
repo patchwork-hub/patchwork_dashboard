@@ -15,7 +15,7 @@ if ServerSetting.count == 0
     },
     {
       name: 'Local Features',
-      options: ['Custom theme', 'Automatic Search Opt-in', 'Local only posts', 'Long posts', 'Local quote posts']
+      options: ['Custom theme', 'Automatic Search Opt-out', 'Local only posts', 'Long posts', 'Local quote posts']
     },
     {
       name: 'User Management',

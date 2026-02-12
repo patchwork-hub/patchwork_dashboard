@@ -99,6 +99,10 @@ class User < ApplicationRecord
     end
   end
 
+  # Configures user searchability and discoverability based on the Dashboard's 'search-opt' ServerSetting.
+  #
+  # Enabled search-opt: The user becomes hidden from search results (noindex: true).
+  # Disabled search-opt: The user remains visible and discoverable (noindex: false).
   def self.update_all_discoverability(value = false)
     find_each(batch_size: 1000) do |user|
       settings_hash = user.settings.present? ? JSON.parse(user.settings) : {}
