@@ -55,30 +55,33 @@ module Api
       ].freeze
 
       DEFAULT_FIND_OUT_CHANNELS = [
-        { slug: 'findoutpodcast', channel_type: Community.channel_types[:channel_feed] },
-        { slug: 'getangry', channel_type: Community.channel_types[:channel_feed] },
-        { slug: 'notjackryan', channel_type: Community.channel_types[:channel_feed] },
-        { slug: 'magareactions', channel_type: Community.channel_types[:channel_feed] },
-        { slug: 'us-politics', channel_type: Community.channel_types[:newsmast] },
-        { slug: 'newyork', channel_type: Community.channel_types[:channel_feed] },
-        { slug: 'activism-civil-rights', channel_type: Community.channel_types[:newsmast] },
-        { slug: 'privacy', channel_type: Community.channel_types[:channel_feed] },
-        { slug: 'climate-change', channel_type: Community.channel_types[:newsmast]},
-        { slug: 'lgbtq', channel_type: Community.channel_types[:newsmast] },
-        { slug: 'us-sport', channel_type: Community.channel_types[:newsmast]}
+        { slug: 'findoutpodcast', channel_type: Community.channel_types[:channel_feed]},
+        { slug: 'getangry', channel_type: Community.channel_types[:channel_feed]},
+        { slug: 'notjackryan', channel_type: Community.channel_types[:channel_feed]},
+        { slug: 'magareactions', channel_type: Community.channel_types[:channel_feed]},
       ].freeze
 
       DEFAULT_FIND_OUT_CATCH_UP = [
-        { slug: 'us-politics', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'politics', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'us-politics', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'breaking-news', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'movies', channel_type: Community.channel_types[:newsmast]},
         { slug: 'us-sport', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'technology', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'mental-health-wellbeing', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'food-drink', channel_type: Community.channel_types[:newsmast]},
       ].freeze
 
       DEFAULT_FIND_OUT_SPEAK_OUT = [
-        { slug: 'us-politics', channel_type: Community.channel_types[:newsmast] },
-        { slug: 'activism-civil-rights', channel_type: Community.channel_types[:newsmast] },
-        { slug: 'privacy', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'activism-civil-rights', channel_type: Community.channel_types[:newsmast]},
         { slug: 'climate-change', channel_type: Community.channel_types[:newsmast]},
-        { slug: 'lgbtq', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'lgbtq', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'black-voices', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'disabled-voices', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'immigrants-rights', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'indigenous-peoples', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'women-voices', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'workers-rights', channel_type: Community.channel_types[:newsmast]},
       ].freeze
 
       DEFAULT_LEICESTER_CHANNELS = [
