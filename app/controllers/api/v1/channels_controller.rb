@@ -55,6 +55,10 @@ module Api
       ].freeze
 
       DEFAULT_FIND_OUT_CHANNELS = [
+        { slug: 'findoutpodcast', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'getangry', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'notjackryan', channel_type: Community.channel_types[:channel_feed] },
+        { slug: 'magareactions', channel_type: Community.channel_types[:channel_feed] },
         { slug: 'us-politics', channel_type: Community.channel_types[:newsmast] },
         { slug: 'newyork', channel_type: Community.channel_types[:channel_feed] },
         { slug: 'activism-civil-rights', channel_type: Community.channel_types[:newsmast] },
