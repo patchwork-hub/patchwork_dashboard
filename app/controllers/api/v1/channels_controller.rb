@@ -62,13 +62,12 @@ module Api
       ].freeze
 
       DEFAULT_FIND_OUT_CATCH_UP = [
-        { slug: 'politics', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'us-elections', channel_type: Community.channel_types[:channel_feed]},
         { slug: 'us-politics', channel_type: Community.channel_types[:newsmast]},
         { slug: 'breaking-news', channel_type: Community.channel_types[:newsmast]},
         { slug: 'movies', channel_type: Community.channel_types[:newsmast]},
         { slug: 'us-sport', channel_type: Community.channel_types[:newsmast]},
         { slug: 'technology', channel_type: Community.channel_types[:newsmast]},
-        { slug: 'mental-health-wellbeing', channel_type: Community.channel_types[:newsmast]},
         { slug: 'food-drink', channel_type: Community.channel_types[:newsmast]},
       ].freeze
 
