@@ -62,7 +62,7 @@ module Api
       ].freeze
 
       DEFAULT_FIND_OUT_CATCH_UP = [
-        { slug: 'us-elections', channel_type: Community.channel_types[:channel_feed]},
+        { slug: 'uselections', channel_type: Community.channel_types[:channel_feed]},
         { slug: 'us-politics', channel_type: Community.channel_types[:newsmast]},
         { slug: 'breaking-news', channel_type: Community.channel_types[:newsmast]},
         { slug: 'movies', channel_type: Community.channel_types[:newsmast]},
