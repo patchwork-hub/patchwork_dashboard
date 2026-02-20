@@ -1,7 +1,4 @@
 class ChannelBlueskyBridgeService
-  # Require AWS service for Route53 client
-  require_relative 'aws_service'
-
   include ApplicationHelper
 
   def initialize
@@ -19,6 +16,7 @@ class ChannelBlueskyBridgeService
   private
 
   def process_community(community)
+    use_local_domain = ActiveModel::Type::Boolean.new.cast(ENV.fetch('USE_LOCAL_DOMAIN', 'true'))
     community_admin = CommunityAdmin.find_by(patchwork_community_id: community&.id, is_boost_bot: true)
     return if community_admin.nil?
 
@@ -46,12 +44,15 @@ class ChannelBlueskyBridgeService
 
     return unless enable_bridge_bluesky?(account)
 
-    if account_relationship_array&.last['following'] == true && account_relationship_array&.last['requested'] == false
-      process_did_value(community, token, account)
-    else
+    if account_relationship_array&.last['following'] == false
       FollowService.new.call(account, target_account)
       account_relationship_array = handle_relationship(account, target_account.id)
+    end
+
+    if use_local_domain
       process_did_value(community, token, account) if account_relationship_array.present? && account_relationship_array&.last && account_relationship_array&.last['following']
+    else
+      Rails.logger.info("Skipping DNS record creation for community #{community.name} - using Bridgy Fed default handle")
     end
   end
 
@@ -68,7 +69,8 @@ class ChannelBlueskyBridgeService
     while retries >= 0
       result = ContributorSearchService.new(query, url: ENV['MASTODON_INSTANCE_URL'], token: token).call
       if result.any?
-        return result.last['id']
+        target_account = result.find { |account| account['username'] == 'bsky.brid.gy' && account['domain'] == 'bsky.brid.gy' }
+        return target_account['id'] if target_account
       end
       retries -= 1
     end
@@ -95,42 +97,23 @@ class ChannelBlueskyBridgeService
   end
 
   def create_dns_record(did_value, community)
-    route53 = AwsService.route53_client
-    hosted_zones = route53.list_hosted_zones
-    channel_zone = hosted_zones.hosted_zones.find { |zone| zone.name == "#{ENV['LOCAL_DOMAIN']}." }
+    # Determine the domain and record name based on community configuration
+    domain_name = determine_domain_name(community)
+    base_domain = if community&.is_custom_domain?
+                    community.slug
+                  else
+                    domain = ENV['LOCAL_DOMAIN']
+                    domain.split('.').last(2).join('.')
+                  end
+    record_name = "_atproto.#{domain_name}"
+    record_value = "did=#{did_value}"
 
-    if channel_zone
-      name = if community&.is_custom_domain?
-              "_atproto.#{community.slug}"
-            else
-              "_atproto.#{community&.slug}.#{ENV['LOCAL_DOMAIN']}"
-            end
-
-      # Determine the correct domain based on environment and custom domain
-      domain_name = determine_domain_name(community)
-      name = "_atproto.#{domain_name}"
-
-      route53.change_resource_record_sets({
-        hosted_zone_id: channel_zone.id,
-        change_batch: {
-          changes: [
-            {
-              action: 'UPSERT',
-              resource_record_set: {
-                name: name,
-                type: 'TXT',
-                ttl: 60,
-                resource_records: [
-                  { value: "\"did=#{did_value}\"" },
-                ],
-              },
-            },
-          ],
-        },
-      })
-    else
-      Rails.logger.error("Hosted zone for #{ENV.fetch('RAILS_ENV', nil)} not found.")
-    end
+    # Use DNS provider factory to create records across different providers
+    dns_provider = DnsProviderFactory.create
+    dns_provider.create_or_update_txt_record(base_domain, record_name, record_value)
+  rescue StandardError => e
+    Rails.logger.error("Failed to create DNS record for #{domain_name}: #{e.message}")
+    raise e
   end
 
   def create_direct_message(token, community)
@@ -158,7 +141,8 @@ class ChannelBlueskyBridgeService
     if community&.is_custom_domain?
       community&.slug
     else
-      "#{community&.slug}.#{ENV['LOCAL_DOMAIN']}"
+      domain = ENV['LOCAL_DOMAIN'].split('.').last(2).join('.')
+      "#{community&.slug}.#{domain}"
     end
   end
 end
