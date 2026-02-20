@@ -9,8 +9,10 @@ module Scheduler
       return unless ServerSetting.find_by(name: 'Automatic Bluesky bridging for new users')&.value
 
       if is_channel_instance?
+        Rails.logger.info('Processing communities for automatic Bluesky bridging')
         ChannelBlueskyBridgeService.new.process_communities
       else
+        Rails.logger.info('Processing users for automatic Bluesky bridging')
         NonChannelBlueskyBridgeService.new.process_users
       end
 
