@@ -35,7 +35,7 @@ class CommunityPostService < BaseService
       IpAddress.find_by(id: @ip_address_id)&.increment_use_count! if @ip_address_id.present?
       @community
     end
-    CommunityCreationJob.perform_later(@community.id, @current_user.id)
+    # CommunityCreationJob.perform_later(@community.id, @current_user.id)
   rescue ActiveRecord::RecordInvalid => e
     Rails.logger.error("Community creation failed: #{e.message}")
     @community

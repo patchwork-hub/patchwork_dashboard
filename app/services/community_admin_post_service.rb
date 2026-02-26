@@ -51,6 +51,10 @@ class CommunityAdminPostService < BaseService
     user.assign_attributes(user_attributes.compact)
     user.save!
 
+    boost_bot_account = Account.find_by(id: @community_admin.account_id)
+
+    CommunityCreationJob.perform_later(@community.id, boost_bot_account.user.id)
+
     if @community_admin.role == 'UserAdmin'
       @community.create_content_type(channel_type: 'custom_channel', custom_condition: 'OR') unless @community.content_type
     end
