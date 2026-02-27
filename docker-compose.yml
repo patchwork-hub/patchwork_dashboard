@@ -17,6 +17,7 @@ services:
       - patchwork_logs:/usr/app/log
     networks:
       - patchwork_network
+      - mastodon_internal_network
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:${EXTERNAL_PORT}/health_check || exit 1"]
       interval: 30s
@@ -35,3 +36,5 @@ volumes:
 networks:
   patchwork_network:
     driver: bridge
+  mastodon_internal_network:
+    external: true
