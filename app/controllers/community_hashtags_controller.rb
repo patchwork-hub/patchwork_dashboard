@@ -12,6 +12,8 @@ class CommunityHashtagsController < BaseController
       flash[:error] = e.message
     rescue ActiveRecord::RecordNotUnique => e
       flash[:error] = "Duplicate entry: Hashtag already exists."
+    rescue ActiveRecord::RecordInvalid => e
+      flash[:error] = e.record.errors.full_messages.join(", ")
     end
 
     redirect_to step3_community_path(@community)
@@ -25,9 +27,9 @@ class CommunityHashtagsController < BaseController
       new_hashtag = form_community_hashtag_params[:hashtag].gsub('#', '')
   
       if old_hashtag != new_hashtag
-        perform_hashtag_action(old_hashtag, params[:community_id], :unfollow)
         community_hashtag.assign_attributes(hashtag: new_hashtag, name: new_hashtag)
         community_hashtag.save!
+        perform_hashtag_action(old_hashtag, params[:community_id], :unfollow)
         perform_hashtag_action(new_hashtag, nil, :follow)
       end
   
@@ -36,6 +38,8 @@ class CommunityHashtagsController < BaseController
       flash[:error] = e.message
     rescue ActiveRecord::RecordNotUnique => e
       flash[:error] = "Duplicate entry: Hashtag already exists."
+    rescue ActiveRecord::RecordInvalid => e
+      flash[:error] = e.record.errors.full_messages.join(", ")
     end
 
     redirect_to step3_community_path(@community)

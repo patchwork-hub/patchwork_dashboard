@@ -13,11 +13,12 @@ class SearchHashtagService
       headers: { 'Authorization' => "Bearer #{@token}" }
     )
 
-    if response.success?
-      hashtag = response['hashtags'].first
-      hashtag ? { name: hashtag['name'] } : Tag.create(name: @query, display_name: @query)
-    else
-      nil
-    end
+    return nil unless response.success?
+
+    hashtag = response['hashtags']&.first
+    
+    hashtag = Tag.create(name: @query, display_name: @query) if hashtag.nil? || hashtag['name'] != @query
+
+    hashtag ? { name: hashtag['name'] } : nil
   end
 end
