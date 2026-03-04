@@ -421,7 +421,14 @@ jQuery(function() {
           });
 
           cropButton.addEventListener("click", () => {
-            const canvas = cropper.getCroppedCanvas();
+            const maxWidth = 1080;
+            const maxHeight = Math.round(maxWidth / aspectRatio);
+            const canvas = cropper.getCroppedCanvas({
+              maxWidth: maxWidth,
+              maxHeight: maxHeight,
+              imageSmoothingEnabled: true,
+              imageSmoothingQuality: 'high',
+            });
             const originalType = file.type || "image/png";
             const mimeType = ["image/jpeg", "image/webp"].includes(originalType) ? originalType : "image/png";
             const quality = mimeType === "image/png" ? undefined : 0.85;
