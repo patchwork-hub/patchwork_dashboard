@@ -68,7 +68,7 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.PATCHWORK_DASHBOARD_REPOSITORY }}
           ECR_REGISTRY_2: ${{ steps.login-ecr-2.outputs.registry }}
           ECR_REPOSITORY_2: ${{ secrets.FINDOUT_DASHBOARD_REPOSITORY }}
-          IMAGE_TAG: ${{ vars.IMAGE_CHANNEL_TAG }}
+          IMAGE_TAG: ${{ vars.IMAGE_PROD_TAG }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY_2/$ECR_REPOSITORY_2:$IMAGE_TAG
