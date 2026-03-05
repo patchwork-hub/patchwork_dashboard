@@ -1,4 +1,4 @@
-run-name: Deploy to Staging Patchwork Dashboard by @${{ github.actor }}
+run-name: Deploy to Reusable Staging Patchwork Dashboard by @${{ github.actor }}
 
 on:
   workflow_dispatch:
