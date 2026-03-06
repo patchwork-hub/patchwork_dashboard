@@ -94,24 +94,25 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+  
+    config.paperclip_defaults = {
+      storage: :s3,
+      s3_credentials: {
+        bucket: ENV['S3_BUCKET'],
+        access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+        secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
+      },
+      s3_region: ENV['S3_REGION'],
+      url: ':s3_alias_url',
+      s3_host_alias: ENV['S3_ALIAS_HOST'],
+      s3_options: {
+        endpoint: ENV['S3_ENDPOINT'],
+        force_path_style: true
+      },
+      s3_protocol: :https,
+      path: ':class/:attachment/:id_partition/:style/:filename'
+    }
 
-  config.paperclip_defaults = {
-    storage: :s3,
-    s3_credentials: {
-      bucket: ENV['S3_BUCKET'],
-      access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-      secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
-      s3_region: ENV['S3_REGION']
-    },
-    url: ':s3_alias_url',
-    s3_host_alias: ENV["S3_ALIAS_HOST"],
-    path: ':class/:attachment/:id_partition/:style/:filename',
-    s3_protocol: :https
-  }
-
-    # Configure AWS
-    # require_relative '../../app/services/aws_service'
-    # AwsService.configure_aws
     config.middleware.use Rack::Attack
 
 end

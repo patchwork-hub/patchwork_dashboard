@@ -168,7 +168,8 @@
                 .row.avatar-image-upload-container.gap-1
                   .logo-upload-container
                     .rounded.border.d-inline-flex.align-items-center.justify-content-center{ style: "width: 300px; height: 150px; border: dotted; overflow: hidden;" }
-                      - logo_image_url = @community_form.logo_image.present? && @community_form.logo_image.respond_to?(:url) ? @community_form.logo_image.url : ''
+                      - logo_present = @community_form.logo_image.present? && @community_form.logo_image.respond_to?(:url) && (!@community_form.logo_image.respond_to?(:exists?) || @community_form.logo_image.exists?)
+                      - logo_image_url = logo_present ? @community_form.logo_image.url : ''
                       - margin_left = logo_image_url.present? ? '0' : '16px'
                       %img{ id: "currentlogo", src: logo_image_url, alt: "Logo Preview", style: "display: #{logo_image_url.present? ? 'block' : 'none'}; width: 100%; height: 100%; object-fit: cover; margin-left: #{margin_left};" }
                       - if logo_image_url.blank?
@@ -184,7 +185,8 @@
               .row.avatar-image-upload-container.gap-1
                 .avatar-upload-container
                   .rounded-circle.border.d-inline-flex.align-items-center.justify-content-center{ style: "width: 90px; height: 90px; border: dotted; overflow: hidden;" }
-                    - avatar_image_url = @community_form.avatar_image.present? && @community_form.avatar_image.respond_to?(:url) ? @community_form.avatar_image.url : ''
+                    - avatar_present = @community_form.avatar_image.present? && @community_form.avatar_image.respond_to?(:url) && (!@community_form.avatar_image.respond_to?(:exists?) || @community_form.avatar_image.exists?)
+                    - avatar_image_url = avatar_present ? @community_form.avatar_image.url : ''
                     - margin_left = avatar_image_url.present? ? '0' : '16px'
                     %img{ id: "currentAvatar", src: avatar_image_url, alt: "Avatar Preview", style: "display: #{avatar_image_url.present? ? 'block' : 'none'}; width: 100%; height: 100%; object-fit: cover; margin-left: #{margin_left};" }
                     - if avatar_image_url.blank?
@@ -198,7 +200,8 @@
             .col-md-12
               %label{ for: "customFile", class: "form-label" } Banner image
               .dropzone.p-1.border.rounded.text-center{ style: "border: dashed; background-color: #f8f9fa;", id: "bannerDropzone", onclick: "document.getElementById('customFile').click();" }
-                - banner_image_url = @community_form.banner_image.present? && @community_form.banner_image.respond_to?(:url) ? @community_form.banner_image.url : ''
+                - banner_present = @community_form.banner_image.present? && @community_form.banner_image.respond_to?(:url) && (!@community_form.banner_image.respond_to?(:exists?) || @community_form.banner_image.exists?)
+                - banner_image_url = banner_present ? @community_form.banner_image.url : ''
                 = f.input :banner_image, as: :file, label: false, input_html: { id: "customFile", class: "form-control-file upload-input", style: "display: none;", accept: "image/*", 'data-preview-id': "currentBanner", 'data-aspect-ratio': "2.1" }
                 %img{ src: banner_image_url, alt: "Current Banner", class: "img-fluid dropzone-preview", id: "currentBanner", style: "display: #{banner_image_url.present? ? 'block' : 'none'};" }
                 %div.dropzone-placeholder

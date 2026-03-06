@@ -14,6 +14,7 @@ class UnfollowService < BaseService
     response = unfollow_account(api_base_url, token)
     account_data = process_api_response(response)
     account = find_account(account_data)
+    account
 
   rescue HTTParty::Error => e
     puts "HTTP request failed: #{e.message}"

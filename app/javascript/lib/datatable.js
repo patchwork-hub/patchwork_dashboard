@@ -421,7 +421,20 @@ jQuery(function() {
           });
 
           cropButton.addEventListener("click", () => {
-            const canvas = cropper.getCroppedCanvas();
+            const maxWidth = 1080;
+            const maxHeight = Math.round(maxWidth / aspectRatio);
+            const canvas = cropper.getCroppedCanvas({
+              maxWidth: maxWidth,
+              maxHeight: maxHeight,
+              imageSmoothingEnabled: true,
+              imageSmoothingQuality: 'high',
+            });
+            const originalType = file.type || "image/png";
+            const mimeType = ["image/jpeg", "image/webp"].includes(originalType) ? originalType : "image/png";
+            const quality = mimeType === "image/png" ? undefined : 0.85;
+            const extension = mimeType === "image/jpeg" ? "jpg" : mimeType === "image/webp" ? "webp" : "png";
+            const fileName = file.name ? file.name.replace(/\.[^/.]+$/, `.${extension}`) : `cropped-image.${extension}`;
+
             canvas.toBlob((blob) => {
               if (previewImg.src.startsWith("blob:")) {
                 URL.revokeObjectURL(previewImg.src);
@@ -431,10 +444,10 @@ jQuery(function() {
               previewImg.style.display = "block";
 
               const dataTransfer = new DataTransfer();
-              dataTransfer.items.add(new File([blob], "cropped-image.png", { type: "image/png" }));
+              dataTransfer.items.add(new File([blob], fileName, { type: mimeType }));
               input.files = dataTransfer.files;
               document.body.removeChild(modal);
-            }, "image/png");
+            }, mimeType, quality);
           });
 
           closeButton.addEventListener("click", () => {
