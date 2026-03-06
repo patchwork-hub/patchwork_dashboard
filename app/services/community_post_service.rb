@@ -31,11 +31,9 @@ class CommunityPostService < BaseService
       @community.save!
       set_default_additional_information
       assign_roles_and_content_type
-      Rails.logger.info "IP Address ID: #{@ip_address_id}"
       IpAddress.find_by(id: @ip_address_id)&.increment_use_count! if @ip_address_id.present?
       @community
     end
-    # CommunityCreationJob.perform_later(@community.id, @current_user.id)
   rescue ActiveRecord::RecordInvalid => e
     Rails.logger.error("Community creation failed: #{e.message}")
     @community
@@ -154,26 +152,46 @@ class CommunityPostService < BaseService
   end
 
   def update_account_attributes
-    p "START_UPDATING_ACCOUNT #{@community.slug.parameterize.underscore}"
-    if @options[:id].present?
-      @account.update!(
-        display_name: @community.name,
-        avatar: @community.avatar_image || '',
-        header: @community.banner_image || '',
-        note: @community.description || ''
-      )
-    else
-      actor_type = @community.hub? ? "Application" : "Service"
-      @account.update!(
-        display_name: @community.name,
-        username: @community.slug.parameterize.underscore,
-        note: @community.description,
-        avatar: @community.avatar_image || '',
-        header: @community.banner_image || '',
-        actor_type: actor_type,
-        discoverable: true
-      )
-    end
+    UpdateBoostBotProfileJob.perform_later(account_id: @account.id, community_id: @community.id, is_update: @options[:id].present?)
+    # p "START_UPDATING_ACCOUNT #{@community.slug.parameterize.underscore}"
+    # if @options[:id].present?
+    #   @account.update!(
+    #     display_name: @community.name,
+    #     avatar: @community.avatar_image || '',
+    #     header: @community.banner_image || '',
+    #     note: @community.description || ''
+    #   )
+    # else
+    #   actor_type = @community.hub? ? "Application" : "Service"
+    #   @account.update!(
+    #     display_name: @community.name,
+    #     username: @community.slug.parameterize.underscore,
+    #     note: @community.description,
+    #     avatar: @community.avatar_image || '',
+    #     header: @community.banner_image || '',
+    #     actor_type: actor_type,
+    #     discoverable: true
+    #   )
+    # end
+
+    # token = GenerateAdminAccessTokenService.new(@account.user.id).call
+
+    # UpdateAccountCredentialsService.new.call(
+    # token: token,
+    # display_name: @community.name,
+    # note: @community.description,
+    # avatar: @community.avatar_image,  # Paperclip attachment
+    # header: @community.banner_image   # Paperclip attachment
+    # )
+
+    # unless @options[:id].present?
+    #   actor_type = @community.hub? ? "Application" : "Service"
+    #   @account.update!(
+    #     username: @community.slug.parameterize.underscore,
+    #     actor_type: actor_type,
+    #     discoverable: true
+    #   )
+    # end
   end
 
   def set_community_admin
