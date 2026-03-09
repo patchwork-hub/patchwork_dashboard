@@ -30,6 +30,12 @@ class UpdateAccountCredentialsService < BaseService
     rescue IOError, Errno::EBADF
       nil
     end
+
+    @opened_temp_paths&.each do |path|
+      File.delete(path) if File.exist?(path)
+    rescue StandardError
+      nil
+    end
   end
 
   private
@@ -50,31 +56,33 @@ class UpdateAccountCredentialsService < BaseService
       queued_file = value.queued_for_write[:original] if value.respond_to?(:queued_for_write)
       return queued_file if queued_file
 
+      original_name = value.original_filename if value.respond_to?(:original_filename)
+      original_name ||= "image_#{SecureRandom.hex(4)}.jpg"
+
       begin
         if defined?(Paperclip) && Paperclip.respond_to?(:io_adapters)
           adapter = Paperclip.io_adapters.for(value)
-          if adapter && adapter.respond_to?(:path) && File.exist?(adapter.path)
-            file = File.open(adapter.path, "rb")
-            @opened_uploads << file
-            return file
+          
+          require 'fileutils'
+          tmp_dir = Rails.root.join('tmp', 'patchwork_uploads', SecureRandom.hex(8))
+          FileUtils.mkdir_p(tmp_dir)
+          tmp_file_path = File.join(tmp_dir, original_name)
+          
+          File.open(tmp_file_path, 'wb') do |f|
+            f.write(adapter.read)
           end
-        end
-      rescue Errno::ENOENT
-        return nil
-      end
-
-      if value.respond_to?(:path)
-        begin
-          path = value.path(:original)
-          path = value.path if path.nil?
-          return nil unless path && File.exist?(path)
-
-          file = File.open(path, "rb")
+          
+          file = File.open(tmp_file_path, 'rb')
+          
           @opened_uploads << file
+          @opened_temp_paths ||= []
+          @opened_temp_paths << tmp_file_path
+          
           return file
-        rescue Errno::ENOENT
-          return nil
         end
+      rescue => e
+        Rails.logger.error("Error creating temp upload file: #{e.message}")
+        return nil
       end
 
       return nil
