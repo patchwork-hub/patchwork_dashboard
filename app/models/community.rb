@@ -63,8 +63,8 @@ class Community < ApplicationRecord
   EXCLUDE_ARRAY_IDS = []
 
   has_attached_file :logo_image
-  has_attached_file :avatar_image
-  has_attached_file :banner_image
+  has_attached_file :avatar_image, preserve_files: true
+  has_attached_file :banner_image, preserve_files: true
 
   attribute :is_custom_domain, :boolean, default: false
 
