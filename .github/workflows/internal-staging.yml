@@ -161,7 +161,7 @@ jobs:
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ secrets.FINDOUT_DASHBOARD_STAGING_SERVICE_NAME }}
-          cluster: ${{ secrets.CLUSTER_STAGING }}
+          cluster: ${{ secrets.FINDOUT_STAGING_CLUSTER_STAGING }}
           wait-for-service-stability: false
 
 
