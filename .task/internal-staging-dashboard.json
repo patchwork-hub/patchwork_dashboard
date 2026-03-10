@@ -1,9 +1,9 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:eu-west-2:672691776916:task-definition/patchwork-dashboard-staging:192",
+    "family": "patchwork-dashboard-staging",
     "containerDefinitions": [
         {
             "name": "patchwork-dashboard-staging",
-            "image": "672691776916.dkr.ecr.eu-west-2.amazonaws.com/patchwork-dashboard:staging",
+            "image": "672691776916.dkr.ecr.eu-west-2.amazonaws.com/internal-dashboard-staging:staging",
             "cpu": 0,
             "portMappings": [
                 {
@@ -31,56 +31,16 @@
                     "awslogs-create-group": "true",
                     "awslogs-region": "eu-west-2",
                     "awslogs-stream-prefix": "ecs"
-                },
-                "secretOptions": []
+                }
             },
             "systemControls": []
         }
     ],
-    "family": "patchwork-dashboard-staging",
     "taskRoleArn": "arn:aws:iam::672691776916:role/patchwork-ecs-task-role",
     "executionRoleArn": "arn:aws:iam::672691776916:role/patchwork-ecs-task-execution-role",
     "networkMode": "awsvpc",
-    "revision": 192,
     "volumes": [],
-    "status": "ACTIVE",
-    "requiresAttributes": [
-        {
-            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
-        },
-        {
-            "name": "ecs.capability.execution-role-awslogs"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.ecr-auth"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-        },
-        {
-            "name": "ecs.capability.env-files.s3"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.task-iam-role"
-        },
-        {
-            "name": "ecs.capability.execution-role-ecr-pull"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-        },
-        {
-            "name": "ecs.capability.task-eni"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
-        }
-    ],
     "placementConstraints": [],
-    "compatibilities": [
-        "EC2",
-        "FARGATE"
-    ],
     "requiresCompatibilities": [
         "FARGATE"
     ],
@@ -90,8 +50,5 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2025-01-11T08:38:55.933Z",
-    "registeredBy": "arn:aws:iam::672691776916:user/ahn",
-    "enableFaultInjection": false,
-    "tags": []
+    "enableFaultInjection": false
 }
