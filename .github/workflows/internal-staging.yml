@@ -8,7 +8,7 @@ on:
 
 env:
   DEFINITION:
-    .aws/channel-staging-dashboard.json
+    .task/internal-staging-dashboard.json
 
 permissions:
   contents: read
