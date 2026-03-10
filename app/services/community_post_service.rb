@@ -49,7 +49,7 @@ class CommunityPostService < BaseService
       @community.update(community_attributes)
       if @community.community_admins.present?
         @account = Account.find_by(id: @community.community_admins.first.account_id) if @current_user.master_admin?
-        update_account_attributes
+        update_account_attributes(community_attributes)
         update_community_admin
       end
       if @community.channel_feed?
@@ -145,14 +145,32 @@ class CommunityPostService < BaseService
 
   def assign_roles_and_content_type
     if @current_user.user_admin? || @current_user.hub_admin?
-      update_account_attributes
+      update_account_attributes(community_attributes)
       set_community_admin
       set_clean_up_policy
     end
   end
 
-  def update_account_attributes
-    UpdateBoostBotProfileJob.perform_later(account_id: @account.id, community_id: @community.id, is_update: @options[:id].present?)
+  def update_account_attributes(community_attributes)
+    require 'base64'
+
+    job_attributes = community_attributes.slice(:name, :description)
+    
+    if community_attributes[:avatar_image].present?
+      job_attributes[:avatar_base64] = Base64.strict_encode64(community_attributes[:avatar_image].read)
+      job_attributes[:avatar_filename] = community_attributes[:avatar_image].original_filename
+      community_attributes[:avatar_image].rewind
+    end
+
+    if community_attributes[:banner_image].present?
+      job_attributes[:banner_base64] = Base64.strict_encode64(community_attributes[:banner_image].read)
+      job_attributes[:banner_filename] = community_attributes[:banner_image].original_filename
+      community_attributes[:banner_image].rewind
+    end
+
+    UpdateBoostBotProfileJob.perform_later(account_id: @account.id, community_id: @community.id, is_update: @options[:id].present?, attributes: job_attributes)
+    
+    # Temporarily disable direct updates to avoid file handling issues. The background job will handle the updates.
     # p "START_UPDATING_ACCOUNT #{@community.slug.parameterize.underscore}"
     # if @options[:id].present?
     #   @account.update!(
