@@ -7,8 +7,8 @@ on:
       - internal/staging
 
 env:
-  DEFINITION:
-    .task/internal-staging-dashboard.json
+  DEFINITION:   .task/internal-staging-dashboard.json
+  FINDOUT_DEFINITION: .task/internal-findout-staging.json
 
 permissions:
   contents: read
@@ -151,7 +151,7 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ env.DEFINITION }}
+          task-definition: ${{ env.FINDOUT_DEFINITION }}
           container-name: ${{ secrets.FINDOUT_DASHBOARD_STAGING_CONTAINER_NAME }}
           # image: ${{ steps.build-image.outputs.image }}
           image:  ${{ secrets.DASHBOARD_STAGING_IMAGE }}
