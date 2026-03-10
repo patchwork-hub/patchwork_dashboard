@@ -63,7 +63,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       
   Deploy-patchwork-dashboard-staging:
-    name: Deploy to Staging
+    name: Deploy to patchwork-dashboard-staging
     needs: Build
     runs-on: ubuntu-latest
     steps:
@@ -114,7 +114,7 @@ jobs:
           wait-for-service-stability: false
 
   Deploy-findout-dashboard-staging:
-    name: Deploy to Staging
+    name: Deploy to findout-dashboard-staging
     needs: Build
     runs-on: ubuntu-latest
     steps:
