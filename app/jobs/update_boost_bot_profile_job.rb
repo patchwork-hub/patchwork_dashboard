@@ -44,7 +44,6 @@ class UpdateBoostBotProfileJob < ApplicationJob
 
     require 'fileutils'
     require 'base64'
-    tmp_dir = Rails.root.join('tmp', 'job_uploads', SecureRandom.hex(8))
     FileUtils.mkdir_p(tmp_dir)
     file_path = File.join(tmp_dir, filename || "image_#{SecureRandom.hex(4)}.jpg")
 
