@@ -13,8 +13,8 @@ class UpdateAccountCredentialsService < BaseService
     header_file = normalize_upload(header)
 
     body = {}
-    body[:display_name] = display_name if display_name
-    body[:note] = note if note
+    body[:display_name] = display_name.b if display_name
+    body[:note] = note.b if note
     body[:avatar] = avatar_file if avatar_file
     body[:header] = header_file if header_file
 

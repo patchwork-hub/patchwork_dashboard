@@ -154,7 +154,7 @@ jobs:
           task-definition: ${{ env.FINDOUT_DEFINITION }}
           container-name: ${{ secrets.FINDOUT_DASHBOARD_STAGING_CONTAINER_NAME }}
           # image: ${{ steps.build-image.outputs.image }}
-          image:  ${{ secrets.DASHBOARD_STAGING_IMAGE }}
+          image:  ${{ secrets.FINDOUT_DASHBOARD_STAGING_IMAGE }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
