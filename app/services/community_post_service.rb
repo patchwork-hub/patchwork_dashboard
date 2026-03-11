@@ -169,47 +169,6 @@ class CommunityPostService < BaseService
     end
 
     UpdateBoostBotProfileJob.perform_later(account_id: @account.id, community_id: @community.id, is_update: @options[:id].present?, attributes: job_attributes)
-    
-    # Temporarily disable direct updates to avoid file handling issues. The background job will handle the updates.
-    # p "START_UPDATING_ACCOUNT #{@community.slug.parameterize.underscore}"
-    # if @options[:id].present?
-    #   @account.update!(
-    #     display_name: @community.name,
-    #     avatar: @community.avatar_image || '',
-    #     header: @community.banner_image || '',
-    #     note: @community.description || ''
-    #   )
-    # else
-    #   actor_type = @community.hub? ? "Application" : "Service"
-    #   @account.update!(
-    #     display_name: @community.name,
-    #     username: @community.slug.parameterize.underscore,
-    #     note: @community.description,
-    #     avatar: @community.avatar_image || '',
-    #     header: @community.banner_image || '',
-    #     actor_type: actor_type,
-    #     discoverable: true
-    #   )
-    # end
-
-    # token = GenerateAdminAccessTokenService.new(@account.user.id).call
-
-    # UpdateAccountCredentialsService.new.call(
-    # token: token,
-    # display_name: @community.name,
-    # note: @community.description,
-    # avatar: @community.avatar_image,  # Paperclip attachment
-    # header: @community.banner_image   # Paperclip attachment
-    # )
-
-    # unless @options[:id].present?
-    #   actor_type = @community.hub? ? "Application" : "Service"
-    #   @account.update!(
-    #     username: @community.slug.parameterize.underscore,
-    #     actor_type: actor_type,
-    #     discoverable: true
-    #   )
-    # end
   end
 
   def set_community_admin
