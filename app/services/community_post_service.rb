@@ -289,21 +289,21 @@ class CommunityPostService < BaseService
       @community&.logo_image = nil
       @community&.logo_image_file_name = nil
     else
-      attributes[:logo_image] = @options[:logo_image]
+      attributes[:logo_image] = randomize_filename(@options[:logo_image])
     end
 
     if @options[:avatar_image].nil? && !@community&.avatar_image.present?
       @community&.avatar_image = nil
       @community&.avatar_image_file_name = nil
     else
-      attributes[:avatar_image] = @options[:avatar_image]
+      attributes[:avatar_image] = randomize_filename(@options[:avatar_image])
     end
 
     if @options[:banner_image].nil? && !@community&.banner_image.present?
       @community&.banner_image = nil
       @community&.banner_image_file_name = nil
     else
-      attributes[:banner_image] = @options[:banner_image]
+      attributes[:banner_image] = randomize_filename(@options[:banner_image])
     end
 
     attributes.compact
@@ -316,5 +316,13 @@ class CommunityPostService < BaseService
   def get_position
     last_position = Community.order(:position).pluck(:position).last
     (last_position || 0) + 1
+  end
+
+  def randomize_filename(file)
+    return file unless file.respond_to?(:original_filename) && file.original_filename.present?
+
+    extension = File.extname(file.original_filename)
+    file.original_filename = "#{SecureRandom.hex(8)}#{extension}"
+    file
   end
 end
