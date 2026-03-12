@@ -91,7 +91,7 @@ class NonChannelBlueskyBridgeService
         create_dns_record(did_value, account)
         sleep 1.minutes
         create_direct_message(token, account)
-        user.update!(did_value: did_value)
+        user.update_column(:did_value, did_value)
       rescue StandardError => e
         Rails.logger.error("Error processing did_value for user #{account.username}: #{e.message}")
       end
