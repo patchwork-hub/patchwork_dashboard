@@ -7,8 +7,8 @@ on:
       - internal/staging
 
 env:
-  DEFINITION:
-    .task/internal-staging-dashboard.json
+  DEFINITION:   .task/internal-staging-dashboard.json
+  FINDOUT_DEFINITION: .task/internal-findout-staging.json
 
 permissions:
   contents: read
@@ -62,8 +62,8 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       
-  Deploy:
-    name: Deploy to Staging
+  Deploy-patchwork-dashboard-staging:
+    name: Deploy to patchwork-dashboard-staging
     needs: Build
     runs-on: ubuntu-latest
     steps:
@@ -111,6 +111,57 @@ jobs:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ secrets.DASHBOARD_STAGING_SERVICE_NAME }}
           cluster: ${{ secrets.CLUSTER_STAGING }}
+          wait-for-service-stability: false
+
+  Deploy-findout-dashboard-staging:
+    name: Deploy to findout-dashboard-staging
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
+
+      # This is a separate action that sets up buildx runner
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Use Github action cache
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.FINDOUT_DEFINITION }}
+          container-name: ${{ secrets.FINDOUT_DASHBOARD_STAGING_CONTAINER_NAME }}
+          # image: ${{ steps.build-image.outputs.image }}
+          image:  ${{ secrets.FINDOUT_DASHBOARD_STAGING_IMAGE }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ secrets.FINDOUT_DASHBOARD_STAGING_SERVICE_NAME }}
+          cluster: ${{ secrets.FINDOUT_STAGING_CLUSTER_STAGING }}
           wait-for-service-stability: false
 
 
