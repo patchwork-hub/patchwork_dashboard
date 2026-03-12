@@ -100,7 +100,7 @@ class ChannelBlueskyBridgeService
     # Determine the domain and record name based on community configuration
     domain_name = determine_domain_name(community)
     base_domain = if community&.is_custom_domain?
-                    community.slug
+                    community&.slug
                   else
                     domain = ENV['LOCAL_DOMAIN']
                     domain.split('.').last(2).join('.')
