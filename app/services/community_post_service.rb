@@ -152,20 +152,14 @@ class CommunityPostService < BaseService
   end
 
   def update_account_attributes(community_attributes)
-    require 'base64'
-
     job_attributes = community_attributes.slice(:name, :description)
     
     if community_attributes[:avatar_image].present?
-      job_attributes[:avatar_base64] = Base64.strict_encode64(community_attributes[:avatar_image].read)
-      job_attributes[:avatar_filename] = community_attributes[:avatar_image].original_filename
-      community_attributes[:avatar_image].rewind
+      job_attributes[:avatar_changed] = true
     end
 
     if community_attributes[:banner_image].present?
-      job_attributes[:banner_base64] = Base64.strict_encode64(community_attributes[:banner_image].read)
-      job_attributes[:banner_filename] = community_attributes[:banner_image].original_filename
-      community_attributes[:banner_image].rewind
+      job_attributes[:banner_changed] = true
     end
 
     UpdateBoostBotProfileJob.perform_later(account_id: @account.id, community_id: @community.id, is_update: @options[:id].present?, attributes: job_attributes)
