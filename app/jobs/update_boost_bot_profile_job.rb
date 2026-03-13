@@ -10,8 +10,8 @@ class UpdateBoostBotProfileJob < ApplicationJob
     token = GenerateAdminAccessTokenService.new(account&.user&.id).call
     return if token.nil?
 
-    avatar_file = decode_base64_to_file(attributes[:avatar_base64], attributes[:avatar_filename])
-    banner_file = decode_base64_to_file(attributes[:banner_base64], attributes[:banner_filename])
+    avatar_file = attributes[:avatar_changed] ? community.avatar_image : nil
+    banner_file = attributes[:banner_changed] ? community.banner_image : nil
 
     original_avatar_file_name = community.avatar_image_file_name
     original_banner_file_name = community.banner_image_file_name
@@ -28,40 +28,8 @@ class UpdateBoostBotProfileJob < ApplicationJob
     # We must explicitly restore the local Dashboard's original filenames to prevent broken image links.
     community.reload
     filename_updates = {}
-    filename_updates[:avatar_image_file_name] = original_avatar_file_name if original_avatar_file_name.present?
-    filename_updates[:banner_image_file_name] = original_banner_file_name if original_banner_file_name.present?
+    filename_updates[:avatar_image_file_name] = original_avatar_file_name if attributes[:avatar_changed] && original_avatar_file_name.present?
+    filename_updates[:banner_image_file_name] = original_banner_file_name if attributes[:banner_changed] && original_banner_file_name.present?
     community.update_columns(filename_updates) if filename_updates.any?
-
-  ensure
-    delete_temp_file(avatar_file)
-    delete_temp_file(banner_file)
-  end
-
-  private
-
-  def decode_base64_to_file(base64_data, filename)
-    return nil unless base64_data.present?
-
-    require 'fileutils'
-    require 'base64'
-    tmp_dir = Rails.root.join('tmp', 'job_uploads', SecureRandom.hex(8))
-    FileUtils.mkdir_p(tmp_dir)
-    file_path = File.join(tmp_dir, filename || "image_#{SecureRandom.hex(4)}.jpg")
-
-    File.open(file_path, 'wb') do |f|
-      f.write(Base64.strict_decode64(base64_data))
-    end
-    
-    File.open(file_path, 'rb')
-  rescue StandardError => e
-    Rails.logger.error("Failed to decode base64 file #{filename}: #{e.message}")
-    nil
-  end
-  
-  def delete_temp_file(file)
-    return unless file.present? && File.exist?(file.path)
-    File.delete(file.path)
-  rescue StandardError => e
-    Rails.logger.error("Failed to delete temp file: #{e.message}")
   end
 end
