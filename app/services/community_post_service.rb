@@ -243,6 +243,7 @@ class CommunityPostService < BaseService
       @community&.logo_image = nil
       @community&.logo_image_file_name = nil
     else
+      log_upload_metadata(:logo_image, @options[:logo_image])
       attributes[:logo_image] = randomize_filename(@options[:logo_image])
     end
 
@@ -250,6 +251,7 @@ class CommunityPostService < BaseService
       @community&.avatar_image = nil
       @community&.avatar_image_file_name = nil
     else
+      log_upload_metadata(:avatar_image, @options[:avatar_image])
       attributes[:avatar_image] = randomize_filename(@options[:avatar_image])
       Rails.logger.info("#{'*' * 10} community_attr[avatar_image]: #{attributes[:avatar_image]} #{'*' * 10}" )
     end
@@ -258,6 +260,7 @@ class CommunityPostService < BaseService
       @community&.banner_image = nil
       @community&.banner_image_file_name = nil
     else
+      log_upload_metadata(:banner_image, @options[:banner_image])
       attributes[:banner_image] = randomize_filename(@options[:banner_image])
       Rails.logger.info("#{'*' * 10} community_attr[banner_image]: #{attributes[:banner_image]} #{'*' * 10}" )
     end
@@ -280,5 +283,18 @@ class CommunityPostService < BaseService
     extension = File.extname(file.original_filename)
     file.original_filename = "#{SecureRandom.hex(8)}#{extension}"
     file
+  end
+
+  def log_upload_metadata(field_name, file)
+    return unless file.respond_to?(:original_filename)
+
+    header_string = file.respond_to?(:headers) ? file.headers.to_s : ''
+    multipart_filename = header_string[/filename=\"([^\"]+)\"/, 1]
+    multipart_content_type = header_string[/Content-Type:\s*([^\r\n]+)/i, 1]
+
+    Rails.logger.info(
+      "Upload metadata [#{field_name}] original_filename=#{file.original_filename.inspect} " \
+      "filename=#{multipart_filename.inspect} content_type=#{multipart_content_type.inspect}"
+    )
   end
 end
