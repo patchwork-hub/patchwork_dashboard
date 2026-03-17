@@ -251,6 +251,7 @@ class CommunityPostService < BaseService
       @community&.avatar_image_file_name = nil
     else
       attributes[:avatar_image] = randomize_filename(@options[:avatar_image])
+      Rails.logger.info("#{'*' * 10} community_attr[avatar_image]: #{attributes[:avatar_image]} #{'*' * 10}" )
     end
 
     if @options[:banner_image].nil? && !@community&.banner_image.present?
@@ -258,6 +259,7 @@ class CommunityPostService < BaseService
       @community&.banner_image_file_name = nil
     else
       attributes[:banner_image] = randomize_filename(@options[:banner_image])
+      Rails.logger.info("#{'*' * 10} community_attr[banner_image]: #{attributes[:banner_image]} #{'*' * 10}" )
     end
 
     attributes.compact
