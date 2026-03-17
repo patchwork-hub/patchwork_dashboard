@@ -162,6 +162,7 @@ class CommunityPostService < BaseService
       job_attributes[:banner_changed] = true
     end
 
+    Rails.logger.info("#{'*' * 10} Enqueuing UpdateBoostBotProfileJob with attributes: #{job_attributes} #{'*' * 10}" )
     UpdateBoostBotProfileJob.perform_later(account_id: @account.id, community_id: @community.id, is_update: @options[:id].present?, attributes: job_attributes)
   end
 
