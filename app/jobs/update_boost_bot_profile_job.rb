@@ -7,8 +7,8 @@ class UpdateBoostBotProfileJob < ApplicationJob
     community = Community.find_by(id: community_id)
     return if account.nil? || community.nil?
 
-   Rails.logger.info("#{'*' * 10} Enqueuing UpdateBoostBotProfileJob with attributes: #{attributes} #{'*' * 10}" )
-   Rails.logger.info("#{'*' * 10} Enqueuing UpdateBoostBotProfileJob with is_update: #{is_update} #{'*' * 10}" )
+   Rails.logger.info("#{'*' * 10} UpdateBoostBotProfileJob with attributes: #{attributes} #{'*' * 10}" )
+   Rails.logger.info("#{'*' * 10} UpdateBoostBotProfileJob with is_update: #{is_update} #{'*' * 10}" )
 
     token = GenerateAdminAccessTokenService.new(account&.user&.id).call
     return if token.nil?
@@ -19,7 +19,6 @@ class UpdateBoostBotProfileJob < ApplicationJob
     original_avatar_file_name = community.avatar_image_file_name
     original_banner_file_name = community.banner_image_file_name
     Rails.logger.info("#{'*' * 10} UpdateBoostBotProfileJob with original_avatar_file_name: #{original_avatar_file_name}, original_banner_file_name: #{original_banner_file_name} #{'*' * 10}" )  
-    Rails.logger.info("#{'*' * 10} UpdateBoostBotProfileJob with original_banner_file_name: #{original_banner_file_name}, original_banner_file_name: #{original_banner_file_name} #{'*' * 10}" )  
 
     UpdateAccountCredentialsService.new.call(
       token: token,
