@@ -61,7 +61,11 @@ class UpdateAccountCredentialsService < BaseService
 
       begin
         if defined?(Paperclip) && Paperclip.respond_to?(:io_adapters)
-          return Paperclip.io_adapters.for(value)
+          adapter = Paperclip.io_adapters.for(value)
+          file = File.open(adapter.path, 'rb')
+
+          @opened_uploads << file
+          return file
         end
       rescue => e
         Rails.logger.error("Error fetching paperclip adapter: #{e.message}")
