@@ -22,9 +22,7 @@ class PostStatusService < BaseService
                              body: @params.to_json,
                              headers: headers)
 
-    if response.code == 200
-      Rails.logger.info("Created status: #{response.body}")
-    else
+    unless response.code == 200
       Rails.logger.error("Failed to create status: #{response.body}")
     end
 

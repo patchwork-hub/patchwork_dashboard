@@ -162,7 +162,6 @@ class CommunityPostService < BaseService
       job_attributes[:banner_changed] = true
     end
 
-    Rails.logger.info("#{'*' * 10} Enqueuing to UpdateBoostBotProfileJob with job_attributes: #{job_attributes} #{'*' * 10}" )
     UpdateBoostBotProfileJob.set(wait: 60.seconds).perform_later(account_id: @account.id, community_id: @community.id, is_update: @options[:id].present?, attributes: job_attributes)
   end
 
@@ -253,7 +252,6 @@ class CommunityPostService < BaseService
     else
       log_upload_metadata(:avatar_image, @options[:avatar_image])
       attributes[:avatar_image] = randomize_filename(@options[:avatar_image])
-      Rails.logger.info("#{'*' * 10} community_attr[avatar_image]: #{attributes[:avatar_image]} #{'*' * 10}" )
     end
 
     if @options[:banner_image].nil? && !@community&.banner_image.present?
@@ -262,7 +260,6 @@ class CommunityPostService < BaseService
     else
       log_upload_metadata(:banner_image, @options[:banner_image])
       attributes[:banner_image] = randomize_filename(@options[:banner_image])
-      Rails.logger.info("#{'*' * 10} community_attr[banner_image]: #{attributes[:banner_image]} #{'*' * 10}" )
     end
 
     attributes.compact
