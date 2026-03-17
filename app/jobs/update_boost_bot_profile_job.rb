@@ -5,10 +5,12 @@ class UpdateBoostBotProfileJob < ApplicationJob
   def perform(account_id:, community_id:, is_update: false, attributes: {})
     account = Account.find_by(id: account_id)
     community = Community.find_by(id: community_id)
+    community.reload if community.present?
+
     return if account.nil? || community.nil?
 
-   Rails.logger.info("#{'*' * 10} UpdateBoostBotProfileJob with attributes: #{attributes} #{'*' * 10}" )
-   Rails.logger.info("#{'*' * 10} UpdateBoostBotProfileJob with is_update: #{is_update} #{'*' * 10}" )
+    Rails.logger.info("#{'*' * 10} UpdateBoostBotProfileJob with attributes: #{attributes} #{'*' * 10}" )
+    Rails.logger.info("#{'*' * 10} UpdateBoostBotProfileJob with is_update: #{is_update} #{'*' * 10}" )
 
     token = GenerateAdminAccessTokenService.new(account&.user&.id).call
     return if token.nil?
@@ -30,7 +32,6 @@ class UpdateBoostBotProfileJob < ApplicationJob
 
     # Mastodon's update_credentials synchronously overwrites the DB rows in patchwork_communities.
     # We must explicitly restore the local Dashboard's original filenames to prevent broken image links.
-    community.reload
     filename_updates = {}
     filename_updates[:avatar_image_file_name] = original_avatar_file_name if attributes[:avatar_changed] && original_avatar_file_name.present?
     filename_updates[:banner_image_file_name] = original_banner_file_name if attributes[:banner_changed] && original_banner_file_name.present?
