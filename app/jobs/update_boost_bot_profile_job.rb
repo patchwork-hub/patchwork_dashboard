@@ -7,9 +7,6 @@ class UpdateBoostBotProfileJob < ApplicationJob
     community = Community.find_by(id: community_id)
     return if account.nil? || community.nil?
 
-   Rails.logger.info("#{'*' * 10} UpdateBoostBotProfileJob with attributes: #{attributes} #{'*' * 10}" )
-   Rails.logger.info("#{'*' * 10} UpdateBoostBotProfileJob with is_update: #{is_update} #{'*' * 10}" )
-
     token = GenerateAdminAccessTokenService.new(account&.user&.id).call
     return if token.nil?
 
@@ -18,7 +15,6 @@ class UpdateBoostBotProfileJob < ApplicationJob
 
     original_avatar_file_name = community.avatar_image_file_name
     original_banner_file_name = community.banner_image_file_name
-    Rails.logger.info("#{'*' * 10} UpdateBoostBotProfileJob with original_avatar_file_name: #{original_avatar_file_name}, original_banner_file_name: #{original_banner_file_name} #{'*' * 10}" )  
 
     UpdateAccountCredentialsService.new.call(
       token: token,
@@ -34,7 +30,6 @@ class UpdateBoostBotProfileJob < ApplicationJob
     filename_updates = {}
     filename_updates[:avatar_image_file_name] = original_avatar_file_name if attributes[:avatar_changed] && original_avatar_file_name.present?
     filename_updates[:banner_image_file_name] = original_banner_file_name if attributes[:banner_changed] && original_banner_file_name.present?
-    Rails.logger.info("#{'*' * 10} UpdateBoostBotProfileJob with filename_updates: #{filename_updates} #{'*' * 10}" )  
 
     community.update_columns(filename_updates) if filename_updates.any?
   end
