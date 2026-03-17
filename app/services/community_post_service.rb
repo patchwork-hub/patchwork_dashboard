@@ -163,7 +163,7 @@ class CommunityPostService < BaseService
     end
 
     Rails.logger.info("#{'*' * 10} Enqueuing to UpdateBoostBotProfileJob with job_attributes: #{job_attributes} #{'*' * 10}" )
-    UpdateBoostBotProfileJob.perform_later(account_id: @account.id, community_id: @community.id, is_update: @options[:id].present?, attributes: job_attributes)
+    UpdateBoostBotProfileJob.set(wait: 60.seconds).perform_later(account_id: @account.id, community_id: @community.id, is_update: @options[:id].present?, attributes: job_attributes)
   end
 
   def set_community_admin
