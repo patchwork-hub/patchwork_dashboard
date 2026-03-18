@@ -62,26 +62,13 @@ class UpdateAccountCredentialsService < BaseService
       begin
         if defined?(Paperclip) && Paperclip.respond_to?(:io_adapters)
           adapter = Paperclip.io_adapters.for(value)
-          
-          require 'fileutils'
-          tmp_dir = Rails.root.join('tmp', 'patchwork_uploads', SecureRandom.hex(8))
-          FileUtils.mkdir_p(tmp_dir)
-          tmp_file_path = File.join(tmp_dir, original_name)
-          
-          File.open(tmp_file_path, 'wb') do |f|
-            f.write(adapter.read)
-          end
-          
-          file = File.open(tmp_file_path, 'rb')
-          
+          file = File.open(adapter.path, 'rb')
+
           @opened_uploads << file
-          @opened_temp_paths ||= []
-          @opened_temp_paths << tmp_file_path
-          
           return file
         end
       rescue => e
-        Rails.logger.error("Error creating temp upload file: #{e.message}")
+        Rails.logger.error("Error fetching paperclip adapter: #{e.message}")
         return nil
       end
 
