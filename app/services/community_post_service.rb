@@ -162,7 +162,7 @@ class CommunityPostService < BaseService
       job_attributes[:banner_changed] = true
     end
 
-    # UpdateBoostBotProfileJob.set(wait: 60.seconds).perform_later(account_id: @account.id, community_id: @community.id, is_update: @options[:id].present?, attributes: job_attributes)
+    UpdateBoostBotProfileJob.set(wait: 60.seconds).perform_later(account_id: @account.id, community_id: @community.id, is_update: @options[:id].present?, attributes: job_attributes)
   end
 
   def set_community_admin
