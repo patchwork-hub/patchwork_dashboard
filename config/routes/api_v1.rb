@@ -115,6 +115,12 @@ namespace :api, defaults: { format: :json } do
       end
     end
 
+    resources :joined_working_groups, only: %i[index create destroy] do
+      collection do
+        post :set_primary
+      end
+    end
+
     get '/domains/verify', to: 'domains#verify'
     get 'general_icons', to: 'community_links#general'
     get 'social_icons',  to: 'community_links#social'
