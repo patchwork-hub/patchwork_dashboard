@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    class JoinedWorkgroupsController < ApiController
+    class JoinedWorkingGroupsController < ApiController
       skip_before_action :verify_key!
       before_action :check_authorization_header
       before_action :set_authenticated_account
