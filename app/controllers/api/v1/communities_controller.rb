@@ -112,17 +112,23 @@ module Api
                                    .page(params[:page])
                                    .per(params[:per_page] || PER_PAGE)
 
+        grouped_data = post_hashtags.group_by { |ph| ph.community&.name }.map do |community_name, hashtags|
+          {
+            community_name: community_name,
+            patchwork_community_id: hashtags.first.patchwork_community_id,
+            hashtags: hashtags.map do |ph|
+              {
+                id: ph.id,
+                hashtag: ph.hashtag,
+                created_at: ph.created_at,
+                updated_at: ph.updated_at
+              }
+            end
+          }
+        end
+
         render json: {
-          data: post_hashtags.map { |ph|
-            {
-              id: ph.id,
-              hashtag: ph.hashtag,
-              patchwork_community_id: ph.patchwork_community_id,
-              community_name: ph.community&.name,
-              created_at: ph.created_at,
-              updated_at: ph.updated_at
-            }
-          },
+          data: grouped_data,
           meta: pagination_meta(post_hashtags)
         }, status: :ok
       end
