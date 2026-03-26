@@ -117,6 +117,14 @@ module ApplicationHelper
     current_user && policy(current_user).newsmast_admin?
   end
 
+  def channel_post_hashtag_enabled?
+    ENV['CHANNEL_POST_HASHTAG_ENABLED'] == 'true'
+  end
+
+  def newsmast_post_hashtag_enabled?
+    ENV['NEWSMAST_POST_HASHTAG_ENABLED'] == 'true'
+  end
+
   def render_custom_emojis(text)
     emoji_map = MastodonEmoji.fetch_and_cache_emojis
 

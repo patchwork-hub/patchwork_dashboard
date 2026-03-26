@@ -1,3 +1,6 @@
+- is_channel_feed = current_user.user_admin? || params[:channel_type] == 'channel_feed' || @community&.channel_feed?
+- is_newsmast = current_user.newsmast_admin? || params[:channel_type] == 'newsmast' || @community&.newsmast?
+- show_post_hashtags = (is_channel_feed && channel_post_hashtag_enabled?) || (is_newsmast && newsmast_post_hashtag_enabled?)
 .container-fluid
   .row-md-12.my-4
     .col
@@ -89,6 +92,45 @@
                             = image_tag("icons/trash-can.svg", class: "ml-2", width: "16", height: "16")
             .pagination.pagination-sm.m-0.float-right
               = paginate @records, theme: 'bootstrap4'
+      - if show_post_hashtags
+        #post-hashtags-section
+          .card
+            .card-body
+              .row.d-flex.align-items-center.justify-content-between
+                .col
+                  %label Post Hashtags
+                  %p.text-muted.small Add hashtags that will be automatically added to posts made by users on your server when they post to this channel.
+                .col-auto
+                  %button.btn.btn-outline-secondary{type: "button", "data-target" => "#postHashtagModal", "data-toggle" => "modal"} Add new
+              .table-responsive
+                %table.table.table-striped.no-side-borders.top-bottom-border.mt-3
+                  %thead
+                    %tr
+                      %th{style: "width: 30px;"}
+                        %i.far.fa-square.mr-4
+                      %th
+                        %label.text-muted{ style: "font-size: 14px;" } Post Hashtags
+                  %tbody
+                    - if @post_hashtag_records.size == 0
+                      %tr
+                        %td.text-center{ colspan: 2 }
+                          %p.text-muted.small You haven't added any post hashtags to this channel yet
+                          %a.text-danger.small{ href: '#', title: 'Add new post hashtag', 'data-toggle': 'modal', 'data-target': '#postHashtagModal' }
+                            Click here to add one
+                    - @post_hashtag_records.each do |record|
+                      %tr
+                        %td
+                          = check_box_tag "selected_post_hashtags[]", record.id, false, class: 'select_post_hashtag'
+                        %td{ style: 'width: 90%;' }
+                          = "##{record.hashtag}"
+                          %td
+                            %a{ href: '#', "data-toggle" => "modal", "data-target" => "#editPostHashtagModal", "data-id" => record.id, "data-hashtag" => record.hashtag }
+                              = image_tag("icons/edit-btn.svg", class: "ml-2", width: "16", height: "16")
+                          %td
+                            = link_to community_post_hashtag_path(id: record.id, community_id: @community.id), method: :delete, data: { confirm: 'Are you sure?' }, class: 'text-danger', title: 'Delete', rel: 'nofollow' do
+                              = image_tag("icons/trash-can.svg", class: "ml-2", width: "16", height: "16")
+              .pagination.pagination-sm.m-0.float-right
+                = paginate @post_hashtag_records, theme: 'bootstrap4', param_name: :post_hashtag_page
       #contributors-section
         .card
           .card-body
@@ -174,4 +216,6 @@
 = render 'add_contributor'
 = render 'edit_hashtag'
 = render 'add_hashtag'
+= render 'add_post_hashtag'
+= render 'edit_post_hashtag'
 = render 'keyword_filter'
