@@ -135,6 +135,8 @@ class CommunitiesController < BaseController
     @records = load_filtered_records(commu_hashtag_records_filter)
     @search = commu_hashtag_records_filter.build_search
     @community_hashtag_form = Form::CommunityHashtag.new(community_id: @community.id)
+    @form_post_hashtag = Form::PostHashtag.new
+    @post_hashtag_records = PostHashtag.where(patchwork_community_id: @community.id).page(params[:post_hashtag_page]).per(PER_PAGE)
     @follow_records = load_follow_records
     setup_filter_keywords(COMMUNITY_FILTER_TYPES[:in])
   end

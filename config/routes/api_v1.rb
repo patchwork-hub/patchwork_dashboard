@@ -95,6 +95,7 @@ namespace :api, defaults: { format: :json } do
         post 'set_visibility'
         get 'fetch_ip_address'
         get 'hashtag_list'
+        get 'post_hashtag_list'
       end
       member do
         patch :manage_additional_information
