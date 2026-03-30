@@ -189,6 +189,11 @@ class Community < ApplicationRecord
             foreign_key: 'patchwork_community_id',
             dependent: :destroy
 
+  has_many :post_hashtags,
+            class_name: 'PostHashtag',
+            foreign_key: 'patchwork_community_id',
+            dependent: :destroy
+
   has_many :joined_communities,
             class_name: 'JoinedCommunity',
             foreign_key: 'patchwork_community_id',
