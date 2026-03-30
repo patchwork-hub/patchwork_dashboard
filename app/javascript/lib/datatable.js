@@ -295,6 +295,21 @@ jQuery(function() {
     form.attr('action', actionUrl);
   });
 
+  $('#editPostHashtagModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var hashtagId = button.data('id');
+    var hashtag = button.data('hashtag');
+
+    var modal = $(this);
+    modal.find('#edit_post_hashtag_id').val(hashtagId);
+    modal.find('#edit_post_hashtag_input').val('#' + hashtag);
+
+    var form = modal.find('#edit_post_hashtag_form');
+    var communityId = $('#edit_post_hashtag_community_id').val();
+    var actionUrl = '/channels/' + communityId + '/post_hashtags/' + hashtagId;
+    form.attr('action', actionUrl);
+  });
+
   const saveAndPreviewBtn = document.getElementById("save-and-preview-btn");
   const form = document.getElementById("additionalForm");
 
