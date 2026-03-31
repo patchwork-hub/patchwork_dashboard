@@ -1,9 +1,9 @@
 {
-    "family": "csidnet-dashboard",
+    "taskDefinitionArn": "arn:aws:ecs:eu-west-2:672691776916:task-definition/csidnet-dashboard:10",
     "containerDefinitions": [
         {
             "name": "csidnet-dashboard",
-            "image": "672691776916.dkr.ecr.eu-west-2.amazonaws.com/internal-patchwork-dashboard:production",
+            "image": "672691776916.dkr.ecr.eu-west-2.amazonaws.com/internal-dashboard-staging:staging",
             "cpu": 0,
             "portMappings": [
                 {
@@ -36,11 +36,51 @@
             "systemControls": []
         }
     ],
+    "family": "csidnet-dashboard",
     "taskRoleArn": "arn:aws:iam::672691776916:role/patchwork-ecs-task-role",
     "executionRoleArn": "arn:aws:iam::672691776916:role/patchwork-ecs-task-execution-role",
     "networkMode": "awsvpc",
+    "revision": 10,
     "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.env-files.s3"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
     "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE",
+        "MANAGED_INSTANCES"
+    ],
     "requiresCompatibilities": [
         "FARGATE"
     ],
@@ -50,5 +90,8 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "enableFaultInjection": false
+    "registeredAt": "2026-03-31T04:35:45.033Z",
+    "registeredBy": "arn:aws:iam::672691776916:user/ahn",
+    "enableFaultInjection": false,
+    "tags": []
 }
