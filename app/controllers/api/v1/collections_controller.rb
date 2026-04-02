@@ -45,6 +45,10 @@ module Api
 
       def fetch_channels
         if @channels
+          order_direction = %w[asc desc].include?(params[:order_by_position]&.downcase) ? params[:order_by_position].downcase : 'asc'
+          @channels = @channels.respond_to?(:to_a) ? @channels.to_a : @channels
+          @channels = @channels.sort_by { |c| c.try(:position).to_i }
+          @channels.reverse! if order_direction == 'desc'
           render json: serialized_channels(type: params[:type])
         else
           render json: { data: [] }
@@ -145,6 +149,9 @@ module Api
         end
         base_communities
         .public_send(scope)
+        .includes(:patchwork_community_links, :patchwork_community_additional_informations,
+                  :patchwork_community_rules, :patchwork_community_type, :patchwork_community_hashtags,
+                  :content_type, community_admins: :account)
         .exclude_array_ids
         .exclude_incomplete_channels
         .exclude_deleted_channels
