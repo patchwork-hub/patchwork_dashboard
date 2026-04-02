@@ -28,10 +28,10 @@ class UpdateBoostBotProfileJob < ApplicationJob
 
     # Mastodon's update_credentials synchronously overwrites the DB rows in patchwork_communities.
     # We must explicitly restore the local Dashboard's original filenames to prevent broken image links.
-    filename_updates = {}
-    filename_updates[:avatar_image_file_name] = original_avatar_file_name if attributes[:avatar_changed] && original_avatar_file_name.present?
-    filename_updates[:banner_image_file_name] = original_banner_file_name if attributes[:banner_changed] && original_banner_file_name.present?
+    # filename_updates = {}
+    # filename_updates[:avatar_image_file_name] = original_avatar_file_name if attributes[:avatar_changed] && original_avatar_file_name.present?
+    # filename_updates[:banner_image_file_name] = original_banner_file_name if attributes[:banner_changed] && original_banner_file_name.present?
 
-    community.update_columns(filename_updates) if filename_updates.any?
+    # community.update_columns(filename_updates) if filename_updates.any?
   end
 end
