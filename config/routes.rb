@@ -22,6 +22,7 @@ Rails.application.routes.draw do
       post 'step0', to: 'communities#step0_save'
       get 'step1', to: 'communities#step1', as: 'step1_new'
       post 'step1', to: 'communities#step1_save'
+      patch 'update_positions', to: 'communities#update_positions'
     end
     member do
       get 'step2', to: 'communities#step2'

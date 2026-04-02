@@ -35,6 +35,7 @@
               %tr
                 %th.align-left{ style: "width: 40px;" }
                   = check_box_tag :select_all, '', false, id: 'select_all'
+                %th{ style: "width: 40px;"} Position
                 %th{ style: "width: 80px;"} #{title}
                 %th{ style: "width: 100px;"} Username
                 - if channel_type_param.eql?('channel') || channel_type_param.eql?('hub')
@@ -55,6 +56,7 @@
                 %tr
                   %td.text-center{ style: "width: 40px;" }
                     = check_box_tag "selected_communities[]", community.id, false, class: 'select_community'
+                  %td{ style: "width: 40px;"}= community.position
                   %td{ style: "width: 80px;"}= community.name
                   %td{ style: "width: 100px;"}
                     - if account.present?
@@ -119,6 +121,18 @@
                 -#  %button.btn.btn-outline-secondary{ onclick: "window.location='#{communities_path}'" }
                       Import a #{keyword}
                       = image_tag("icons/circle-left.svg", class: "ml-2", width: "16", height: "16")
+                %button.btn.btn-outline-secondary.ml-3{ "data-toggle" => "modal", "data-target" => "#reorderCommunitiesModal" }
+                  Reorder
+                  %i.fa-solid.fa-arrows-up-down.ml-2
                 %button.btn.btn-danger.ml-3{ onclick: "window.location='#{create_path}'" }
                   Create a #{keyword}
                   = image_tag("icons/circle-plus.svg", class: "ml-2", width: "16", height: "16")
+
+= render 'reorder_communities'
+= javascript_include_tag 'custom_js/reorder_communities'
+
+:css
+  .sortable-ghost {
+    opacity: 0.4;
+    background: #f0f0f0;
+  }

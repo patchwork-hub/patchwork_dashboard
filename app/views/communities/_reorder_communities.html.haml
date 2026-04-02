@@ -1,0 +1,27 @@
+- channel_type_param = params[:channel_type]
+- communities = Community.where(channel_type: channel_type_param, deleted_at: nil).order(position: :asc)
+
+#reorderCommunitiesModal.modal.fade{ tabindex: "-1", role: "dialog", "aria-labelledby" => "reorderCommunitiesModalLabel", "aria-hidden" => "true" }
+  .modal-dialog.modal-dialog-centered.modal-lg{ role: "document" }
+    .modal-content
+      .modal-header
+        %h5.modal-title#reorderCommunitiesModalLabel Reorder Channels
+        %button.close{ type: "button", "data-dismiss" => "modal", "aria-label" => "Close" }
+          %span{ "aria-hidden" => "true" } &times;
+      .modal-body
+        %p.text-muted.small.mb-3 Drag and drop to reorder, or edit position values directly. Click "Save Order" to apply changes.
+        %ul#sortable-community-list.list-group{ style: "min-height: 60px; max-height: 60vh; overflow-y: auto;" }
+          - communities.each do |community|
+            %li.list-group-item.d-flex.align-items-center{ "data-id" => community.id, style: "cursor: grab; user-select: none;" }
+              %span.drag-handle.mr-3{ style: "color: #aaa; font-size: 18px;" } ☰
+              %input.position-input.form-control.form-control-sm.mr-3{ type: "number", value: community.position, min: 1, style: "width: 65px; text-align: center;" }
+              - if community.avatar_image.present? && community.avatar_image.exists?
+                %img.rounded-circle.mr-2{ src: community.avatar_image.url, width: "32", height: "32", style: "object-fit: cover;" }
+              - else
+                %span.rounded-circle.d-inline-flex.align-items-center.justify-content-center.mr-2{ style: "width: 32px; height: 32px; background: #e9ecef;" }
+                  %i.fa-solid.fa-image{ style: "color: #aaa; font-size: 14px;" }
+              %span= community.name
+      .modal-footer
+        #reorder-status.mr-auto
+        %button.btn.btn-outline-secondary{ type: "button", "data-dismiss" => "modal" } Cancel
+        %button#save-order-btn.btn.btn-danger{ type: "button" } Save Order
