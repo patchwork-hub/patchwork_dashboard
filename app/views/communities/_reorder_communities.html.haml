@@ -1,5 +1,5 @@
 - channel_type_param = params[:channel_type]
-- communities = Community.where(channel_type: channel_type_param, deleted_at: nil).order(position: :asc)
+- communities = Community.where(channel_type: channel_type_param, deleted_at: nil).where.not(visibility: nil).order(position: :asc)
 
 #reorderCommunitiesModal.modal.fade{ tabindex: "-1", role: "dialog", "aria-labelledby" => "reorderCommunitiesModalLabel", "aria-hidden" => "true" }
   .modal-dialog.modal-dialog-centered.modal-lg{ role: "document" }
