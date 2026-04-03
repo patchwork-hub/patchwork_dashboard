@@ -1,6 +1,6 @@
 class CommunitiesController < BaseController
   before_action :authenticate_user!
-  before_action :set_community, except: %i[step0 step0_save step1 step1_save index new]
+  before_action :set_community, except: %i[step0 step0_save step1 step1_save index new update_positions]
   before_action :initialize_form, only: %i[step0 step1]
   before_action :set_current_step
   before_action :set_content_type, only: %i[step3 step4 step5 step6]
@@ -179,6 +179,18 @@ class CommunitiesController < BaseController
     respond_to(&:html)
   end
 
+  def update_positions
+    positions = params[:positions] || []
+    ActiveRecord::Base.transaction do
+      positions.each do |pos|
+        Community.where(id: pos[:id]).update_all(position: pos[:position])
+      end
+    end
+    render json: { success: true }, status: :ok
+  rescue StandardError => e
+    render json: { success: false, error: e.message }, status: :unprocessable_entity
+  end
+
   # Search/mute actions
   def search_contributor
     result = ContributorSearchService.new(
@@ -254,14 +266,17 @@ class CommunitiesController < BaseController
           is_recommended: @community.is_recommended,
           no_boost_channel: @community.no_boost_channel,
           is_custom_domain: @community.is_custom_domain,
-          ip_address_id: @community.ip_address_id
+          ip_address_id: @community.ip_address_id,
+          position: @community.position
         }
       else
         authorize current_user, :user_is_not_community_admin?
         form_data = {}
       end
     else
-      form_data = {}
+      channel_type = params[:channel_type] || default_channel_type
+      next_position = (Community.where(channel_type: channel_type, deleted_at: nil).maximum(:position) || 0) + 1
+      form_data = { position: next_position }
     end
 
     @community_form = Form::Community.new(form_data)
@@ -291,7 +306,7 @@ class CommunitiesController < BaseController
       :id, :name, :slug, :collection_id, :bio,
       :banner_image, :avatar_image, :logo_image,
       :community_type_id, :is_recommended, :no_boost_channel,
-      :content_type, :channel_type, :is_custom_domain, :ip_address_id
+      :content_type, :channel_type, :is_custom_domain, :ip_address_id, :position
     )
   end
 

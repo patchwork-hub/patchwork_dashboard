@@ -6,7 +6,7 @@
 class Form::Community
   include ActiveModel::Model
 
-  attr_accessor :id, :name, :slug, :collection_id, :bio, :banner_image, :logo_image, :avatar_image, :community_type_id, :is_recommended, :is_custom_domain, :ip_address_id, :no_boost_channel
+  attr_accessor :id, :name, :slug, :collection_id, :bio, :banner_image, :logo_image, :avatar_image, :community_type_id, :is_recommended, :is_custom_domain, :ip_address_id, :no_boost_channel, :position
 
   def initialize(options = {})
     options = options.is_a?(Hash) ? options.symbolize_keys : options
@@ -23,5 +23,6 @@ class Form::Community
     @no_boost_channel = options.fetch(:no_boost_channel) if options[:no_boost_channel]
     @is_custom_domain = options.fetch(:is_custom_domain) if options[:is_custom_domain]
     @ip_address_id = options.fetch(:ip_address_id) if options[:ip_address_id]
+    @position = options.fetch(:position) if options[:position]
   end
 end
