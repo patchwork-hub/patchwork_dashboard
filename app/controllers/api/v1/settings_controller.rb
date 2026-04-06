@@ -20,8 +20,18 @@ module Api
 
       def upsert
         @setting = Setting.find_or_initialize_by(account: @account, app_name: @app_name)
+        current_settings = (@setting.settings || {}).with_indifferent_access
+        incoming = setting_params[:settings] || {}
 
-        if @setting.update(setting_params)
+        updates = {}
+        updates[:theme] = { type: incoming.dig(:theme, :type) } if incoming.dig(:theme, :type).present?
+        updates[:layout] = { tab_order: incoming.dig(:layout, :tab_order) } if incoming.dig(:layout, :tab_order).present?
+        updates[:user_timeline] = incoming[:user_timeline] if incoming.key?(:user_timeline)
+
+        # Use deep_merge! to combine the updates into the current settings
+        current_settings.deep_merge!(updates)
+
+        if @setting.update(settings: current_settings)
           render_success(@setting, 'api.setting.messages.saved')
         else
           render_validation_failed(@setting.errors, 'api.setting.errors.validation_failed')
@@ -70,7 +80,13 @@ module Api
       end
 
       def setting_params
-        params.permit(settings: [theme: [:type]])
+        params.permit(
+          settings: [
+            theme: [:type],
+            layout: [:tab_order],
+            user_timeline: []
+          ]
+        )
       end
 
       def default_setting
