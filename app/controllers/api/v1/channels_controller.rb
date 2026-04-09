@@ -95,6 +95,17 @@ module Api
         { slug: 'RenewedResistance', channel_type: Community.channel_types[:channel]}
       ]
 
+      DEFAULT_CSIDNET_CHANNELS = [
+        { slug: 'hunger-disease-water', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'climate-change', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'biology', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'science', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'academia-research', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'environment', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'biodiversity-rewilding', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'chemistry', channel_type: Community.channel_types[:newsmast] }
+      ]
+
       def recommend_channels
         @recommended_channels = Community.recommended.exclude_array_ids
         render json: Api::V1::ChannelSerializer.new(@recommended_channels).serializable_hash.to_json
@@ -196,6 +207,10 @@ module Api
 
       def leicester_channels
         render_custom_channels(DEFAULT_LEICESTER_CHANNELS)
+      end
+
+      def csidnet_channels
+        render_custom_channels(DEFAULT_CSIDNET_CHANNELS)
       end
 
       def starter_packs_channels
