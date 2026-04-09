@@ -51,6 +51,7 @@ namespace :api, defaults: { format: :json } do
         get :find_out_catch_up
         get :find_out_speak_out
         get :leicester_channels
+        get :csidnet_channels
       end
       member do
         get :starter_packs_detail
