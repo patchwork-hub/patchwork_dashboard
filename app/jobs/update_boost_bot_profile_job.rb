@@ -22,8 +22,9 @@ class UpdateBoostBotProfileJob < ApplicationJob
       token: token,
       display_name: attributes[:name] || community.name,
       note: attributes[:description] || community.description,
-      avatar: avatar_file,  
-      header: banner_file   
+      avatar: avatar_file,
+      header: banner_file,
+      channel_type: community.channel_type
     )
 
     # Mastodon's update_credentials synchronously overwrites the DB rows in patchwork_communities.

@@ -5,7 +5,7 @@ module Api
     class ChannelsController < ApiController
       skip_before_action :verify_key!
       before_action :check_authorization_header, only: [:channel_detail, :channel_feeds, :newsmast_channels, :my_channel, :mo_me_channels, :patchwork_demo_channels, :toot_channels, :bristol_cable_channels, :find_out_channels]
-      before_action :set_channel, only: [:channel_detail, :channel_feeds]
+      before_action :set_channel, only: [:channel_detail, :channel_feeds, :change_boost_bot_profile]
 
       DEFAULT_MO_ME_CHANNELS = [
         { slug: 'mediarevolution', channel_type: Community.channel_types[:channel] },
@@ -222,6 +222,17 @@ module Api
         }
       end
 
+      def change_boost_bot_profile
+        if @channel.nil? || !@channel.boost_bot?
+          return render_errors('api.community.errors.not_found', :not_found)
+        end
+        @channel.update!(boost_bot_profile_params)
+        render_updated(
+          {},
+          'api.messages.updated'
+        )
+      end
+
       private
 
       def set_channel
@@ -305,6 +316,35 @@ module Api
         else
           'twt'
         end
+      end
+
+      def boost_bot_profile_channel_id
+        params[:id].presence || params[:community_id].presence
+      end
+
+      def boost_bot_profile_params
+        source_params = params[:channel].is_a?(ActionController::Parameters) ? params[:channel] : params
+
+        update_params = {
+          name: source_params[:name],
+          description: source_params[:description]
+        }
+
+        if !source_params.key?(:avatar) && source_params[:avatar].nil?
+          @channel.avatar_image = nil
+          @channel.avatar_image_file_name = nil
+        else
+          update_params[:avatar_image] = source_params[:avatar]
+        end
+
+        if !source_params.key?(:banner) && source_params[:banner].nil?
+          @channel.banner_image = nil
+          @channel.banner_image_file_name = nil
+        else
+          update_params[:banner_image] = source_params[:banner]
+        end
+
+        update_params.compact
       end
     end
   end
