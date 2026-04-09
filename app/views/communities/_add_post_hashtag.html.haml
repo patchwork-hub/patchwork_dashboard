@@ -1,0 +1,22 @@
+#postHashtagModal.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "postHashtagModalLabel", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog{:role => "document"}
+    .modal-content
+      .modal-header
+        %h5#postHashtagModalLabel.modal-title Add post hashtag
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} ×
+      .modal-body
+        %p.text-muted.small Add a hashtag that will be automatically added to posts made by users on your server when they post to this channel.
+        = simple_form_for @form_post_hashtag, url: community_post_hashtags_path(@community) do |form|
+          = form.hidden_field :community_id, value: @community.id
+          .row
+            .col
+              .form-group
+                = form.label :hashtag
+                = form.text_field :hashtag, class: 'form-control', value: '#'
+          .modal-footer
+            %div.d-flex.justify-content-between
+              .col
+                %button.btn.btn-secondary{"data-dismiss" => "modal", :type => "button"} Close
+              .col
+                = form.submit 'Save', class: 'btn btn-danger'

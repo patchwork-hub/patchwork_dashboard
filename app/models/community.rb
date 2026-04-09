@@ -189,6 +189,11 @@ class Community < ApplicationRecord
             foreign_key: 'patchwork_community_id',
             dependent: :destroy
 
+  has_many :post_hashtags,
+            class_name: 'PostHashtag',
+            foreign_key: 'patchwork_community_id',
+            dependent: :destroy
+
   has_many :joined_communities,
             class_name: 'JoinedCommunity',
             foreign_key: 'patchwork_community_id',
@@ -205,6 +210,8 @@ class Community < ApplicationRecord
   belongs_to :ip_address, optional: true
 
   validates :registration_mode, inclusion: { in: ['open', 'approved', 'none'] }
+
+  validates :position, uniqueness: { scope: :channel_type, message: 'has already been taken for this channel type' }, if: -> { deleted_at.nil? }
 
   scope :recommended, -> {
     joins(:patchwork_community_type)

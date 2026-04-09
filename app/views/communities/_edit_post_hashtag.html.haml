@@ -1,0 +1,23 @@
+#editPostHashtagModal.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "editPostHashtagLabel", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog{:role => "document"}
+    .modal-content
+      .modal-header
+        %h5#editPostHashtagLabel.modal-title Edit post hashtag
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} ×
+      .modal-body
+        %p.text-muted.small Edit the post hashtag using the form below.
+        = simple_form_for @form_post_hashtag, url: '#', method: :patch, html: { id: 'edit_post_hashtag_form' } do |form|
+          = form.hidden_field :community_id, value: @community.id, id: 'edit_post_hashtag_community_id'
+          = form.hidden_field :id, id: 'edit_post_hashtag_id'
+          .row
+            .col
+              .form-group
+                = form.label :hashtag
+                = form.text_field :hashtag, class: 'form-control', id: 'edit_post_hashtag_input'
+          .modal-footer
+            %div.d-flex.justify-content-between
+              .col
+                %button.btn.btn-secondary{"data-dismiss" => "modal", :type => "button"} Close
+              .col
+                = form.submit 'Save changes', class: 'btn btn-danger'

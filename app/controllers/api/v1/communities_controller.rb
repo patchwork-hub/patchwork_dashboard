@@ -93,6 +93,46 @@ module Api
         render_hashtags(hashtags)
       end
 
+      def post_hashtag_list
+        communities = Community.where(channel_type: ['newsmast', 'channel_feed'])
+                               .where(deleted_at: nil)
+
+        if params[:channel_type].present?
+          communities = communities.where(channel_type: params[:channel_type])
+        end
+
+        if params[:channel_name].present?
+          channel_names = Array.wrap(params[:channel_name])
+          communities = communities.where(name: channel_names)
+        end
+
+        post_hashtags = PostHashtag.includes(:community)
+                                   .where(patchwork_community_id: communities.pluck(:id))
+                                   .order(created_at: :desc)
+                                   .page(params[:page])
+                                   .per(params[:per_page] || PER_PAGE)
+
+        grouped_data = post_hashtags.group_by { |ph| ph.community&.name }.map do |community_name, hashtags|
+          {
+            community_name: community_name,
+            patchwork_community_id: hashtags.first.patchwork_community_id,
+            hashtags: hashtags.map do |ph|
+              {
+                id: ph.id,
+                hashtag: ph.hashtag,
+                created_at: ph.created_at,
+                updated_at: ph.updated_at
+              }
+            end
+          }
+        end
+
+        render json: {
+          data: grouped_data,
+          meta: pagination_meta(post_hashtags)
+        }, status: :ok
+      end
+
       def mute_contributor_list
         contributors = fetch_contributors(:muted)
         render_contributors(contributors)
