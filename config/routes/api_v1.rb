@@ -52,6 +52,7 @@ namespace :api, defaults: { format: :json } do
         get :find_out_speak_out
         get :leicester_channels
         get :csidnet_channels
+        patch :change_boost_bot_profile
       end
       member do
         get :starter_packs_detail
