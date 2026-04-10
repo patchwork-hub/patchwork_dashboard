@@ -28,6 +28,6 @@ class Setting < ApplicationRecord
   validates :app_name, presence: true
   validates :settings, presence: true
 
-  enum app_name: { patchwork: 0, newsmast: 1 } , _default: :patchwork
+  enum app_name: { patchwork: 0, newsmast: 1, leicester: 2 } , _default: :patchwork
 
 end

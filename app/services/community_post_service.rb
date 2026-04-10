@@ -220,7 +220,7 @@ class CommunityPostService < BaseService
       is_recommended: @options[:is_recommended],
       no_boost_channel: @options[:no_boost_channel],
       guides: nil,
-      position: get_position,
+      position: @options[:position].present? ? @options[:position].to_i : get_position,
       admin_following_count: 0,
       patchwork_community_type_id: @community_type.id,
       channel_type: @options[:channel_type],

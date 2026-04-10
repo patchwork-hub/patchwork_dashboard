@@ -211,6 +211,8 @@ class Community < ApplicationRecord
 
   validates :registration_mode, inclusion: { in: ['open', 'approved', 'none'] }
 
+  validates :position, uniqueness: { scope: :channel_type, message: 'has already been taken for this channel type' }, if: -> { deleted_at.nil? }
+
   scope :recommended, -> {
     joins(:patchwork_community_type)
       .where(patchwork_communities: { is_recommended: true })
@@ -285,6 +287,10 @@ class Community < ApplicationRecord
 
   def self.has_local_newsmast_channel?
     self.filter_newsmast_channels.present?
+  end
+
+  def boost_bot?
+    CommunityAdmin.where(patchwork_community_id: self.id, is_boost_bot: true).exists?
   end
 
   private
