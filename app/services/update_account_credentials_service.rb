@@ -4,7 +4,9 @@
 require "httparty"
 
 class UpdateAccountCredentialsService < BaseService
-  def call(token:, display_name: nil, note: nil, avatar: nil, header: nil, api_base_url: ENV["MASTODON_INSTANCE_URL"])
+  def call(token:, display_name: nil, note: nil, avatar: nil, header: nil, api_base_url: ENV["MASTODON_INSTANCE_URL"], channel_type: nil)
+    return unless token &&  channel_type == Community.channel_types[:channel_feed]
+
     url = "#{api_base_url}/api/v1/accounts/update_credentials"
     headers = { "Authorization" => "Bearer #{token}" }
     @opened_uploads = []
@@ -17,6 +19,8 @@ class UpdateAccountCredentialsService < BaseService
     body[:note] = note.b if note
     body[:avatar] = avatar_file if avatar_file
     body[:header] = header_file if header_file
+    body[:channel_type] = channel_type
+    body[:skip_dashboard_profile] = true
 
     HTTParty.patch(
       url,

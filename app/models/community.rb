@@ -289,6 +289,10 @@ class Community < ApplicationRecord
     self.filter_newsmast_channels.present?
   end
 
+  def boost_bot?
+    CommunityAdmin.where(patchwork_community_id: self.id, is_boost_bot: true).exists?
+  end
+
   private
 
   def unique_patchwork_community_links
