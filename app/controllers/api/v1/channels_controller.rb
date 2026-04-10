@@ -79,6 +79,7 @@ module Api
         { slug: 'disabled-voices', channel_type: Community.channel_types[:newsmast]},
         { slug: 'immigrants-rights', channel_type: Community.channel_types[:newsmast]},
         { slug: 'indigenous-peoples', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'neurodivergent', channel_type: Community.channel_types[:channel_feed]},
         { slug: 'women-voices', channel_type: Community.channel_types[:newsmast]},
         { slug: 'workers-rights', channel_type: Community.channel_types[:newsmast]},
       ].freeze
