@@ -1,10 +1,13 @@
 class Rack::Attack
   # Configure cache store (uses Rails.cache by default)
   # For production, use Redis for distributed rate limiting
+
+  db = (ENV['REDIS_DB'].presence || ENV['SIDEKIQ_REDIS_DB'].presence || '0').to_i
+
   redis_url = if ENV['REDIS_PASSWORD'].present?
-    "redis://:#{ENV['REDIS_PASSWORD']}@#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT']}"
+    "redis://:#{ENV['REDIS_PASSWORD']}@#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT']}/#{db}"
   else
-    "redis://#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT']}"
+    "redis://#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT']}/#{db}"
   end
 
   if redis_url.present?
