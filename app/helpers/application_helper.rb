@@ -15,7 +15,6 @@ module ApplicationHelper
 
     if master_admin?
       links = [
-        { path: '/homepage', id: 'homepage-link', header: 'Homepage', icon: 'home.svg', text: 'Home', active_if: 'homepage' },
         { path: server_settings_path, id: 'server-settings-link', header: 'Server settings', icon: 'sliders.svg', text: 'Server settings', active_if: ['server_settings', 'keyword_filter_groups', 'keyword_filters'] },
         { path: '/installation', id: 'installation-link', header: 'Installation', icon: 'screwdriver-wrench.svg', text: 'Installation', active_if: 'installation' }
       ]
@@ -142,7 +141,7 @@ module ApplicationHelper
     if Rails.env.development?
       return true
     end
-    
+
     if ENV.fetch('CHANNELS_ENABLED', nil) == 'true'
       return true
     end
