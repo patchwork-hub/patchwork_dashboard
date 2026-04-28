@@ -10,6 +10,7 @@ env:
   DEFINITION:   .task/internal-staging-dashboard.json
   FINDOUT_DEFINITION: .task/internal-findout-staging.json
   CSIDNET_DASHBOARD_STAGING_DEFINITION: .task/internal-csidnet-staging.json
+  BRAZIL_DASHBOARD_STAGING_DEFINITION: .task/internal-brazil-staging.json
 
 permissions:
   contents: read
@@ -40,6 +41,19 @@ jobs:
         with:
           mask-password: 'true'
 
+      - name: Configure AWS credentials (Brazil)
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.BRAZIL_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.BRAZIL_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.BRAZIL_AWS_REGION }}
+
+      - name: Login to Amazon ECR (Brazil)
+        id: login-ecr-brazil
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
+
       # This is a separate action that sets up buildx runner
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -58,10 +72,16 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.STAGING_REPOSITORY }}
+          ECR_REGISTRY_BRAZIL: ${{ steps.login-ecr-brazil.outputs.registry }}
+          ECR_REPOSITORY_BRAZIL: ${{ secrets.BRAZIL_DASHBOARD_STAGING_REPOSITORY }}
           IMAGE_TAG: ${{ vars.IMAGE_STAGING_TAG }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY_BRAZIL/$ECR_REPOSITORY_BRAZIL:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY_BRAZIL/$ECR_REPOSITORY_BRAZIL:$IMAGE_TAG
+
+    
       
   Deploy-patchwork-dashboard-staging:
     name: Deploy to patchwork-dashboard-staging
@@ -216,7 +236,52 @@ jobs:
           cluster: ${{ secrets.CSIDNET_STAGING_CLUSTER_STAGING }}
           wait-for-service-stability: false
 
-  
+  # Deploy-brazil-dashboard-staging:
+  #   name: Deploy to brazil-dashboard-staging
+  #   needs: Build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
+  #     - name: Configure AWS credentials (Brazil)
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.BRAZIL_AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.BRAZIL_AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ${{ secrets.BRAZIL_AWS_REGION }}
 
-      
+  #     - name: Login to Amazon ECR (Brazil)
+  #       id: login-ecr
+  #       uses: aws-actions/amazon-ecr-login@v1
+  #       with:
+  #         mask-password: 'true'
+
+  #     # This is a separate action that sets up buildx runner
+  #     - name: Setup Docker Buildx
+  #       uses: docker/setup-buildx-action@v2
+
+  #     # Use Github action cache
+  #     - name: Cache Docker layers
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: /tmp/.buildx-cache
+  #         key: ${{ runner.os }}-buildx-${{ github.sha }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-buildx-
+
+  #     - name: Fill in the new image ID in the Amazon ECS task definition
+  #       id: task-def
+  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
+  #       with:
+  #         task-definition: ${{ env.BRAZIL_DASHBOARD_STAGING_DEFINITION }}
+  #         container-name: ${{ secrets.BRAZIL_DASHBOARD_STAGING_CONTAINER_NAME }}
+  #         image: ${{ secrets.BRAZIL_DASHBOARD_STAGING_IMAGE }}
+
+      # - name: Deploy Amazon ECS task definition
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+      #   with:
+      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
+      #     service: ${{ secrets.BRAZIL_DASHBOARD_STAGING_SERVICE_NAME }}
+      #     cluster: ${{ secrets.BRAZIL_STAGING_CLUSTER_STAGING }}
+      #     wait-for-service-stability: false
