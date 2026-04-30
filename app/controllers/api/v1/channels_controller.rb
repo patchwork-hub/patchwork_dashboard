@@ -79,6 +79,7 @@ module Api
         { slug: 'disabled-voices', channel_type: Community.channel_types[:newsmast]},
         { slug: 'immigrants-rights', channel_type: Community.channel_types[:newsmast]},
         { slug: 'indigenous-peoples', channel_type: Community.channel_types[:newsmast]},
+        { slug: 'neurodivergent', channel_type: Community.channel_types[:channel_feed]},
         { slug: 'women-voices', channel_type: Community.channel_types[:newsmast]},
         { slug: 'workers-rights', channel_type: Community.channel_types[:newsmast]},
       ].freeze
@@ -104,6 +105,12 @@ module Api
         { slug: 'environment', channel_type: Community.channel_types[:newsmast]},
         { slug: 'biodiversity-rewilding', channel_type: Community.channel_types[:newsmast] },
         { slug: 'chemistry', channel_type: Community.channel_types[:newsmast] }
+      ]
+
+      DEFAULT_BRAZILIAN_MUSEUM_CHANNELS = [
+        { slug: 'museums', channel_type: Community.channel_types[:channel_feed]},
+        { slug: 'history', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'performingarts', channel_type: Community.channel_types[:newsmast] }
       ]
 
       def recommend_channels
@@ -213,6 +220,10 @@ module Api
         render_custom_channels(DEFAULT_CSIDNET_CHANNELS)
       end
 
+      def brazilian_museum_channels
+        render_custom_channels(DEFAULT_BRAZILIAN_MUSEUM_CHANNELS)
+      end
+
       def starter_packs_channels
         starter_packs_channels = load_json_data(starter_pack_data_path('starter_pack_list.json'))
 
@@ -236,6 +247,8 @@ module Api
           followers: followers
         }
       end
+
+      
 
       def change_boost_bot_profile
         if @channel.nil? || !@channel.boost_bot?

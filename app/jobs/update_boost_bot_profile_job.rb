@@ -10,8 +10,11 @@ class UpdateBoostBotProfileJob < ApplicationJob
     token = GenerateAdminAccessTokenService.new(account&.user&.id).call
     return if token.nil?
 
-    avatar_file = attributes[:avatar_changed] ? community.avatar_image : nil
-    banner_file = attributes[:banner_changed] ? community.banner_image : nil
+    # avatar_file = attributes[:avatar_changed] ? community.avatar_image : nil
+    # banner_file = attributes[:banner_changed] ? community.banner_image : nil
+
+    avatar_file = community.avatar_image.present? ? community.avatar_image : nil
+    banner_file = community.banner_image.present? ? community.banner_image : nil
 
     original_avatar_file_name = community.avatar_image_file_name
     original_banner_file_name = community.banner_image_file_name
