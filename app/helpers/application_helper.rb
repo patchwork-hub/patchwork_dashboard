@@ -39,7 +39,7 @@ module ApplicationHelper
       end
 
       links += [
-        # { path: accounts_path, id: 'accounts-link', header: 'Users', icon: 'users.svg', text: 'Users', active_if: 'accounts' },
+        { path: accounts_path, id: 'accounts-link', header: 'Users', icon: 'users.svg', text: 'Users', active_if: 'accounts' },
         { path: custom_emojis_path, id: 'custom-emojis-link', header: 'Custom emojis', icon: 'custom-emojis.svg', text: 'Custom emojis', active_if: 'custom_emojis' },
         { path: resources_path, id: 'resources-link', header: 'Resources', icon: 'folder.svg', text: 'Resources', active_if: 'resources' },
         { path: api_keys_path, id: 'resources-link', header: 'API Key', icon: 'key.svg', text: 'API Key', active_if: 'api_keys' }
