@@ -84,7 +84,7 @@ class NonChannelBlueskyBridgeService
   end
 
   def process_did_value(user, token, account)
-    did_value = FetchDidValueService.new.call(account, user)
+    did_value = FetchDidValueService.new.call(account, nil)
 
     if did_value
       begin
@@ -123,7 +123,7 @@ class NonChannelBlueskyBridgeService
 
   def create_direct_message(token, account)
     base_domain = ENV['LOCAL_DOMAIN'].split('.').last(2).join('.')
-    name = "#{account&.username}@#{base_domain}"
+    name = "#{account&.username}.#{base_domain}"
 
     status_params = {
       "in_reply_to_id": nil,

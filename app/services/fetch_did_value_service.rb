@@ -50,15 +50,15 @@ class FetchDidValueService < BaseService
 
   def extract_did_value(response_body)
     document = Nokogiri::HTML(response_body)
-    did_button = document.at_css("button.glyphicon-tag[onclick*='copy']")
-    
+    did_button = document.at_css("button.btn-copy[onclick*='did:']")
+
     if did_button
       onclick_value = did_button.attr('onclick')
       did_match = onclick_value&.match(/copy\('(did:[^']+)'\)/)
       return did_match[1] if did_match
-      
+
       title_value = did_button.attr('title')
-      title_match = title_value&.match(/(did:\w+:\w+)/)
+      title_match = title_value&.match(/(did:[^'"\s]+)/)
       return title_match[1] if title_match
     end
     nil
