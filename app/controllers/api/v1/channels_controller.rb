@@ -107,6 +107,12 @@ module Api
         { slug: 'chemistry', channel_type: Community.channel_types[:newsmast] }
       ]
 
+      DEFAULT_BRAZILIAN_MUSEUM_CHANNELS = [
+        { slug: 'museums', channel_type: Community.channel_types[:channel_feed]},
+        { slug: 'history', channel_type: Community.channel_types[:newsmast] },
+        { slug: 'performing-arts', channel_type: Community.channel_types[:newsmast] }
+      ]
+
       def recommend_channels
         @recommended_channels = Community.recommended.exclude_array_ids
         render json: Api::V1::ChannelSerializer.new(@recommended_channels).serializable_hash.to_json
@@ -214,6 +220,10 @@ module Api
         render_custom_channels(DEFAULT_CSIDNET_CHANNELS)
       end
 
+      def brazilian_museum_channels
+        render_custom_channels(DEFAULT_BRAZILIAN_MUSEUM_CHANNELS)
+      end
+
       def starter_packs_channels
         starter_packs_channels = load_json_data(starter_pack_data_path('starter_pack_list.json'))
 
@@ -237,6 +247,8 @@ module Api
           followers: followers
         }
       end
+
+      
 
       def change_boost_bot_profile
         if @channel.nil? || !@channel.boost_bot?

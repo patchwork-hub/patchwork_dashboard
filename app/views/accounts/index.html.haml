@@ -5,7 +5,10 @@
     .card
       .card-header
         %h3.card-title Registered Users
-        .card-tools
+        .card-tools.d-flex.justify-content-end.align-items-center
+          %a{ href: export_accounts_path(format: :csv, q: params[:q]), class: "btn btn-danger", title: "export CSV", style: "display: inline-flex; align-items: center; color: #ffffff !important; margin-right: 8px;" }
+            = image_tag("icons/download.svg", style: "width: 1em; height: 1em; margin-right: 5px;")
+            Export CSV
           = search_form_for @search do |f|
             .input-group.input-group-sm{style: "width: 150px;"}
               = f.search_field :username_cont, class: "form-control float-right", placeholder: "Search"
@@ -16,23 +19,27 @@
         %table.table.table-bordered.table-striped{data: {url: accounts_url, type: 'account'}}
           %thead
             %tr
-              %th
-                = check_box_tag :select_all, '', false, id: 'select_all'
-              %th User name
+              -# %th
+              -#   = check_box_tag :select_all, '', false, id: 'select_all'
+              %th Username
               %th Display name
               %th Email address
               %th Time and date account opened
-              %th Server domain
+              -# %th Server domain
           %tbody
             - @records.each do |account|
               %tr
+                -# %td
+                -#   = check_box_tag "selected_accounts[]", account.id, false, class: 'select_account'
                 %td
-                  = check_box_tag "selected_accounts[]", account.id, false, class: 'select_account'
-                %td= account.username
+                  - if account.present?
+                    %span.copyable-text{title: "Click to copy", style: "cursor: pointer;", onclick: "copyToClipboard('#{account_url(account)}')"}= "@#{username(account)}@#{domain(account)}"
+                  - else
+                    %span.text-muted -
                 %td= render_custom_emojis(account.display_name)
                 %td= account.user ? account.user.email : "-"
                 %td= account.created_at.strftime('%Y-%m-%d %H:%M:%S')
-                %td= account.domain ? account.domain : ENV['MASTODON_INSTANCE_URL']
+                -# %td= account.domain ? account.domain : ENV['MASTODON_INSTANCE_URL']
       .card-footer.clearfix
         %ul.pagination.pagination-sm.m-0.float-right
           = render partial: 'kaminari/paginator', locals: { custom_paginator: @filter }   
