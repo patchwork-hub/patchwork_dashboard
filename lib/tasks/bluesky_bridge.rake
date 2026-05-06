@@ -11,8 +11,7 @@ namespace :bluesky_bridge do
     local_domain = ENV['LOCAL_DOMAIN'].to_s
     base_domain = local_domain.split('.').last(2).join('.') if local_domain.include?('.')
 
-    fix_usernames = ['testedbysev52', 'michael']
-    users = User.where.not(did_value: [nil, '']).where(bluesky_bridge_enabled: true).includes(:account).where(accounts: { username: fix_usernames, domain: nil })
+    users = User.where.not(did_value: [nil, '']).where(bluesky_bridge_enabled: true).includes(:account)
 
     puts "Checking follow status for #{users.count} users against account_id=#{target_account.id}..."
 
