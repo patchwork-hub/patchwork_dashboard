@@ -110,7 +110,7 @@ module Api
       DEFAULT_BRAZILIAN_MUSEUM_CHANNELS = [
         { slug: 'museums', channel_type: Community.channel_types[:channel_feed]},
         { slug: 'history', channel_type: Community.channel_types[:newsmast] },
-        { slug: 'performingarts', channel_type: Community.channel_types[:newsmast] }
+        { slug: 'performing-arts', channel_type: Community.channel_types[:newsmast] }
       ]
 
       def recommend_channels

@@ -14,6 +14,26 @@ class AccountsController < BaseController
     render json: { message: 'successfully_unfollowed' }, status: :ok
   end
 
+  def export
+    accounts = records_filter.public_scope.joins(:user).includes(:user).where.not(users: { confirmed_at: nil })
+
+    domain = ENV['LOCAL_DOMAIN'] || 'example.com'
+
+    csv_data = CSV.generate(headers: true) do |csv|
+      csv << ['Username', 'Display name', 'Email address', 'Time and date account opened']
+      accounts.find_each do |account|
+        csv << [
+          "@#{account.username}@#{domain}",
+          account.display_name,
+          account.user&.email || '-',
+          account.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        ]
+      end
+    end
+
+    send_data csv_data, filename: "registered_users_#{Time.zone.now.strftime('%Y%m%d_%H%M%S')}.csv", type: 'text/csv'
+  end
+
   def find_account
     @account = Account.find(params[:id])
   end
