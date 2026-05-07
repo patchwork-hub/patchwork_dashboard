@@ -51,7 +51,6 @@ namespace :bluesky_bridge do
 
       relationship_data = AccountRelationshipsService.new.call(account, target_account.id)
       relationship = relationship_data.is_a?(Array) ? relationship_data.last : nil
-      following = relationship.present? ? relationship['following'] : nil
 
 
       if handle_name.end_with?(".ap.brid.gy")
@@ -101,7 +100,7 @@ namespace :bluesky_bridge do
         end
       end
 
-      puts "user_id=#{user.id} username=#{account.username} following=#{following.inspect}"
+      puts "user_id=#{user.id} username=#{account.username} account_id=#{account.id} Done!!!"
     rescue StandardError => e
       puts "user_id=#{user.id} username=#{account&.username} error=#{e.message}"
     end
