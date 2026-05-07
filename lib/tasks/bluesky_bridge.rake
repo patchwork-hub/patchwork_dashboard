@@ -55,11 +55,14 @@ namespace :bluesky_bridge do
 
 
       if handle_name.end_with?(".ap.brid.gy")
+        puts "*** user_id=#{user.id} username=#{account.username} handle=#{handle_name} ***"
         UnfollowService.new.call(account, target_account)
         sleep 1.minutes
       end
 
       if relationship&.[]('following') == false
+        puts "*** user_id=#{user.id} username=#{account.username} following? =#{relationship&.[]('following')} ***"
+
         FollowService.new.call(account, target_account)
 
         # Re-check relationship to avoid sending DM when follow failed.
