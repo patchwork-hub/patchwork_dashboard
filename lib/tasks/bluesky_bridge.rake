@@ -16,6 +16,22 @@ namespace :bluesky_bridge do
     puts "Checking follow status for #{users.count} users against account_id=#{target_account.id}..."
 
     users.find_each do |user|
+
+      did_value = user.did_value
+      url = "https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=#{CGI.escape(did_value)}"
+      response = HTTParty.get(url, timeout: 10)
+      if response.code != 200
+        puts "user_id=#{user.id} username=#{user.account&.username} skipped: failed to fetch profile with did_value=#{did_value}"
+        next
+      end
+
+      handle_name = response.dig('handle')
+
+      if handle_name.nil? || handle_name.empty?
+        puts "user_id=#{user.id} username=#{user.account&.username} skipped: handle not found in profile response for did_value=#{did_value}"
+        next
+      end
+
       account = user.account
 
       if account.nil?
@@ -36,6 +52,12 @@ namespace :bluesky_bridge do
       relationship_data = AccountRelationshipsService.new.call(account, target_account.id)
       relationship = relationship_data.is_a?(Array) ? relationship_data.last : nil
       following = relationship.present? ? relationship['following'] : nil
+
+
+      if handle_name.end_with?(".ap.brid.gy")
+        UnfollowService.new.call(account, target_account)
+        sleep 1.minutes
+      end
 
       if relationship&.[]('following') == false
         FollowService.new.call(account, target_account)
