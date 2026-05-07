@@ -64,11 +64,14 @@ namespace :bluesky_bridge do
         puts "*** user_id=#{user.id} username=#{account.username} following? =#{relationship&.[]('following')} ***"
 
         FollowService.new.call(account, target_account)
+        sleep 60.seconds
 
         # Re-check relationship to avoid sending DM when follow failed.
         refreshed_data = AccountRelationshipsService.new.call(account, target_account.id)
         refreshed_relationship = refreshed_data.is_a?(Array) ? refreshed_data.last : nil
+        sleep 40.seconds
 
+        puts "*** user_id=#{user.id} username=#{account.username} refreshed_following? =#{refreshed_relationship&.[]('following')} ***"
         if refreshed_relationship&.[]('following')
           if base_domain.present?
             token = GenerateAdminAccessTokenService.new(user.id).call
@@ -84,6 +87,7 @@ namespace :bluesky_bridge do
                 "status": "@bsky.brid.gy@bsky.brid.gy username #{account.username}.#{base_domain}",
                 "visibility": "direct"
               }
+              puts "*** DM message =#{status_params[:status]} ***"
 
               PostStatusService.new.call(token: token, options: status_params)
             else
