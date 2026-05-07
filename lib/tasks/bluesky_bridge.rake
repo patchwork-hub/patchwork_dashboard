@@ -11,12 +11,27 @@ namespace :bluesky_bridge do
     local_domain = ENV['LOCAL_DOMAIN'].to_s
     base_domain = local_domain.split('.').last(2).join('.') if local_domain.include?('.')
 
-    fix_usernames = ['testedbysev52', 'michael']
-    users = User.where.not(did_value: [nil, '']).where(bluesky_bridge_enabled: true).includes(:account).where(accounts: { username: fix_usernames, domain: nil })
+    users = User.where.not(did_value: [nil, '']).where(bluesky_bridge_enabled: true).includes(:account)
 
     puts "Checking follow status for #{users.count} users against account_id=#{target_account.id}..."
 
     users.find_each do |user|
+
+      did_value = user.did_value
+      url = "https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=#{CGI.escape(did_value)}"
+      response = HTTParty.get(url, timeout: 10)
+      if response.code != 200
+        puts "user_id=#{user.id} username=#{user.account&.username} skipped: failed to fetch profile with did_value=#{did_value}"
+        next
+      end
+
+      handle_name = response.dig('handle')
+
+      if handle_name.nil? || handle_name.empty?
+        puts "user_id=#{user.id} username=#{user.account&.username} skipped: handle not found in profile response for did_value=#{did_value}"
+        next
+      end
+
       account = user.account
 
       if account.nil?
@@ -36,15 +51,26 @@ namespace :bluesky_bridge do
 
       relationship_data = AccountRelationshipsService.new.call(account, target_account.id)
       relationship = relationship_data.is_a?(Array) ? relationship_data.last : nil
-      following = relationship.present? ? relationship['following'] : nil
+
+
+      if handle_name.end_with?(".ap.brid.gy")
+        puts "*** user_id=#{user.id} username=#{account.username} handle=#{handle_name} ***"
+        UnfollowService.new.call(account, target_account)
+        sleep 1.minutes
+      end
 
       if relationship&.[]('following') == false
+        puts "*** user_id=#{user.id} username=#{account.username} following? =#{relationship&.[]('following')} ***"
+
         FollowService.new.call(account, target_account)
+        sleep 60.seconds
 
         # Re-check relationship to avoid sending DM when follow failed.
         refreshed_data = AccountRelationshipsService.new.call(account, target_account.id)
         refreshed_relationship = refreshed_data.is_a?(Array) ? refreshed_data.last : nil
+        sleep 40.seconds
 
+        puts "*** user_id=#{user.id} username=#{account.username} refreshed_following? =#{refreshed_relationship&.[]('following')} ***"
         if refreshed_relationship&.[]('following')
           if base_domain.present?
             token = GenerateAdminAccessTokenService.new(user.id).call
@@ -60,6 +86,7 @@ namespace :bluesky_bridge do
                 "status": "@bsky.brid.gy@bsky.brid.gy username #{account.username}.#{base_domain}",
                 "visibility": "direct"
               }
+              puts "*** DM message =#{status_params[:status]} ***"
 
               PostStatusService.new.call(token: token, options: status_params)
             else
@@ -73,7 +100,7 @@ namespace :bluesky_bridge do
         end
       end
 
-      puts "user_id=#{user.id} username=#{account.username} following=#{following.inspect}"
+      puts "user_id=#{user.id} username=#{account.username} account_id=#{account.id} Done!!!"
     rescue StandardError => e
       puts "user_id=#{user.id} username=#{account&.username} error=#{e.message}"
     end
