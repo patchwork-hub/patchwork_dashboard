@@ -47,7 +47,7 @@ class KeywordFilterGroup < ApplicationRecord
   def self.delete_all_when_inactive(server_setting)
     KeywordFilterGroup.where(server_setting_id: server_setting.id, is_custom: false).destroy_all
 
-    redis_key = redis_key_name(server_setting.name)
+    redis_key = redis_key_name(server_setting.key)
     delete_redis_filters(redis_key)
   end
 
@@ -71,7 +71,7 @@ class KeywordFilterGroup < ApplicationRecord
   end
 
   def self.filter_type_for(setting_name)
-    setting_name == 'Spam filters' ? 'spam_filters' : 'keyword_filters'
+    setting_name == ServerSetting::KEY_SPAM_FILTERS ? 'spam_filters' : 'keyword_filters'
   end
 
   def self.find_or_initialize_filter_group(group_data, server_setting_id)
@@ -138,6 +138,6 @@ class KeywordFilterGroup < ApplicationRecord
   end
 
   def self.redis_key_name(setting_name)
-    setting_name == 'Spam filters' ? 'spam_filters' : 'content_filters'
+    setting_name == ServerSetting::KEY_SPAM_FILTERS ? 'spam_filters' : 'content_filters'
   end
 end
