@@ -2,44 +2,75 @@ if ServerSetting.count == 0
 
   settings = [
     {
-      name: 'Spam Block',
-      options: ['Spam filters', 'Sign up challenge']
+      key: 'spam_block',
+      options: [
+        { key: 'spam_filters' },
+        { key: 'signup_challenge' }
+      ]
     },
     {
-      name: 'Content Moderation',
-      options: ['Content filters']
+      key: 'content_moderation',
+      options: [
+        { key: 'content_filters' }
+      ]
     },
     {
-      name: 'Federation',
-      options: ['Bluesky', 'Threads', 'Live blocklist']
+      key: 'federation',
+      options: [
+        { key: 'bluesky' },
+        { key: 'threads' },
+        { key: 'live_blocklist' }
+      ]
     },
     {
-      name: 'Local Features',
-      options: ['Custom theme', 'Automatic Search Opt-out', 'Local only posts', 'Long posts', 'Local quote posts']
+      key: 'local_features',
+      options: [
+        { key: 'custom_theme' },
+        { key: 'search_opt_out' },
+        { key: 'local_only_posts' },
+        { key: 'long_posts' },
+        { key: 'local_quote_posts' }
+      ]
     },
     {
-      name: 'User Management',
-      options: ['Guest accounts', 'e-Newsletters', 'Analytics']
+      key: 'user_management',
+      options: [
+        { key: 'guest_accounts' },
+        { key: 'newsletters' },
+        { key: 'analytics' }
+      ]
     },
     {
-      name: 'Plug-ins',
+      key: 'plugins',
       options: []
     },
     {
-      name: 'Bluesky Bridge',
-      options: ['Automatic Bluesky bridging for new users']
+      key: 'bluesky_bridge',
+      options: [
+        { key: 'bluesky_bridge_auto' }
+      ]
     },
     {
-      name: 'Email Branding',
+      key: 'email_branding',
       options: []
     }
   ]
 
   settings.each do |setting|
-    server_setting = ServerSetting.create(name: setting[:name])
+    config = ServerSetting.config[setting[:key]]
+    server_setting = ServerSetting.create(
+      name: config['name'],
+      key: setting[:key]
+    )
 
     setting[:options].each_with_index do |option, index|
-      ServerSetting.create(name: option, position: (index + 1), parent_id: server_setting.id)
+      option_config = ServerSetting.config[option[:key]]
+      ServerSetting.create(
+        name: option_config['name'],
+        key: option[:key],
+        position: (index + 1),
+        parent_id: server_setting.id
+      )
     end
   end
 

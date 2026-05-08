@@ -14,67 +14,94 @@ module ApplicationHelper
     newsmast_active = params[:channel_type] == 'newsmast' || @community&.newsmast? ? 'communities' : nil
 
     if master_admin?
-      links = [
+      # --- Community set-up ---
+      setup_items = [
         { path: server_settings_path, id: 'server-settings-link', header: 'Server settings', icon: 'sliders.svg', text: 'Server settings', active_if: ['server_settings', 'keyword_filter_groups', 'keyword_filters'] },
-        { path: '/installation', id: 'installation-link', header: 'Installation', icon: 'screwdriver-wrench.svg', text: 'Installation', active_if: 'installation' }
+        { path: custom_emojis_path, id: 'custom-emojis-link', header: 'Custom emojis', icon: 'custom-emojis.svg', text: 'Custom emojis', active_if: 'custom_emojis' }
       ]
 
       if is_channel_dashboard?
         if is_channel_instance?
-          links += [
+          setup_items += [
             { path: communities_path(channel_type: 'channel'), id: 'communities-link', header: 'Communities', icon: 'speech.svg', text: 'Communities', active_if: channel_active },
             { path: communities_path(channel_type: 'hub'), id: 'communities-link', header: 'Hubs', icon: 'hub.svg', text: 'Hubs', active_if: hub_active },
             { path: communities_path(channel_type: 'newsmast'), id: 'communities-link', header: 'Newsmast channels', icon: 'newsmast.svg', text: 'Newsmast channels', active_if: newsmast_active },
           ]
         end
-        links += [
-          { path: communities_path(channel_type: 'channel_feed'), id: 'communities-link', header: 'Channels', icon: 'channel-feed.svg', text: 'Channels', active_if: channel_feed_active },
+        setup_items += [
+          { path: communities_path(channel_type: 'channel_feed'), id: 'channels-link', header: 'Channels', icon: 'channel-feed.svg', text: 'Channels', active_if: channel_feed_active },
           { path: collections_path, id: 'collections-link', header: 'Collections', icon: 'collection.svg', text: 'Collections', active_if: 'collections' }
         ]
       end
-      links << { path: master_admins_path, id: 'master_admins-link', header: 'Master admin', icon: 'administrator.svg', text: 'Master admins', active_if: 'master_admins' }
 
       if is_channel_dashboard? && is_channel_instance?
-        links << { path: community_filter_keywords_path(community_id: nil), id: 'global_filters-link', header: 'Global filters', icon: 'globe-white.svg', text: 'Global filters', active_if: 'community_filter_keywords' }
+        setup_items << { path: community_filter_keywords_path(community_id: nil), id: 'global_filters-link', header: 'Global filters', icon: 'globe-white.svg', text: 'Global filters', active_if: 'community_filter_keywords' }
       end
 
-      links += [
+      # --- Community management ---
+      management_items = [
+        { path: master_admins_path, id: 'master_admins-link', header: 'Master admin', icon: 'administrator.svg', text: 'Master admins', active_if: 'master_admins' },
+        { path: "#{ENV['MASTODON_INSTANCE_URL']}/admin/dashboard", id: 'administration-link', header: 'Administration', icon: 'administrator.svg', text: 'Administration', target: '_blank' },
+        { path: "#{ENV['MASTODON_INSTANCE_URL']}/admin/reports", id: 'moderation-link', header: 'Moderation', icon: 'users.svg', text: 'Moderation', target: '_blank' },
         { path: accounts_path, id: 'accounts-link', header: 'Users', icon: 'users.svg', text: 'Users', active_if: 'accounts' },
-        { path: custom_emojis_path, id: 'custom-emojis-link', header: 'Custom emojis', icon: 'custom-emojis.svg', text: 'Custom emojis', active_if: 'custom_emojis' },
-        { path: resources_path, id: 'resources-link', header: 'Resources', icon: 'folder.svg', text: 'Resources', active_if: 'resources' },
-        { path: api_keys_path, id: 'resources-link', header: 'API Key', icon: 'key.svg', text: 'API Key', active_if: 'api_keys' }
+      ]
+
+      # --- Community operation ---
+      operation_items = [
+        { path: '/installation', id: 'installation-link', header: 'Installation', icon: 'screwdriver-wrench.svg', text: 'Installation', active_if: 'installation' },
+        { path: api_keys_path, id: 'api-keys-link', header: 'API Key', icon: 'key.svg', text: 'API Key', active_if: 'api_keys' },
+        { path: app_versions_path(app_name: AppVersion.app_names['patchwork']), id: 'app-versions-link', header: 'App versions', icon: 'sliders.svg', text: 'App versions', active_if: 'app_versions' },
+        { path: "/sidekiq", id: 'sidekiq-link', header: 'Sidekiq', icon: 'smile-1.svg', text: 'Sidekiq', target: '_blank' },
+        { path: resources_path, id: 'resources-link', header: 'Resources', icon: 'folder.svg', text: 'Resources', active_if: 'resources' }
       ]
 
       if is_channel_instance? && is_channel_instance?
-        links << { path: wait_lists_path, id: 'invitation-codes-link', header: 'Invitation codes', icon: 'invitation_code.svg', text: 'Invitation codes', active_if: 'wait_lists' }
+        operation_items << { path: wait_lists_path, id: 'invitation-codes-link', header: 'Invitation codes', icon: 'invitation_code.svg', text: 'Invitation codes', active_if: 'wait_lists' }
       end
 
-      links += [
-        { path: app_versions_path(app_name: AppVersion.app_names['patchwork']), id: 'app-versions-link', header: 'App versions', icon: 'sliders.svg', text: 'App versions', active_if: 'app_versions' },
-        { path: "#{ENV['MASTODON_INSTANCE_URL']}/admin/dashboard", id: 'administration-link', header: 'Administration', icon: 'administrator.svg', text: 'Administration', target: '_blank' },
-        { path: "#{ENV['MASTODON_INSTANCE_URL']}/admin/reports", id: 'moderation-link', header: 'Moderation', icon: 'users.svg', text: 'Moderation', target: '_blank' },
-        { path: "/sidekiq", id: 'sidekiq-link', header: 'Sidekiq', icon: 'smile-1.svg', text: 'Sidekiq', target: '_blank' },
-        { path: 'https://github.com/patchwork-hub/patchwork_dashboard/wiki', id: 'help-support-link', header: 'Help & Support', icon: 'question.svg', text: 'Help & Support', target: '_blank', active_if: 'help_support' }
+      # --- Build grouped structure ---
+      groups = [
+        { title: 'Community set-up', items: setup_items },
+        { title: 'Community management', items: management_items },
+        { title: 'Community operation', items: operation_items }
       ]
+
+      # Help & Support as standalone item (no group)
+      groups << {
+        title: nil,
+        items: [
+          { path: 'https://github.com/patchwork-hub/patchwork_dashboard/wiki', id: 'help-support-link', header: 'Help & Support', icon: 'question.svg', text: 'Help & Support', target: '_blank', active_if: 'help_support' }
+        ]
+      }
+
+      groups
     elsif organisation_admin?
       [
-        { path: communities_path(channel_type: 'channel'), id: 'communities-link', header: 'Communities', icon: 'speech.svg', text: 'Communities', active_if: channel_active },
-        { path: 'https://github.com/patchwork-hub/patchwork_dashboard/wiki', id: 'help-support-link', header: 'Help & Support', icon: 'question.svg', text: 'Help & Support', target: '_blank', active_if: 'help_support' }
+        { title: nil, items: [
+          { path: communities_path(channel_type: 'channel'), id: 'communities-link', header: 'Communities', icon: 'speech.svg', text: 'Communities', active_if: channel_active },
+          { path: 'https://github.com/patchwork-hub/patchwork_dashboard/wiki', id: 'help-support-link', header: 'Help & Support', icon: 'question.svg', text: 'Help & Support', target: '_blank', active_if: 'help_support' }
+        ]}
       ]
     elsif user_admin?
       [
-        { path: communities_path(channel_type: 'channel_feed'), id: 'communities-link', header: 'Channels', icon: 'channel-feed.svg', text: 'Channels', active_if: channel_feed_active },
-        { path: 'https://github.com/patchwork-hub/patchwork_dashboard/wiki', id: 'help-support-link', header: 'Help & Support', icon: 'question.svg', text: 'Help & Support', target: '_blank', active_if: 'help_support' }
+        { title: nil, items: [
+          { path: communities_path(channel_type: 'channel_feed'), id: 'communities-link', header: 'Channels', icon: 'channel-feed.svg', text: 'Channels', active_if: channel_feed_active },
+          { path: 'https://github.com/patchwork-hub/patchwork_dashboard/wiki', id: 'help-support-link', header: 'Help & Support', icon: 'question.svg', text: 'Help & Support', target: '_blank', active_if: 'help_support' }
+        ]}
       ]
     elsif newsmast_admin?
       [
-        { path: communities_path(channel_type: 'newsmast'), id: 'communities-link', header: 'Newsmast channels', icon: 'newsmast.svg', text: 'Newsmast channels', active_if: newsmast_active },
-        { path: 'https://github.com/patchwork-hub/patchwork_dashboard/wiki', id: 'help-support-link', header: 'Help & Support', icon: 'question.svg', text: 'Help & Support', target: '_blank', active_if: 'help_support' }
+        { title: nil, items: [
+          { path: communities_path(channel_type: 'newsmast'), id: 'communities-link', header: 'Newsmast channels', icon: 'newsmast.svg', text: 'Newsmast channels', active_if: newsmast_active },
+          { path: 'https://github.com/patchwork-hub/patchwork_dashboard/wiki', id: 'help-support-link', header: 'Help & Support', icon: 'question.svg', text: 'Help & Support', target: '_blank', active_if: 'help_support' }
+        ]}
       ]
     else
       [
-        { path: communities_path(channel_type: 'hub'), id: 'communities-link', header: 'Hubs', icon: 'hub.svg', text: 'Hubs', active_if: hub_active },
-        { path: 'https://github.com/patchwork-hub/patchwork_dashboard/wiki', id: 'help-support-link', header: 'Help & Support', icon: 'question.svg', text: 'Help & Support', target: '_blank', active_if: 'help_support' }
+        { title: nil, items: [
+          { path: communities_path(channel_type: 'hub'), id: 'communities-link', header: 'Hubs', icon: 'hub.svg', text: 'Hubs', active_if: hub_active },
+          { path: 'https://github.com/patchwork-hub/patchwork_dashboard/wiki', id: 'help-support-link', header: 'Help & Support', icon: 'question.svg', text: 'Help & Support', target: '_blank', active_if: 'help_support' }
+        ]}
       ]
     end
   end

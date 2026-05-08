@@ -13,6 +13,7 @@ import 'custom_js/post_hashtag';
 import 'custom_js/community_preview';
 import 'custom_js/content_type'
 import 'custom_js/admin'
+import 'custom_js/sidebar_toggle'
 
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";

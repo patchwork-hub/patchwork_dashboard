@@ -77,22 +77,47 @@ class ServerSettingsController < ApplicationController
 
     @parent_settings = @parent_settings.where("lower(name) LIKE ?", "%#{@q.downcase}%") if @q.present?
 
-    desired_order = ['Local Features', 'User Management', 'Content filters', 'Spam filters', 'Federation', 'Plug-ins', 'Bluesky Bridge']
-    base_features = [
-      'Automatic Search Opt-out', 'Local only posts', 'Long posts',
-      'Automatic Bluesky bridging for new users', 'Spam filters', 'Content filters'
+    desired_order = [
+      ServerSetting::KEY_LOCAL_FEATURES,
+      ServerSetting::KEY_USER_MANAGEMENT,
+      ServerSetting::KEY_CONTENT_FILTERS,
+      ServerSetting::KEY_SPAM_FILTERS,
+      ServerSetting::KEY_FEDERATION,
+      ServerSetting::KEY_PLUGINS,
+      ServerSetting::KEY_BLUESKY_BRIDGE,
     ]
-    dashboard_extras = ['Custom theme', 'Guest accounts', 'Analytics', 'Live blocklist', 'Sign up challenge']
-    desired_child_name = (is_channel_instance? && is_channel_dashboard?) ? base_features + dashboard_extras : base_features
+
+    base_features = [
+      ServerSetting::KEY_SEARCH_OPT_OUT,
+      ServerSetting::KEY_LOCAL_ONLY_POSTS,
+      ServerSetting::KEY_LONG_POSTS,
+      ServerSetting::KEY_BLUESKY_BRIDGE_AUTO,
+      ServerSetting::KEY_SPAM_FILTERS,
+      ServerSetting::KEY_CONTENT_FILTERS,
+    ]
+
+    dashboard_extras = [
+      ServerSetting::KEY_CUSTOM_THEME,
+      ServerSetting::KEY_GUEST_ACCOUNTS,
+      ServerSetting::KEY_ANALYTICS,
+      ServerSetting::KEY_LIVE_BLOCKLIST,
+      ServerSetting::KEY_SIGNUP_CHALLENGE,
+    ]
+
+    desired_child_keys = (is_channel_instance? && is_channel_dashboard?) ? base_features + dashboard_extras : base_features
 
     @data = @parent_settings.map do |parent_setting|
-      child_setting_query = parent_setting.children.where(name: desired_child_name).sort_by(&:position)
+      child_setting_query = parent_setting.children.where(key: desired_child_keys).sort_by(&:position)
       {
-        name: parent_setting.name,
+        key: parent_setting.key,
+        name: parent_setting.display_name,
+        description: parent_setting.setting_description,
         settings: child_setting_query.map do |child_setting|
           {
             id: child_setting.id,
-            name: child_setting.name,
+            key: child_setting.key,
+            name: child_setting.display_name,
+            tooltip: child_setting.tooltip,
             is_operational: child_setting.value,
             optional_value: child_setting.optional_value,
             keyword_filter_groups: child_setting.keyword_filter_groups.order(name: :asc).map do |group|
@@ -109,7 +134,7 @@ class ServerSettingsController < ApplicationController
     end
 
     @data.sort_by! do |item|
-      desired_index = desired_order.index(item[:name])
+      desired_index = desired_order.index(item[:key])
       desired_index.nil? ? (desired_order.length + 1) : desired_index
     end
 
