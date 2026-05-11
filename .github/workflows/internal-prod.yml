@@ -1,28 +1,33 @@
 run-name: Deploy to Internal Patchwork Dashboard by @${{ github.actor }}
-
 on:
-  workflow_dispatch:
   push:
     branches:
       - internal/prod
+  workflow_dispatch:
+    inputs:
+      deploy_patchwork:
+        description: 'Deploy Patchwork Dashboard?'
+        type: boolean
+        default: true
+      deploy_findout:
+        description: 'Deploy Findout Dashboard?'
+        type: boolean
+        default: true
 
-permissions:
-  contents: read
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+env:
+  DEFINITION:   .task/internal-dashboard.json
 
 jobs:
   Build:
-    name: Build and Push 
+    name: Build and Push
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
+      # Account 1 - Patchwork
       - name: Configure AWS credentials (Account 1)
+        if: ${{ github.event_name == 'push' || inputs.deploy_patchwork }}
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -30,12 +35,13 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Login to Amazon ECR (Account 1)
+        if: ${{ github.event_name == 'push' || inputs.deploy_patchwork }}
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-        with:
-          mask-password: 'true'
 
+      # Account 2 - Findout
       - name: Configure AWS credentials (Account 2)
+        if: ${{ github.event_name == 'push' || inputs.deploy_findout }}
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_2 }}
@@ -43,7 +49,66 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION_2 }}
 
       - name: Login to Amazon ECR (Account 2)
+        if: ${{ github.event_name == 'push' || inputs.deploy_findout }}
         id: login-ecr-2
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      # Build once, push selectively
+      - name: Build image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.PATCHWORK_DASHBOARD_REPOSITORY }}
+          IMAGE_TAG: ${{ vars.IMAGE_PROD_TAG }}
+        run: docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+
+      - name: Push to Patchwork ECR
+        if: ${{ github.event_name == 'push' || inputs.deploy_patchwork }}
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.PATCHWORK_DASHBOARD_REPOSITORY }}
+          IMAGE_TAG: ${{ vars.IMAGE_PROD_TAG }}
+        run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Push to Findout ECR
+        if: ${{ github.event_name == 'push' || inputs.deploy_findout }}
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REGISTRY_2: ${{ steps.login-ecr-2.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.PATCHWORK_DASHBOARD_REPOSITORY }}
+          ECR_REPOSITORY_2: ${{ secrets.FINDOUT_DASHBOARD_REPOSITORY }}
+          IMAGE_TAG: ${{ vars.IMAGE_PROD_TAG }}
+        run: |
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY_2/$ECR_REPOSITORY_2:$IMAGE_TAG
+          docker push $ECR_REGISTRY_2/$ECR_REPOSITORY_2:$IMAGE_TAG
+
+  Deploy-patchwork-dashboard:
+    name: Deploy to patchwork-dashboard
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
         with:
           mask-password: 'true'
@@ -60,45 +125,20 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-
-      - name: Build, tag, and push image to Amazon ECR (Account 1 & 2)
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.PATCHWORK_DASHBOARD_REPOSITORY }}
-          ECR_REGISTRY_2: ${{ steps.login-ecr-2.outputs.registry }}
-          ECR_REPOSITORY_2: ${{ secrets.FINDOUT_DASHBOARD_REPOSITORY }}
-          IMAGE_TAG: ${{ vars.IMAGE_PROD_TAG }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY_2/$ECR_REPOSITORY_2:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY_2/$ECR_REPOSITORY_2:$IMAGE_TAG
-
-  Deploy:
-    runs-on: ubuntu-latest
-    needs: Build
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v2
-      - name: Echo Branch
-        run: echo running on branch ${GITHUB_REF##*/}
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: Deploy to server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.PROD_SERVER_IP }}
-          username: ${{ secrets.PROD_SERVER_USERNAME }}
-          port: ${{ secrets.PORT }}
-          key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
-          script: |
-            eval "$(ssh-agent -s)"
-            ssh-add ~/.ssh/id_rsa
-            cd /home/ubuntu/patchwork-dashboard
-            ansible-playbook dashboard-deploy.yml -e "@dashboard.json"
-
-
-
       
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.DEFINITION }}
+          container-name: ${{ secrets.DASHBOARD_CONTAINER_NAME }}
+          # image: ${{ steps.build-image.outputs.image }}
+          image:  ${{ secrets.DASHBOARD_IMAGE }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ secrets.DASHBOARD_SERVICE_NAME }}
+          cluster: ${{ secrets.DASHBOARD_CLUSTER }}
+          wait-for-service-stability: false
