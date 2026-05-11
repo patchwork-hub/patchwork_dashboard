@@ -8,7 +8,7 @@ class BlockBlueskyBotService
   end
 
   def call
-    users = User.where.not(did_value: nil).where(bluesky_bridge_enabled: true)
+    users = User.where.not(did_value: nil).where(bluesky_bridge_enabled: false)
     return unless users.any?
 
     users.each do |user|
