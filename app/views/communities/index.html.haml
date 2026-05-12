@@ -92,9 +92,8 @@
                     - else
                       = link_to modify_community_path(channel_type_param, community) do
                         = image_tag("icons/edit-btn.svg", title: "Edit", class: "ml-2", width: "16", height: "16")
-                      - if !channel_type_param.eql?('newsmast')
-                        = link_to community_path(community, channel_type_param: channel_type_param), method: :delete, data: { confirm: "Are you sure you want to delete this #{keyword}?" } do
-                          = image_tag("icons/trash-can.svg", title: "Delete", class: "ml-2", width: "16", height: "16")
+                      = link_to community_path(community, channel_type_param: channel_type_param), method: :delete, data: { confirm: "Are you sure you want to delete this #{keyword}?" } do
+                        = image_tag("icons/trash-can.svg", title: "Delete", class: "ml-2", width: "16", height: "16")
                       - if community.channel_type == 'channel_feed'
                         = link_to upgrade_community_path(community), method: :post, data: { confirm: "Are you sure you want to upgrade this channel to a community?" } do
                           = image_tag("icons/upgrade.svg", title: "Upgrade to Community", class: "ml-2", width: "16", height: "16")

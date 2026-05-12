@@ -13,17 +13,12 @@ class AccountDeletionService < BaseService
   private
 
   def delete_account(api_base_url, token)
-      payload = {
-        id: @account.id
-      }
-
       headers = {
         'Authorization' => "Bearer #{token}",
         'Content-Type' => 'application/json'
       }
 
-      response = HTTParty.delete("#{api_base_url}/api/v1/patchwork/account_deletion",
-                              body: payload.to_json,
+      response = HTTParty.delete("#{api_base_url}/api/v1/patchwork/account_deletion/#{@account.id}",
                               headers: headers)
 
       unless response.code == 202 || response.code == 204 || response.code == 200
