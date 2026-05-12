@@ -6,7 +6,7 @@ class DeleteCommunityInstanceService < BaseService
 
   def call(community)
     # Skip lambda call for non-channel communities
-    return true if community.channel_type != Community::CHANNEL_TYPES[:channel]
+    return true if community.channel_type != Community.channel_types[:channel]
 
     return false if LAMBDA_URL.nil? || LAMBDA_API_KEY.nil?
 
