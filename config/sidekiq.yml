@@ -19,6 +19,10 @@ development:
         every: '10m'
         class: Scheduler::FollowBlueskyBotScheduler
         queue: dashboard_development_scheduler
+      CommunityCleanupScheduler:
+        cron: '0 0 * * *'
+        class: Scheduler::CommunityCleanupScheduler
+        queue: dashboard_development_scheduler
 
 staging:
   :verbose: true
@@ -41,6 +45,10 @@ staging:
         every: '10m'
         class: Scheduler::FollowBlueskyBotScheduler
         queue: dashboard_staging_scheduler
+      CommunityCleanupScheduler:
+        cron: '0 0 * * *'
+        class: Scheduler::CommunityCleanupScheduler
+        queue: dashboard_staging_scheduler
 
 production:
   :verbose: true
@@ -62,4 +70,8 @@ production:
       FollowBlueskyBotScheduler:
         every: '10m'
         class: Scheduler::FollowBlueskyBotScheduler
+        queue: dashboard_production_scheduler
+      CommunityCleanupScheduler:
+        cron: '0 0 * * *'
+        class: Scheduler::CommunityCleanupScheduler
         queue: dashboard_production_scheduler
