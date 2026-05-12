@@ -3,6 +3,8 @@
 # Table name: users
 #
 #  id                        :bigint           not null, primary key
+#  age_verified_at           :datetime
+#  alttext_enabled           :boolean          default(FALSE), not null
 #  approved                  :boolean          default(TRUE), not null
 #  bluesky_bridge_enabled    :boolean          default(FALSE), not null
 #  chosen_languages          :string           is an Array
@@ -14,9 +16,6 @@
 #  did_value                 :string
 #  disabled                  :boolean          default(FALSE), not null
 #  email                     :string           default(""), not null
-#  encrypted_otp_secret      :string
-#  encrypted_otp_secret_iv   :string
-#  encrypted_otp_secret_salt :string
 #  encrypted_password        :string           default(""), not null
 #  last_emailed_at           :datetime
 #  last_sign_in_at           :datetime
@@ -24,6 +23,7 @@
 #  otp_backup_codes          :string           is an Array
 #  otp_required_for_login    :boolean          default(FALSE), not null
 #  otp_secret                :string
+#  require_tos_interstitial  :boolean          default(FALSE), not null
 #  reset_password_sent_at    :datetime
 #  reset_password_token      :string
 #  settings                  :text

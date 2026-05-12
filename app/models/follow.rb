@@ -15,7 +15,7 @@
 # Indexes
 #
 #  index_follows_on_account_id_and_target_account_id  (account_id,target_account_id) UNIQUE
-#  index_follows_on_target_account_id                 (target_account_id)
+#  index_follows_on_target_account_id_and_account_id  (target_account_id,account_id)
 #
 # Foreign Keys
 #

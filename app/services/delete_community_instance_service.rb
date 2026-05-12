@@ -5,6 +5,9 @@ class DeleteCommunityInstanceService < BaseService
   LAMBDA_API_KEY = ENV.fetch('DELETE_COMMUNITY_LAMBDA_API_KEY', nil)
 
   def call(community)
+    # Skip lambda call for non-channel communities
+    return true if community.channel_type != Community::CHANNEL_TYPES[:channel]
+
     return false if LAMBDA_URL.nil? || LAMBDA_API_KEY.nil?
 
     return false if community.ip_address_id.nil?
