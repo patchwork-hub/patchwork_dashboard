@@ -34,7 +34,7 @@ class AccountDeletionService < BaseService
   end
 
   def fetch_oauth_token
-    instance_owner = User.find_by(id: UserRole.where(role: 'owner').select(:user_id).first)
+    instance_owner = User.find_by(id: UserRole.where(name: 'Owner').select(:id).first)
     return nil unless instance_owner
 
     token_service = GenerateAdminAccessTokenService.new(instance_owner.id)
