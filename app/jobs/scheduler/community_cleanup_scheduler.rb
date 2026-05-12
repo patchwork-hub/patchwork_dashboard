@@ -1,8 +1,11 @@
 module Scheduler
   class CommunityCleanupScheduler
     def perform
+      # communities = Community.where.not(deleted_at: nil)
+      #                       .where('deleted_at <= ?', 30.days.ago)
+      #                       
       communities = Community.where.not(deleted_at: nil)
-                            .where('deleted_at <= ?', 30.days.ago)
+                              .where('deleted_at <= ?', 10.minutes.ago)
 
       if communities.empty?
         Rails.logger.info '[CommunityCleanupScheduler] No communities to clean up.'
