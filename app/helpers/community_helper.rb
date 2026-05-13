@@ -36,8 +36,10 @@ module CommunityHelper
       'hub'
     when 'channel'
       'community'
-    else
+    when 'channel_feed'
       'channel'
+    else
+      'newsmast'
     end
   end
 
