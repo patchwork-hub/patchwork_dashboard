@@ -22,7 +22,7 @@ class AccountRelationshipsService < BaseService
       results = JSON.parse(response.body)
       results
     else
-      Rails.logger.error("Failed to fetch relationships target_account_id #{target_account_id}: #{response.body}")
+      Rails.logger.error("Failed to fetch relationships account_id #{@admin_account&.id} | target_account_id #{target_account_id}: #{response.body}")
       []
     end
   end

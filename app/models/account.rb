@@ -19,6 +19,7 @@
 #  featured_collection_url       :string
 #  fields                        :jsonb
 #  followers_url                 :string           default(""), not null
+#  following_url                 :string           default(""), not null
 #  header_content_type           :string
 #  header_file_name              :string
 #  header_file_size              :integer
@@ -26,6 +27,7 @@
 #  header_storage_schema_version :integer
 #  header_updated_at             :datetime
 #  hide_collections              :boolean
+#  id_scheme                     :integer          default(1)
 #  inbox_url                     :string           default(""), not null
 #  indexable                     :boolean          default(FALSE), not null
 #  is_banned                     :boolean          default(FALSE)

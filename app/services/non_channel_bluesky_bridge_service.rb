@@ -5,8 +5,10 @@ class NonChannelBlueskyBridgeService
   end
 
   def process_users
-    users = User.where(did_value: nil, bluesky_bridge_enabled: true)
-    return unless users.any?
+    users = User.where(did_value: nil, bluesky_bridge_enabled: true).where.not(
+      confirmed_at: nil).includes(:account).where(
+      accounts: { suspended_at: nil}
+    )
 
     users.each do |user|
       process_user(user)

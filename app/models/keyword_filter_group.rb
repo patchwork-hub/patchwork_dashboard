@@ -83,6 +83,8 @@ class KeywordFilterGroup < ApplicationRecord
   end
 
   def self.update_or_create_keywords(keywords_data, filter_group, redis_key)
+    return [] unless keywords_data.present?
+
     keywords_data.map do |keyword_data|
       keyword_filter = KeywordFilter.find_or_initialize_by(
         keyword: keyword_data['keyword'],
