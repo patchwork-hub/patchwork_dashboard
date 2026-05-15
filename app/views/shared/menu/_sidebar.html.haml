@@ -3,12 +3,28 @@
     = image_tag 'patchwork-with-text.svg', alt: 'Patchwork Logo', width: 180, id: 'logo'
   .sidebar
     %nav.mt-2
-      %ul.nav.nav-pills.nav-sidebar.flex-column{ "data-accordion": "false", "data-widget": "treeview", role: "menu" }
-        - sidebar_menu_items.each do |item|
-          %li.nav-item
-            = link_to item[:path], id: item[:id], data: { header: item[:header] }, class: "nav-link #{active_class(item[:active_if])}", target: item[:target] do
-              - if item[:icon_class]
-                %i.nav-icon{ class: item[:icon_class] }
-              - else
-                = image_tag("icons/#{item[:icon]}", class: "mr-2", width: "16", height: "16")
-              %p= item[:text]
+      %ul.nav.nav-pills.nav-sidebar.flex-column{ role: "menu" }
+        - sidebar_menu_items.each_with_index do |group, index|
+          - if group[:title].present?
+            - has_active = group[:items].any? { |item| active_class(item[:active_if]).present? }
+            %li.nav-header.sidebar-section-header{ data: { toggle: "sidebar-section-#{index}" }, class: ('open' if has_active) }
+              %span= group[:title]
+              %i.fas.fa-chevron-down.sidebar-section-arrow
+            .sidebar-section-items{ id: "sidebar-section-#{index}", style: (has_active ? '' : 'display: none;') }
+              - group[:items].each do |item|
+                %li.nav-item
+                  = link_to item[:path], id: item[:id], data: { header: item[:header] }, class: "nav-link #{active_class(item[:active_if])}", target: item[:target] do
+                    - if item[:icon_class]
+                      %i.nav-icon{ class: item[:icon_class] }
+                    - else
+                      = image_tag("icons/#{item[:icon]}", class: "mr-2", width: "16", height: "16")
+                    %p= item[:text]
+          - else
+            - group[:items].each do |item|
+              %li.nav-item
+                = link_to item[:path], id: item[:id], data: { header: item[:header] }, class: "nav-link #{active_class(item[:active_if])}", target: item[:target] do
+                  - if item[:icon_class]
+                    %i.nav-icon{ class: item[:icon_class] }
+                  - else
+                    = image_tag("icons/#{item[:icon]}", class: "mr-2", width: "16", height: "16")
+                  %p= item[:text]
