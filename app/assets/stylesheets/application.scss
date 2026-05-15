@@ -129,6 +129,44 @@ aside {
   }
 }
 
+// sidebar section headers
+.nav-sidebar .nav-header.sidebar-section-header {
+  padding: 0.75rem 1rem 0.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: normal;
+  color: #a0aab0;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  transition: color 0.2s ease;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &:hover {
+    color: #fff;
+  }
+
+  .sidebar-section-arrow {
+    font-size: 0.55rem;
+    transition: transform 0.25s ease;
+  }
+
+  &.open .sidebar-section-arrow {
+    transform: rotate(180deg);
+  }
+}
+
+.sidebar-section-items {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.25s ease;
+}
+
 // sidebar
 
 // pagination
@@ -221,9 +259,19 @@ a.link {
   margin-top: 57px;
 }
 
+.main-sidebar {
+  overflow: hidden !important;
+  position: fixed !important;
+  top: 0;
+  bottom: 0;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
 .sidebar {
-  position: fixed;
-  height: calc(100% - 57px);
+  flex: 1 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 
 // header
