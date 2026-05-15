@@ -28,7 +28,7 @@ module ApplicationHelper
           ]
         end
         links += [
-          { path: communities_path(channel_type: 'channel_feed'), id: 'communities-link', header: 'Channels', icon: 'channel-feed.svg', text: 'Channels', active_if: channel_feed_active },
+          { path: communities_path(channel_type: 'channel_feed'), id: 'communities-link', header: is_channel_instance? ? 'Channels' : 'Local Channels', icon: 'channel-feed.svg', text: is_channel_instance? ? 'Channels' : 'Local Channels', active_if: channel_feed_active },
           { path: collections_path, id: 'collections-link', header: 'Collections', icon: 'collection.svg', text: 'Collections', active_if: 'collections' }
         ]
       end
@@ -49,8 +49,11 @@ module ApplicationHelper
         links << { path: wait_lists_path, id: 'invitation-codes-link', header: 'Invitation codes', icon: 'invitation_code.svg', text: 'Invitation codes', active_if: 'wait_lists' }
       end
 
+      if is_channel_instance?
+        links << { path: app_versions_path(app_name: AppVersion.app_names['patchwork']), id: 'app-versions-link', header: 'App versions', icon: 'sliders.svg', text: 'App versions', active_if: 'app_versions' }
+      end
+
       links += [
-        { path: app_versions_path(app_name: AppVersion.app_names['patchwork']), id: 'app-versions-link', header: 'App versions', icon: 'sliders.svg', text: 'App versions', active_if: 'app_versions' },
         { path: "#{ENV['MASTODON_INSTANCE_URL']}/admin/dashboard", id: 'administration-link', header: 'Administration', icon: 'administrator.svg', text: 'Administration', target: '_blank' },
         { path: "#{ENV['MASTODON_INSTANCE_URL']}/admin/reports", id: 'moderation-link', header: 'Moderation', icon: 'users.svg', text: 'Moderation', target: '_blank' },
         { path: "/sidekiq", id: 'sidekiq-link', header: 'Sidekiq', icon: 'smile-1.svg', text: 'Sidekiq', target: '_blank' },
