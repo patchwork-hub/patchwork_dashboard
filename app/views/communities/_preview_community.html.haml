@@ -14,7 +14,7 @@
             %img{ src: asset_path(@community.banner_image.present? ? @community.banner_image.url : 'community-banner.svg'), style: "width: 100%; max-height: 200px;" }
           .row.align-items-center.ml-2
             .col-auto
-              %img{ src: asset_path(@community.avatar_image.present? ? @community.avatar_image.url : 'patchwork-logo.svg'), class: "rounded-circle mr-2", style: "width: 80px; height: 80px; margin-top: -60px; border: 2px solid white;" }
+              %img{ src: asset_path(@community.avatar_image.present? ? @community.avatar_image.url : 'newsmast-logo.png'), class: "rounded-circle mr-2", style: "width: 80px; height: 80px; margin-top: -60px; border: 2px solid white;" }
           .row.mt-3.ml-2
             .col
               .row.ml-1
@@ -27,7 +27,7 @@
           - @community_admins.each do |community_admin|
             .row.mt-3
               .col-1
-                - admin_avatar_image_url = @community.avatar_image.present? ? @community.avatar_image.url : 'patchwork-logo.svg'
+                - admin_avatar_image_url = @community.avatar_image.present? ? @community.avatar_image.url : 'newsmast-logo.png'
                 %img{ alt: "", src: asset_path(admin_avatar_image_url), class: "rounded-circle", style: "width: 40px; height: 40px;" }
               .col-8
                 %h6.mb-0= community_admin.display_name
