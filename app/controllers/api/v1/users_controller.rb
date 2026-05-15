@@ -11,6 +11,7 @@ module Api
         return render_not_found unless @account
 
         desired_value = parse_boolean_param(user_params[:bluesky_bridge_enabled])
+        user = @account.user
 
         # Validate parameter presence first
         if desired_value.nil?
@@ -23,17 +24,19 @@ module Api
           return render_errors(error_message, :unprocessable_entity)
         end
 
-        if current_user.update(bluesky_bridge_enabled: desired_value)
-          render_success({id: current_user.id, bluesky_bridge_enabled: current_user.bluesky_bridge_enabled}, 'api.messages.updated')
+        if user.update_column(:bluesky_bridge_enabled, desired_value)
+        render_success({id: user.id, bluesky_bridge_enabled: user.bluesky_bridge_enabled}, 'api.messages.updated')
         else
-          render_validation_failed(current_user.errors, 'api.errors.validation_failed')
+          render_validation_failed(user.errors, 'api.errors.validation_failed')
         end
       end
 
       def index
         return render_not_found unless @account
 
-        render_success({ id: current_user.id, bluesky_bridge_enabled: current_user.bluesky_bridge_enabled })
+        user = @account.user
+
+        render_success({ id: user.id, bluesky_bridge_enabled: user.bluesky_bridge_enabled })
       end
 
     private

@@ -10,11 +10,11 @@
 
       .card-body
         %p
-          Patchwork runs on Mastodon's open-source software. If you're not already running Mastodon,
+          Newsmast runs on Mastodon's open-source software. If you're not already running Mastodon,
           %br
           you'll need to install this first.
         %p.text-muted
-          Patchwork runs on Mastodon versions 1.2.0 and above. If you're not running one of these, you'll need to
+          Newsmast runs on Mastodon versions 1.2.0 and above. If you're not running one of these, you'll need to
           %br
           upgrade your Mastodon installation first.
         .row.mt-5
@@ -30,45 +30,45 @@
   .col-12
     .card.card-equal-height
       .card-header
-        %h3.card-title Patchwork Dashboard
+        %h3.card-title Newsmast Dashboard
       .card-body
         %p.text-muted
-          Install the Patchwork Dashboard with tools to enhance your server, including post, interface, moderation & federation features.
+          Install the Newsmast Dashboard with tools to enhance your server, including post, interface, moderation & federation features.
         .mt-auto
           %button.installed-button.btn.btn-outline-secondary
             Installed
             %i.fa-solid.fa-check
 
-.row.pt-3
-  .col-12
-    .card
-      .card-header
-        %h3.card-title Select a pack
+-# .row.pt-3
+-#   .col-12
+-#     .card
+-#       .card-header
+-#         %h3.card-title Select a pack
 
-      .card-body
-        %p.text-muted Get started quickly and configure Patchwork in one click with our preset packs, designed to suit a variety of preferences and needs. Choose one and the dashboard is tuned to match. These can be starting points for you to build on.
-        .row
-          .col-12
-            .bordered-radio-group
-              .bordered-radio.mx-2.mt-3
-                %input.radio-button{name: "pack_selection", type: "radio", value: "everything_on"}
-                Everything on
-                = render 'shared/tooltip_custom', tooltip_text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse faucibus, risus sed porta vestibulum, augue urna porttitor ipsum, non dignissim ante purus ut sem.', tooltip_position: 'right'
-              .bordered-radio.mx-2.mt-3
-                %input.radio-button{name: "pack_selection", type: "radio", value: "spam_only"}
-                Spam only
-                = render 'shared/tooltip_custom', tooltip_text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse faucibus, risus sed porta vestibulum, augue urna porttitor ipsum, non dignissim ante purus ut sem.', tooltip_position: 'right'
-              .bordered-radio.mx-2.mt-3
-                %input.radio-button{name: "pack_selection", type: "radio", value: "fedi_pact"}
-                Safe spaces
-                = render 'shared/tooltip_custom', tooltip_text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse faucibus, risus sed porta vestibulum, augue urna porttitor ipsum, non dignissim ante purus ut sem.', tooltip_position: 'right'
-              .bordered-radio.mx-2.mt-3
-                %input.radio-button{name: "pack_selection", type: "radio", value: "organisation"}
-                Organisation
-                = render 'shared/tooltip_custom', tooltip_text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse faucibus, risus sed porta vestibulum, augue urna porttitor ipsum, non dignissim ante purus ut sem.', tooltip_position: 'right'
-.row.d-flex.justify-content-end
-  .col-auto
-    %button.btn.btn-danger Save changes
+-#       .card-body
+-#         %p.text-muted Get started quickly and configure Newsmast in one click with our preset packs, designed to suit a variety of preferences and needs. Choose one and the dashboard is tuned to match. These can be starting points for you to build on.
+-#         .row
+-#           .col-12
+-#             .bordered-radio-group
+-#               .bordered-radio.mx-2.mt-3
+-#                 %input.radio-button{name: "pack_selection", type: "radio", value: "everything_on"}
+-#                 Everything on
+-#                 = render 'shared/tooltip_custom', tooltip_text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse faucibus, risus sed porta vestibulum, augue urna porttitor ipsum, non dignissim ante purus ut sem.', tooltip_position: 'right'
+-#               .bordered-radio.mx-2.mt-3
+-#                 %input.radio-button{name: "pack_selection", type: "radio", value: "spam_only"}
+-#                 Spam only
+-#                 = render 'shared/tooltip_custom', tooltip_text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse faucibus, risus sed porta vestibulum, augue urna porttitor ipsum, non dignissim ante purus ut sem.', tooltip_position: 'right'
+-#               .bordered-radio.mx-2.mt-3
+-#                 %input.radio-button{name: "pack_selection", type: "radio", value: "fedi_pact"}
+-#                 Safe spaces
+-#                 = render 'shared/tooltip_custom', tooltip_text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse faucibus, risus sed porta vestibulum, augue urna porttitor ipsum, non dignissim ante purus ut sem.', tooltip_position: 'right'
+-#               .bordered-radio.mx-2.mt-3
+-#                 %input.radio-button{name: "pack_selection", type: "radio", value: "organisation"}
+-#                 Organisation
+-#                 = render 'shared/tooltip_custom', tooltip_text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse faucibus, risus sed porta vestibulum, augue urna porttitor ipsum, non dignissim ante purus ut sem.', tooltip_position: 'right'
+-# .row.d-flex.justify-content-end
+-#   .col-auto
+-#     %button.btn.btn-danger Save changes
 
 .row.ml-1.pt-3.pb-5
   .col-12
