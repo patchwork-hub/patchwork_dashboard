@@ -23,7 +23,7 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (account_id => accounts.id) ON DELETE => cascade
+#  fk_rails_...  (account_id => accounts.id)
 #  fk_rails_...  (patchwork_community_id => patchwork_communities.id)
 #
 class CommunityAdmin < ApplicationRecord
