@@ -29,7 +29,7 @@ module ApplicationHelper
           ]
         end
         setup_items += [
-          { path: communities_path(channel_type: 'channel_feed'), id: 'channels-link', header: is_channel_instance? ? 'Channels' : 'Local Channels', icon: 'channel-feed.svg', text: 'Channels', active_if: channel_feed_active },
+          { path: communities_path(channel_type: 'channel_feed'), id: 'communities-link', header: is_channel_instance? ? 'Channels' : 'Local Channels', icon: 'channel-feed.svg', text: is_channel_instance? ? 'Channels' : 'Local Channels', active_if: channel_feed_active },
           { path: collections_path, id: 'collections-link', header: 'Collections', icon: 'collection.svg', text: 'Collections', active_if: 'collections' }
         ]
       end
@@ -50,7 +50,6 @@ module ApplicationHelper
       operation_items = [
         { path: '/installation', id: 'installation-link', header: 'Installation', icon: 'screwdriver-wrench.svg', text: 'Installation', active_if: 'installation' },
         { path: api_keys_path, id: 'api-keys-link', header: 'API Key', icon: 'key.svg', text: 'API Key', active_if: 'api_keys' },
-        { path: app_versions_path(app_name: AppVersion.app_names['patchwork']), id: 'app-versions-link', header: 'App versions', icon: 'sliders.svg', text: 'App versions', active_if: 'app_versions' },
         { path: "/sidekiq", id: 'sidekiq-link', header: 'Sidekiq', icon: 'smile-1.svg', text: 'Sidekiq', target: '_blank' },
         { path: resources_path, id: 'resources-link', header: 'Resources', icon: 'folder.svg', text: 'Resources', active_if: 'resources' }
       ]
