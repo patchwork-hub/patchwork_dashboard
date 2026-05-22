@@ -1,0 +1,115 @@
+# ============================================================================
+# Server Settings Configuration
+# ============================================================================
+#
+# This file is the single source of truth for all server setting display text.
+# To rename a setting or update a tooltip, edit this file — no code or DB
+# changes needed.
+#
+# Structure:
+#   <key>:
+#     name: "Display name shown in the UI"
+#     description: "Description shown under parent group headings"
+#     tooltip: "Tooltip shown next to child setting toggles"
+#
+# Keys are stable identifiers stored in the `key` column of `server_settings`.
+# They should NEVER be changed once assigned.
+# ============================================================================
+
+# ---------------------
+# Parent Groups
+# ---------------------
+spam_block:
+  name: "Spam Block"
+  description: "Block spam posts and bots from the wider network and keep your server clean. These are active at a server level."
+
+content_moderation:
+  name: "Content Moderation"
+  description: "Control what content enters your server from the wider network by setting up keyword filters."
+
+federation:
+  name: "Federation"
+  description: "Decide which parts of the social web you want to be connected to, casting a broad net or staying focused."
+
+local_features:
+  name: "Local Features"
+  description: "Customise and design the experience of your channel with a suite of features."
+
+user_management:
+  name: "User Management"
+  description: "Foster channel through engagement tools and control who has access to your server."
+
+plugins:
+  name: "Plug-ins"
+  description: "Enable more plug-ins created for Patchwork for more tools and functionality."
+
+bluesky_bridge:
+  name: "Bluesky Bridge"
+  description: ""
+
+email_branding:
+  name: "Email Branding"
+  description: ""
+
+# ---------------------
+# Child Settings
+# ---------------------
+spam_filters:
+  name: "Spam filters"
+  tooltip: "Block spam posts by applying a preset list of keyword filters or add your own. These are maintained with input from other Patchwork server admins."
+
+signup_challenge:
+  name: "Sign up challenge"
+  tooltip: "Add a challenge for new users to answer so spam bots can't easily join your server."
+
+content_filters:
+  name: "Content filters"
+  tooltip: "Apply preset lists of keyword filters or add your own to block specific types of content. Or create your own lists and share them with the admin channel."
+
+bluesky:
+  name: "Bluesky"
+  tooltip: "Block posts from the microblogging platform Bluesky."
+
+threads:
+  name: "Threads"
+  tooltip: "Block posts from the microblogging platform Threads, owned by Meta & Instagram."
+
+live_blocklist:
+  name: "Live blocklist"
+  tooltip: "Control which servers you connect to in the wider network with deny lists that block all posts from specific servers."
+
+custom_theme:
+  name: "Custom theme"
+  tooltip: "Browse a variety of themes for your server's Web interface to give it the flavour you want."
+
+search_opt_out:
+  name: "Automatic Search Opt-in"
+  tooltip: "Make all text within the server, including user's posts and bios, visible to search. Users are able to opt-out if they choose."
+
+local_only_posts:
+  name: "Local only posts"
+  tooltip: "Allow users to publish posts just to your server, fostering a greater sense of channel."
+
+long_posts:
+  name: "Long posts"
+  tooltip: "Set character limits for posts and enable text formatting, including bold, italics & more."
+
+local_quote_posts:
+  name: "Local quote posts"
+  tooltip: "Allow users to publish posts just to your server, fostering a greater sense of channel."
+
+guest_accounts:
+  name: "Guest accounts"
+  tooltip: "Allow anyone with a Mastodon account to participate on your server with guest sign-in."
+
+newsletters:
+  name: "e-Newsletters"
+  tooltip: "Foster a closer, more transparent connection with users on your server by sending regular, custom newsletters."
+
+analytics:
+  name: "Analytics"
+  tooltip: "Understand your channel and optimise your server with non-intrusive analytics."
+
+bluesky_bridge_auto:
+  name: "Automatic Bluesky bridging for new users"
+  tooltip: "Set up Bluesky Bridge accounts for all local users."

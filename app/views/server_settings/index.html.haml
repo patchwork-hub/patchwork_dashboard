@@ -9,35 +9,20 @@
 
       .card-body
         - @server_settings.each do |setting|
-          - next if setting[:name] == 'Plug-ins'
-          - next if setting[:name].in?(["Federation", "User Management"]) && (!is_channel_dashboard? || !is_channel_instance?)
+          - next if setting[:key] == 'plugins'
+          - next if setting[:key].in?(['federation', 'user_management']) && (!is_channel_dashboard? || !is_channel_instance?)
           .row.mb-4
             .col-md-5
               %div
                 %strong= setting[:name]
-                - case setting[:name]
-                  - when 'Local Features'
-                    %p.text-muted.small.mt-2 Customise and design the experience of your channel with a suite of features.
-                  - when 'User Management'
-                    %p.text-muted.small.mt-2 Foster channel through engagement tools and control who has access to your server.
-                  - when 'Content filters'
-                    %p.text-muted.small.mt-2 Apply preset lists of keyword filters or add your own to block specific types of content. Or create your own lists and share them with the admin channel.
-                  - when 'Spam filters'
-                    %p.text-muted.small.mt-2 Filter out spam posts and bots from the wider network at a server level to keep your server clean.
-                  - when 'Federation'
-                    %p.text-muted.small.mt-2 Decide which parts of the social web you want to be connected to, casting a broad net or staying focused.
-                  - when 'Plug-ins'
-                    %p.text-muted.small.mt-2 Enable more plug-ins created for Patchwork for more tools and functionality.
-                  - when 'Spam Block'
-                    %p.text-muted.small.mt-2 Block spam posts and bots from the wider network and keep your server clean. These are active at a server level.
-                  - when 'Content Moderation'
-                    %p.text-muted.small.mt-2 Control what content enters your server from the wider network by setting up keyword filters.
+                - if setting[:description].present?
+                  %p.text-muted.small.mt-2= setting[:description]
             .col-md-7
-              - if setting[:name] == 'Email Branding'
+              - if setting[:key] == 'email_branding'
                 = render 'form_logo_and_brand_color'
 
               - setting[:settings].each_with_index do |option, option_index|
-                - is_collapse = ['Content filters', 'Spam filters'].include?(option[:name])
+                - is_collapse = option[:key].in?(['content_filters', 'spam_filters'])
                 - collapse_id = "collapse_#{option[:id]}"
                 - if is_collapse
                   %div.d-flex.justify-content-between
@@ -52,16 +37,13 @@
                               %i.fa-solid.fa-xmark
                         %span.ml-2
                           = option[:name]
-                          - case option[:name]
-                            - when 'Spam filters'
-                              = render 'shared/tooltip_custom', tooltip_text: 'Block spam posts by applying a preset list of keyword filters or add your own. These are maintained with input from other Patchwork server admins.', tooltip_position: 'top'
-                            - when 'Content filters'
-                              = render 'shared/tooltip_custom', tooltip_text: 'Apply preset lists of keyword filters or add your own to block specific types of content. Or create your own lists and share them with the admin channel.', tooltip_position: 'top'
+                          - if option[:tooltip].present?
+                            = render 'shared/tooltip_custom', tooltip_text: option[:tooltip], tooltip_position: 'top'
                       %div
-                        - if option[:name].casecmp?('Spam filters')
+                        - if option[:key] == 'spam_filters'
                           %a{ href: '#', style: 'color: red;', title: 'Add spam filter', 'data-filter-type': 'spam', 'data-id': option[:id], 'data-toggle': 'modal', 'data-target': '#keyFilterModal', 'data-label': 'Select or create filter list' }
                             Add spam filter
-                        - if option[:name].casecmp?('Content filters')
+                        - if option[:key] == 'content_filters'
                           %a{ href: '#', style: 'color: red;', title: 'Add custom filter', 'data-filter-type': 'content', 'data-id': option[:id], 'data-toggle': 'modal', 'data-target': '#keyFilterModal', 'data-label': 'Custom filter name' }
                             Add custom filter
                     %div
@@ -109,34 +91,9 @@
                             %i.fa-solid.fa-xmark
                       %span.ml-2
                         = option[:name]
-                        - case option[:name]
-                          - when 'Sign up challenge'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Add a challenge for new users to answer so spam bots can’t easily join your server.', tooltip_position: 'top'
-                          - when 'Live blocklist'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Control which servers you connect to in the wider network with deny lists that block all posts from specific servers.', tooltip_position: 'top'
-                          - when 'Bluesky'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Block posts from the microblogging platform Bluesky.', tooltip_position: 'top'
-                          - when 'Threads'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Block posts from the microblogging platform Threads, owned by Meta & Instagram.', tooltip_position: 'top'
-                          - when 'Custom theme'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Browse a variety of themes for your server’s Web interface to give it the flavour you want.', tooltip_position: 'top'
-                          - when 'Automatic Search Opt-out'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Make all text within the server, including user’s posts and bios, visible to search. Users are able to opt-out if they choose.', tooltip_position: 'top'
-                          - when 'Local only posts'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Allow users to publish posts just to your server, fostering a greater sense of channel.', tooltip_position: 'top'
-                          - when 'Long posts'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Set character limits for posts and enable text formatting, including bold, italics & more.', tooltip_position: 'top'
-                          - when 'Local quote posts'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Allow users to publish posts just to your server, fostering a greater sense of channel.', tooltip_position: 'top'
-                          - when 'Guest accounts'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Allow anyone with a Mastodon account to participate on your server with guest sign-in.', tooltip_position: 'top'
-                          - when 'e-Newsletters'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Foster a closer, more transparent connection with users on your server by sending regular, custom newsletters.', tooltip_position: 'top'
-                          - when 'Analytics'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Understand your channel and optimise your server with non-intrusive analytics.', tooltip_position: 'top'
-                          - when 'Automatic Bluesky bridging for new users'
-                            = render 'shared/tooltip_custom', tooltip_text: 'Set up Bluesky Bridge accounts for all local users.', tooltip_position: 'top'
-                        - if option[:name].casecmp?('Long posts')
+                        - if option[:tooltip].present?
+                          = render 'shared/tooltip_custom', tooltip_text: option[:tooltip], tooltip_position: 'top'
+                        - if option[:key] == 'long_posts'
                           %br
                           %span.small{ style: 'color: grey;' }
                             Maximum Characters:
@@ -144,14 +101,14 @@
                             %a{ href: '#', title: 'Long posts', 'data-toggle': 'modal', 'data-setting-id': option[:id], 'data-optional-value': option[:optional_value], 'data-target': '#maxCharsModal', onclick: "handleEditClick(this)" }
                               = image_tag("icons/edit-btn.svg", class: "mb-1", width: "13", height: "13")
                     %div
-                      - case option[:name]
-                      - when 'Sign up challenge'
+                      - case option[:key]
+                      - when 'signup_challenge'
                         %a{ href: '#', style: 'color: red;', title: 'Add challenge' }
                           Add challenge
-                      - when 'Custom theme'
+                      - when 'custom_theme'
                         %a{ href: '#', style: 'color: red;', title: 'Choose theme' }
                           Choose theme
-                      - when 'Live blocklist'
+                      - when 'live_blocklist'
                         %a{ href: 'https://connect.iftas.org/library/iftas-documentation/fedicheck/', style: 'color: red;', title: 'Set-up denylist', target: '_blank' }
                           Set-up denylist
                 - unless option_index == setting[:settings].size - 1

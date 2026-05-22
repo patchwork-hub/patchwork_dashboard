@@ -22,7 +22,7 @@ development:
       BlockBlueskyBotScheduler:
         every: '10m'
         class: Scheduler::BlockBlueskyBotScheduler
-        queue: dashboard_development_scheduler  
+        queue: dashboard_development_scheduler
       CommunityCleanupScheduler:
         cron: '0 0 * * *'
         class: Scheduler::CommunityCleanupScheduler
@@ -52,6 +52,7 @@ staging:
       BlockBlueskyBotScheduler:
         every: '10m'
         class: Scheduler::BlockBlueskyBotScheduler
+        queue: dashboard_staging_scheduler
       CommunityCleanupScheduler:
         cron: '0 0 * * *'
         class: Scheduler::CommunityCleanupScheduler
@@ -81,6 +82,7 @@ production:
       BlockBlueskyBotScheduler:
         every: '10m'
         class: Scheduler::BlockBlueskyBotScheduler
+        queue: dashboard_production_scheduler
       CommunityCleanupScheduler:
         cron: '0 0 * * *'
         class: Scheduler::CommunityCleanupScheduler

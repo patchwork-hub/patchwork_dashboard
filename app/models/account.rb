@@ -121,7 +121,7 @@ class Account < ApplicationRecord
       id_path = id.to_s.scan(/.{3}/).join('/')
       "https://#{ENV['S3_ALIAS_HOST']}/accounts/avatars/#{id_path}/original/#{avatar_file_name}"
     else
-      ActionController::Base.helpers.asset_path('patchwork-logo.svg')
+      ActionController::Base.helpers.asset_path('newsmast-logo.png')
     end
   end
 
