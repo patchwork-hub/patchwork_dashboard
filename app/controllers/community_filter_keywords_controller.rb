@@ -1,4 +1,5 @@
 class CommunityFilterKeywordsController < ApplicationController
+  before_action :authorize_community_filter_keywords!
   before_action :set_community_filter_keyword, only: [:edit, :update, :destroy]
 
   PER_PAGE = 10
@@ -70,6 +71,16 @@ class CommunityFilterKeywordsController < ApplicationController
       Rails.logger.error("Error fetching community filter keywords: #{e.message}")
       community_filter_keywords = []
       flash[:error] = 'An error occurred while fetching filter keywords. Please try again later.'
+    end
+  end
+
+  def authorize_community_filter_keywords!
+    patchwork_community_id = params[:community_id] || params[:patchwork_community_id] || params.dig(:community_filter_keyword, :patchwork_community_id)
+    if patchwork_community_id.present?
+      @community = Community.find(patchwork_community_id)
+      authorize @community, :initialize_form?
+    else
+      authorize :community_filter_keyword, "#{action_name}?"
     end
   end
 end

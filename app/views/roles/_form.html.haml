@@ -1,0 +1,64 @@
+.row
+  .col-12
+    .card
+      .card-header
+        %h3.card-title
+          = "#{action_name.capitalize} role"
+      .card-body.w-250
+        = simple_form_for @role, url: (@role.new_record? ? roles_path : role_path(@role)), method: (@role.new_record? ? :post : :patch), local: true do |f|
+          .row
+            .col-md-6
+              = f.input :name, label: 'Role name', input_html: { class: 'form-control', placeholder: 'Enter role name' }
+            .col-md-3
+              .form-group.numeric.optional.user_role_position
+                = f.label :position, 'Position'
+                = f.number_field :position, class: 'form-control', value: @role.position
+            .col-md-3
+              .form-group.string.optional.user_role_color
+                = f.label :color, 'Badge color'
+                .input-group
+                  .input-group-prepend
+                    %span.input-group-text #
+                  = f.text_field :color, class: 'form-control', placeholder: 'e.g. 3498db', value: @role.color.to_s.delete('#')
+
+          .row
+            .col-md-12.mb-3
+              .form-check
+                = f.check_box :highlighted, class: 'form-check-input'
+                = f.label :highlighted, 'Display role badge on user profiles', class: 'form-check-label'
+
+          %hr
+          %h5.mb-3 Permissions
+
+          - { 'Dashboard Channels' => UserRole::Flags::DASHBOARD_CATEGORIES[:dashboard_channels], 'Dashboard Management' => UserRole::Flags::DASHBOARD_CATEGORIES[:dashboard_management], 'Dashboard Operations' => UserRole::Flags::DASHBOARD_CATEGORIES[:dashboard_operations] }.each do |category_name, privileges|
+            .card.mb-3
+              .card-header.py-2
+                %h6.mb-0= category_name
+              .card-body.py-2
+                .row
+                  - privileges.each do |privilege|
+                    .col-md-4.mb-2
+                      .form-check
+                        = check_box_tag 'user_role[permissions_as_keys][]', privilege.to_s, @role.permissions_as_keys.include?(privilege.to_s), id: "permission_#{privilege}", class: 'form-check-input'
+                        = label_tag "permission_#{privilege}", privilege.to_s.titleize, class: 'form-check-label'
+
+          -# Hiding Mastodon permissions
+          -# - { 'Mastodon Moderation' => UserRole::Flags::MASTODON_CATEGORIES[:moderation], 'Mastodon Administration' => UserRole::Flags::MASTODON_CATEGORIES[:administration], 'Mastodon Invites' => UserRole::Flags::MASTODON_CATEGORIES[:invites], 'Mastodon DevOps' => UserRole::Flags::MASTODON_CATEGORIES[:devops], 'Special' => UserRole::Flags::MASTODON_CATEGORIES[:special] }.each do |category_name, privileges|
+          -#   .card.mb-3
+          -#     .card-header.py-2
+          -#       %h6.mb-0= category_name
+          -#     .card-body.py-2
+          -#       .row
+          -#         - privileges.each do |privilege|
+          -#           .col-md-4.mb-2
+          -#             .form-check
+          -#               = check_box_tag 'user_role[permissions_as_keys][]', privilege.to_s, @role.permissions_as_keys.include?(privilege.to_s), id: "permission_#{privilege}", class: 'form-check-input'
+          -#               = label_tag "permission_#{privilege}", privilege.to_s.titleize, class: 'form-check-label'
+
+          -# Include a hidden field so that unchecking all permissions submits an empty array
+          = hidden_field_tag 'user_role[permissions_as_keys][]', ''
+
+          .row.mt-4
+            .col-md-12.d-flex.justify-content-center
+              = f.submit (@role.new_record? ? 'Create role' : 'Update role'), class: 'btn btn-primary mx-2 btn-custom'
+              = link_to 'Cancel', roles_path, class: 'btn btn-secondary mx-2 btn-custom'

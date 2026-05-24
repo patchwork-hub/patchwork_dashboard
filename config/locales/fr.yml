@@ -239,6 +239,16 @@ fr:
               blank: "Les paramètres ne peuvent pas être vides."
               invalid: "Le format des paramètres est invalide."
 
+        user_role:
+          attributes:
+            permissions_as_keys:
+              own_role: "Vous ne pouvez pas modifier les permissions de votre propre rôle."
+              elevated: "Vous ne pouvez pas accorder de permissions que vous ne possédez pas."
+              dangerous: "Vous ne pouvez pas modifier les permissions du rôle de tout le monde."
+            position:
+              own_role: "Vous ne pouvez pas modifier la position de votre propre rôle."
+              elevated: "Vous ne pouvez pas définir une position supérieure à celle de votre propre rôle."
+
   # Time and date formats
   time:
     formats:

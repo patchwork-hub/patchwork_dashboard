@@ -239,6 +239,16 @@ it:
               blank: "Le impostazioni non possono essere vuote."
               invalid: "Il formato delle impostazioni non è valido."
 
+        user_role:
+          attributes:
+            permissions_as_keys:
+              own_role: "Non puoi modificare i permessi del tuo stesso ruolo."
+              elevated: "Non puoi concedere permessi che non possiedi."
+              dangerous: "Non puoi modificare i permessi del ruolo di tutti."
+            position:
+              own_role: "Non puoi modificare la posizione del tuo stesso ruolo."
+              elevated: "Non puoi impostare una posizione superiore a quella del tuo stesso ruolo."
+
   # Time and date formats
   time:
     formats:

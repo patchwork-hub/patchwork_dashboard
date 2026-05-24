@@ -1,7 +1,7 @@
 class ServerSettingsController < ApplicationController
   include ApplicationHelper
 
-  before_action :authorize_master_admin!
+  before_action :authorize_server_setting!
   before_action :initialize_server_settings, only: [:index, :branding]
 
   def index
@@ -141,8 +141,8 @@ class ServerSettingsController < ApplicationController
     @data
   end
 
-  def authorize_master_admin!
-    authorize :master_admin, :index?
+  def authorize_server_setting!
+    authorize :server_setting, "#{action_name}?"
   end
 
   def site_settings_params

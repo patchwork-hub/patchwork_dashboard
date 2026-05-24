@@ -1,7 +1,9 @@
 class Form::MasterAdmin
   include ActiveModel::Model
 
-  attr_accessor :id, :display_name, :username, :email, :password, :password_confirmation, :note, :role
+  attr_accessor :id, :display_name, :username, :email, :password, :password_confirmation, :note, :role, :current_user
+
+  validate :validate_role_assignment
 
   def initialize(attributes = {})
     super(attributes.to_h.symbolize_keys)
@@ -45,7 +47,12 @@ class Form::MasterAdmin
   end
 
   def create_or_update_user!(account)
-    role_record = UserRole.find_by!(name: 'MasterAdmin')
+    role_record = if role.to_s.match?(/\A\d+\z/)
+                    UserRole.find_by(id: role)
+                  else
+                    UserRole.find_by(name: role)
+                  end
+    role_record ||= UserRole.find_by!(name: 'MasterAdmin')
 
     user = User.where(email: email).first_or_initialize
     user.assign_attributes(
@@ -66,4 +73,20 @@ class Form::MasterAdmin
     user.save!
   end
 
+  private
+
+  def validate_role_assignment
+    return unless current_user.present?
+    return if current_user.role&.name == 'MasterAdmin'
+
+    assigned_role = if role.to_s.match?(/\A\d+\z/)
+                      UserRole.find_by(id: role)
+                    else
+                      UserRole.find_by(name: role)
+                    end
+
+    if assigned_role && !current_user.role.overrides?(assigned_role)
+      errors.add(:role, "cannot be equal to or higher than your own role")
+    end
+  end
 end

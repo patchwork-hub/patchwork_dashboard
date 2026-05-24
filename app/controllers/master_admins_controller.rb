@@ -5,7 +5,8 @@ class MasterAdminsController < ApplicationController
 
   def index
     @master_admins = User.joins(:account)
-                          .where(role: master_admin_role)
+                          .where(role_id: UserRole.assignable.select(:id))
+                          .where.not(account_id: CommunityAdmin.where.not(account_id: nil).select(:account_id))
                           .select(
                             'users.id AS user_id,
                              accounts.username,
@@ -16,11 +17,11 @@ class MasterAdminsController < ApplicationController
   end
 
   def new
-    @master_admin = Form::MasterAdmin.new
+    @master_admin = Form::MasterAdmin.new(current_user: current_user)
   end
 
   def create
-    @master_admin = Form::MasterAdmin.new(master_admin_params)
+    @master_admin = Form::MasterAdmin.new(master_admin_params.merge(current_user: current_user))
 
     if @master_admin.save
       redirect_to master_admins_path, notice: 'Master admin created successfully.'
@@ -55,7 +56,8 @@ class MasterAdminsController < ApplicationController
       username: user.account&.username,
       email: user.email,
       note: user.account&.note,
-      role: user.role&.name
+      role: user.role&.id,
+      current_user: current_user
     )
   end
 
@@ -65,6 +67,6 @@ class MasterAdminsController < ApplicationController
   end
 
   def authorize_master_admin!
-    authorize :master_admin, :index?
+    authorize :master_admin, "#{action_name}?"
   end
 end

@@ -1,6 +1,6 @@
 class CommunityPolicy < ApplicationPolicy
   def initialize_form?
-    master_admin? || user_has_access_to_community? || user_admin? || newsmast_admin?
+    master_admin? || user_has_access_to_community? || user_admin? || newsmast_admin? || can?(:manage_channels, :manage_channel_feeds, :manage_hubs, :manage_newsmast_channels)
   end
 
   def index?
@@ -16,7 +16,7 @@ class CommunityPolicy < ApplicationPolicy
   end
 
   def step0?
-    master_admin? || organisation_admin?
+    master_admin? || organisation_admin? || can?(:manage_channels)
   end
 
   def step1?
@@ -28,7 +28,7 @@ class CommunityPolicy < ApplicationPolicy
   end
 
   def step2?
-    master_admin? || user_admin? || newsmast_admin?
+    master_admin? || user_admin? || newsmast_admin? || can?(:manage_channel_feeds, :manage_newsmast_channels)
   end
 
   def step2_save?

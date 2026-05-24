@@ -239,6 +239,16 @@ cy:
               blank: "Ni all y gosodiadau fod yn wag."
               invalid: "Mae fformat y gosodiadau'n annilys."
 
+        user_role:
+          attributes:
+            permissions_as_keys:
+              own_role: "Ni allwch newid hawliau eich rôl eich hun."
+              elevated: "Ni allwch roi hawliau nad oes gennych."
+              dangerous: "Ni allwch newid hawliau'r rôl pawb."
+            position:
+              own_role: "Ni allwch newid safle eich rôl eich hun."
+              elevated: "Ni allwch osod safle sy'n uwch na safle eich rôl eich hun."
+
   # Time and date formats
   time:
     formats:
