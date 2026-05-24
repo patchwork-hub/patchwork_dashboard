@@ -27,7 +27,8 @@ class Filter::Community < Filter::Common
   end
 
   def master_admin?
-    @current_user&.role&.name.in?(%w[MasterAdmin])
+    @current_user&.role&.name == 'MasterAdmin' ||
+      @current_user&.can?(:manage_channels, :manage_channel_feeds, :manage_hubs, :manage_newsmast_channels)
   end
 
   def account_id

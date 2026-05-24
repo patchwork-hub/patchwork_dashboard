@@ -18,6 +18,7 @@ class CommunitiesController < BaseController
     params[:channel_type] ||= params[:q]&.delete(:channel_type)
     redirect_to communities_path(request.query_parameters.merge(channel_type: default_channel_type)) unless params[:channel_type].present?
     @channel_type = params[:channel_type] || default_channel_type
+    authorize_channel_type!(@channel_type)
     @search = commu_records_filter.build_search
     params[:status] ||= 'active'
     @records = load_filtered_records(commu_records_filter)
@@ -403,6 +404,32 @@ class CommunitiesController < BaseController
   end
 
   # Authorization and verification
+  def authorize_channel_type!(channel_type)
+    return if current_user.role&.name == 'MasterAdmin'
+
+    permission_map = {
+      'channel'      => :manage_channels,
+      'channel_feed' => :manage_channel_feeds,
+      'hub'          => :manage_hubs,
+      'newsmast'     => :manage_newsmast_channels,
+    }.freeze
+
+    required_permission = permission_map[channel_type]
+
+    # For community admins (UserAdmin, OrganisationAdmin, etc.) who have direct community access
+    return if required_permission.nil?
+    return if current_user.can?(required_permission)
+
+    # Allow users who are community admins for communities of this type
+    has_community_access = CommunityAdmin.joins(:community)
+                                         .where(account_id: current_user.account_id)
+                                         .where(patchwork_communities: { channel_type: channel_type })
+                                         .exists?
+    return if has_community_access
+
+    raise Pundit::NotAuthorizedError, "not allowed to view #{channel_type} communities"
+  end
+
   def authorize_step(policy_method)
     community = @community || Community.new
     authorize community, policy_method

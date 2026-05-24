@@ -239,6 +239,16 @@ ja:
               blank: "設定は空にできません"
               invalid: "設定の形式が無効です"
 
+        user_role:
+          attributes:
+            permissions_as_keys:
+              own_role: "自分自身のロールの権限を変更することはできません。"
+              elevated: "自分が持っていない権限を付与することはできません。"
+              dangerous: "全員のロールの権限を変更することはできません。"
+            position:
+              own_role: "自分自身のロールの順序を変更することはできません。"
+              elevated: "自分自身のロールより高い順序を設定することはできません。"
+
   # Time and date formats
   time:
     formats:
