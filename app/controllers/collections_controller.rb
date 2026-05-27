@@ -1,5 +1,5 @@
 class CollectionsController < ApplicationController
-  before_action :authorize_master_admin!
+  before_action :authorize_collection!
   before_action :set_collection, only: %i[show edit update]
   PER_PAGE = 10
 
@@ -45,7 +45,7 @@ class CollectionsController < ApplicationController
     params.require(:collection).permit(:name, :slug, :sorting_index, :banner_image, :avatar_image)
   end
 
-  def authorize_master_admin!
-    authorize :master_admin, :index?
+  def authorize_collection!
+    authorize :collection, "#{action_name}?"
   end
 end

@@ -4,6 +4,7 @@
 #
 #  id             :bigint           not null, primary key
 #  deleted_at     :datetime
+#  key            :string
 #  name           :string
 #  optional_value :string
 #  position       :integer
@@ -12,8 +13,15 @@
 #  updated_at     :datetime         not null
 #  parent_id      :bigint
 #
+# Indexes
+#
+#  index_server_settings_on_key  (key) UNIQUE WHERE (key IS NOT NULL)
+#
 class ServerSetting < ApplicationRecord
+  include ServerSettingConfig
+
   validates :name, presence: true
+  validates :key, uniqueness: true, allow_nil: true
 
   has_many :keyword_filter_groups, dependent: :destroy
 
@@ -39,11 +47,11 @@ class ServerSetting < ApplicationRecord
   private
 
   def invoke_keyword_schedule
-    KeywordFiltersJob.perform_now(name)
+    KeywordFiltersJob.perform_now(key)
   end
 
   def content_or_spam_filters?
-    name == "Content filters" || name == "Spam filters"
+    key.in?([KEY_CONTENT_FILTERS, KEY_SPAM_FILTERS])
   end
 
   def sync_setting
@@ -51,11 +59,11 @@ class ServerSetting < ApplicationRecord
   end
 
   def search_opt_out_filter?
-    name == "Automatic Search Opt-out"
+    key == KEY_SEARCH_OPT_OUT
   end
 
   def bluesky_bridge_enabled?
-    name == "Automatic Bluesky bridging for new users"
+    key == KEY_BLUESKY_BRIDGE_AUTO
   end
 
   def update_accounts_discoverable

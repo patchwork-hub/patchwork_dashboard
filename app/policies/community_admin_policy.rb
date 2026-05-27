@@ -1,7 +1,7 @@
 class CommunityAdminPolicy < ApplicationPolicy
 
   def create?
-    master_admin?
+    master_admin? || can?(:manage_community_admins)
   end
 
   class Scope < ApplicationPolicy::Scope

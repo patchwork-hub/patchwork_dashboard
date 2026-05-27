@@ -1,4 +1,5 @@
 class KeywordFilterGroupsController < ApplicationController
+  before_action :authorize_keyword_filter_group!
   before_action :set_keyword_filter_group, only: [:show, :edit, :update, :destroy, :update_is_active, :download_csv]
 
   def index
@@ -160,5 +161,11 @@ class KeywordFilterGroupsController < ApplicationController
     @keyword_filter_group.keyword_filters.each do |keyword_filter|
       KeywordFilterGroup.update_create_redis_filter(redis_key,  keyword_filter.keyword, @keyword_filter_group.server_setting_id, keyword_filter.filter_type, is_active = true, @keyword_filter_group.id, is_custom = true)
     end
+  end
+
+  private
+
+  def authorize_keyword_filter_group!
+    authorize :keyword_filter_group, "#{action_name}?"
   end
 end

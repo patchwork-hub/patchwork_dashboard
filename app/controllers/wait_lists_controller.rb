@@ -1,5 +1,6 @@
 class WaitListsController < ApplicationController
-  before_action :authorize_master_admin!
+  before_action :authenticate_user!
+  before_action :authorize_wait_list!
   before_action :set_wait_list, only: %i[show edit update destroy]
 
   PER_PAGE = 10
@@ -43,11 +44,11 @@ class WaitListsController < ApplicationController
     redirect_to wait_lists_url, notice: 'Wait list was successfully destroyed.'
   end
 
-  def authorize_master_admin!
-    authorize :master_admin, :index?
-  end
-
   private
+
+  def authorize_wait_list!
+    authorize :wait_list, "#{action_name}?"
+  end
 
   def set_wait_list
     @wait_list = WaitList.find(params[:id])

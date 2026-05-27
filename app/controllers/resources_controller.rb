@@ -1,12 +1,7 @@
 class ResourcesController < ApplicationController
-  before_action :authorize_master_admin!
+  before_action :authenticate_user!
 
   def index
-  end
-
-  private
-
-  def authorize_master_admin!
-    authorize :master_admin, :index?
+    authorize :resources, :index?
   end
 end

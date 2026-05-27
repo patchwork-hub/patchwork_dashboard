@@ -1,0 +1,41 @@
+.row
+  .col-12
+    .card
+      .card-header
+        %h3.card-title
+          Roles
+        .card-tools
+          %button.btn.btn-sm.btn-danger.ml-3{ onclick: "window.location='#{new_role_path}'" }
+            Create a role
+            = image_tag("icons/circle-plus.svg", class: "ml-2", width: "16", height: "16")
+
+      .card-body
+        %table.table.no-side-borders.top-bottom-border
+          %thead
+            %tr
+              %th Role
+              %th Color
+              %th Position
+              %th Users
+              %th Permissions
+              %th Actions
+          %tbody
+            - @roles.each do |role|
+              %tr
+                %td
+                  - if role.color.present?
+                    %span.badge{ style: "background-color: #{role.color.start_with?('#') ? role.color : '#' + role.color}; color: #fff; padding: 4px 8px;" }= role.name
+                  - else
+                    = role.name
+                %td
+                  - if role.color.present?
+                    %span.badge{ style: "background-color: #{role.color.start_with?('#') ? role.color : '#' + role.color}; color: #fff; padding: 4px 8px; min-width: 60px;" }= role.color.start_with?('#') ? role.color : '#' + role.color
+                %td= role.position
+                %td= role.users_count
+                %td= role.permissions_as_keys.size
+                %td
+                  %a{ href: edit_role_path(role), title: 'Edit' }
+                    = image_tag("icons/edit-btn.svg", class: "ml-2", width: "16", height: "16")
+                  - unless role.everyone?
+                    = link_to role_path(role), method: :delete, data: { confirm: "Are you sure you want to delete the role '#{role.name}'?" }, title: 'Delete' do
+                      = image_tag("icons/trash-can.svg", class: "ml-2", width: "16", height: "16")

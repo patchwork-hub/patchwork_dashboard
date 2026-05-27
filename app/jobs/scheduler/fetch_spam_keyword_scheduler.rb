@@ -4,7 +4,7 @@ module Scheduler
     sidekiq_options retry: 0, queue: :scheduler
 
     def perform
-      KeywordFiltersJob.perform_now('Spam filters')
+      KeywordFiltersJob.perform_now(ServerSetting::KEY_SPAM_FILTERS)
     end
   end
 end
