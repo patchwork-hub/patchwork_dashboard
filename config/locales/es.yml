@@ -239,6 +239,16 @@ es:
             account_id:
               taken: "La cuenta ya está registrada en la lista de espera"
 
+        user_role:
+          attributes:
+            permissions_as_keys:
+              own_role: "No puedes cambiar los permisos de tu propio rol."
+              elevated: "No puedes otorgar permisos que no tienes."
+              dangerous: "No puedes cambiar los permisos del rol de todos."
+            position:
+              own_role: "No puedes cambiar la posición de tu propio rol."
+              elevated: "No puedes establecer una posición superior a la de tu propio rol."
+
   # Time and date formats
   time:
     formats:

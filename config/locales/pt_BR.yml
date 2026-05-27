@@ -239,6 +239,16 @@ pt_BR:
               blank: "As configurações não podem estar em branco."
               invalid: "O formato das configurações é inválido."
 
+        user_role:
+          attributes:
+            permissions_as_keys:
+              own_role: "Você não pode alterar as permissões do seu próprio papel."
+              elevated: "Você não pode conceder permissões que não possui."
+              dangerous: "Você não pode alterar as permissões do papel de todos."
+            position:
+              own_role: "Você não pode alterar a posição do seu próprio papel."
+              elevated: "Você não pode definir uma posição superior à do seu próprio papel."
+
   # Time and date formats
   time:
     formats:

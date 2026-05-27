@@ -13,58 +13,87 @@ module ApplicationHelper
     hub_active = params[:channel_type] == 'hub' || @community&.hub? ? 'communities' : nil
     newsmast_active = params[:channel_type] == 'newsmast' || @community&.newsmast? ? 'communities' : nil
 
-    if master_admin?
+    if master_admin? || dashboard_admin? || current_user.can?(:view_newsmast_dashboard)
       # --- Community set-up ---
-      setup_items = [
-        { path: server_settings_path, id: 'server-settings-link', header: 'Server settings', icon: 'sliders.svg', text: 'Server settings', active_if: ['server_settings', 'keyword_filter_groups', 'keyword_filters'] },
-        { path: custom_emojis_path, id: 'custom-emojis-link', header: 'Custom emojis', icon: 'custom-emojis.svg', text: 'Custom emojis', active_if: 'custom_emojis' }
-      ]
+      setup_items = []
+      if master_admin? || current_user.can?(:manage_server_settings)
+        setup_items << { path: server_settings_path, id: 'server-settings-link', header: 'Server settings', icon: 'sliders.svg', text: 'Server settings', active_if: ['server_settings', 'keyword_filter_groups', 'keyword_filters'] }
+      end
+      if master_admin? || current_user.can?(:manage_custom_emojis)
+        setup_items << { path: custom_emojis_path, id: 'custom-emojis-link', header: 'Custom emojis', icon: 'custom-emojis.svg', text: 'Custom emojis', active_if: 'custom_emojis' }
+      end
 
       if is_channel_dashboard?
         if is_channel_instance?
-          setup_items += [
-            { path: communities_path(channel_type: 'channel'), id: 'communities-link', header: 'Communities', icon: 'speech.svg', text: 'Communities', active_if: channel_active },
-            { path: communities_path(channel_type: 'hub'), id: 'communities-link', header: 'Hubs', icon: 'hub.svg', text: 'Hubs', active_if: hub_active },
-            { path: communities_path(channel_type: 'newsmast'), id: 'communities-link', header: 'Newsmast channels', icon: 'newsmast.svg', text: 'Newsmast channels', active_if: newsmast_active },
-          ]
+          if master_admin? || current_user.can?(:manage_channels)
+            setup_items << { path: communities_path(channel_type: 'channel'), id: 'communities-link', header: 'Communities', icon: 'speech.svg', text: 'Communities', active_if: channel_active }
+          end
+          if master_admin? || current_user.can?(:manage_hubs)
+            setup_items << { path: communities_path(channel_type: 'hub'), id: 'communities-link', header: 'Hubs', icon: 'hub.svg', text: 'Hubs', active_if: hub_active }
+          end
+          if master_admin? || current_user.can?(:manage_newsmast_channels)
+            setup_items << { path: communities_path(channel_type: 'newsmast'), id: 'communities-link', header: 'Newsmast channels', icon: 'newsmast.svg', text: 'Newsmast channels', active_if: newsmast_active }
+          end
         end
-        setup_items += [
-          { path: communities_path(channel_type: 'channel_feed'), id: 'channels-link', header: is_channel_instance? ? 'Channels' : 'Local Channels', icon: 'channel-feed.svg', text: is_channel_instance? ? 'Channels' : 'Local Channels', active_if: channel_feed_active },
-          { path: collections_path, id: 'collections-link', header: 'Collections', icon: 'collection.svg', text: 'Collections', active_if: 'collections' }
-        ]
+        if master_admin? || current_user.can?(:manage_channel_feeds)
+          setup_items << { path: communities_path(channel_type: 'channel_feed'), id: 'communities-link', header: is_channel_instance? ? 'Channels' : 'Local Channels', icon: 'channel-feed.svg', text: is_channel_instance? ? 'Channels' : 'Local Channels', active_if: channel_feed_active }
+        end
+        if master_admin? || current_user.can?(:manage_collections)
+          setup_items << { path: collections_path, id: 'collections-link', header: 'Collections', icon: 'collection.svg', text: 'Collections', active_if: 'collections' }
+        end
       end
 
       if is_channel_dashboard? && is_channel_instance?
-        setup_items << { path: community_filter_keywords_path(community_id: nil), id: 'global_filters-link', header: 'Global filters', icon: 'globe-white.svg', text: 'Global filters', active_if: 'community_filter_keywords' }
+        if master_admin? || current_user.can?(:manage_global_filters)
+          setup_items << { path: community_filter_keywords_path(community_id: nil), id: 'global_filters-link', header: 'Global filters', icon: 'globe-white.svg', text: 'Global filters', active_if: 'community_filter_keywords' }
+        end
       end
 
       # --- Community management ---
-      management_items = [
-        { path: master_admins_path, id: 'master_admins-link', header: 'Master admin', icon: 'administrator.svg', text: 'Master admins', active_if: 'master_admins' },
-        { path: "#{ENV['MASTODON_INSTANCE_URL']}/admin/dashboard", id: 'administration-link', header: 'Administration', icon: 'administrator.svg', text: 'Administration', target: '_blank' },
-        { path: "#{ENV['MASTODON_INSTANCE_URL']}/admin/reports", id: 'moderation-link', header: 'Moderation', icon: 'users.svg', text: 'Moderation', target: '_blank' },
-        { path: accounts_path, id: 'accounts-link', header: 'Users', icon: 'users.svg', text: 'Users', active_if: 'accounts' },
-      ]
+      management_items = []
+      if master_admin? || current_user.can?(:manage_roles)
+        management_items << { path: roles_path, id: 'roles-link', header: 'Roles & Permissions', icon: 'administrator.svg', text: 'Roles', active_if: 'roles' }
+      end
+      if master_admin? || current_user.can?(:manage_master_admins)
+        management_items << { path: master_admins_path, id: 'master_admins-link', header: 'Dashboard admin', icon: 'administrator.svg', text: 'Dashboard admins', active_if: 'master_admins' }
+      end
+      if master_admin?
+        management_items << { path: "#{ENV['MASTODON_INSTANCE_URL']}/admin/dashboard", id: 'administration-link', header: 'Administration', icon: 'administrator.svg', text: 'Administration', target: '_blank' }
+        management_items << { path: "#{ENV['MASTODON_INSTANCE_URL']}/admin/reports", id: 'moderation-link', header: 'Moderation', icon: 'users.svg', text: 'Moderation', target: '_blank' }
+      end
+      if master_admin? || current_user.can?(:view_accounts)
+        management_items << { path: accounts_path, id: 'accounts-link', header: 'Users', icon: 'users.svg', text: 'Users', active_if: 'accounts' }
+      end
 
       # --- Community operation ---
-      operation_items = [
-        { path: '/installation', id: 'installation-link', header: 'Installation', icon: 'screwdriver-wrench.svg', text: 'Installation', active_if: 'installation' },
-        { path: api_keys_path, id: 'api-keys-link', header: 'API Key', icon: 'key.svg', text: 'API Key', active_if: 'api_keys' },
-        { path: "/sidekiq", id: 'sidekiq-link', header: 'Sidekiq', icon: 'smile-1.svg', text: 'Sidekiq', target: '_blank' },
-        { path: resources_path, id: 'resources-link', header: 'Resources', icon: 'folder.svg', text: 'Resources', active_if: 'resources' }
-      ]
+      operation_items = []
+      if master_admin? || current_user.can?(:manage_installation)
+        operation_items << { path: '/installation', id: 'installation-link', header: 'Installation', icon: 'screwdriver-wrench.svg', text: 'Installation', active_if: 'installation' }
+      end
+      if master_admin? || current_user.can?(:manage_api_keys)
+        operation_items << { path: api_keys_path, id: 'api-keys-link', header: 'API Key', icon: 'key.svg', text: 'API Key', active_if: 'api_keys' }
+      end
+      if master_admin? || current_user.can?(:manage_sidekiq)
+        operation_items << { path: "/sidekiq", id: 'sidekiq-link', header: 'Sidekiq', icon: 'smile-1.svg', text: 'Sidekiq', target: '_blank' }
+      end
+      if master_admin? || current_user.can?(:manage_resources)
+        operation_items << { path: resources_path, id: 'resources-link', header: 'Resources', icon: 'folder.svg', text: 'Resources', active_if: 'resources' }
+      end
 
-      if is_channel_instance?
-        operation_items << { path: wait_lists_path, id: 'invitation-codes-link', header: 'Invitation codes', icon: 'invitation_code.svg', text: 'Invitation codes', active_if: 'wait_lists' }
-        operation_items << { path: app_versions_path(app_name: AppVersion.app_names['patchwork']), id: 'app-versions-link', header: 'App versions', icon: 'sliders.svg', text: 'App versions', active_if: 'app_versions' }
+      if is_channel_instance? && is_channel_instance?
+        if master_admin? || current_user.can?(:manage_invitation_codes)
+          operation_items << { path: wait_lists_path, id: 'invitation-codes-link', header: 'Invitation codes', icon: 'invitation_code.svg', text: 'Invitation codes', active_if: 'wait_lists' }
+        end
+        if master_admin? || current_user.can?(:manage_app_versions)
+          operation_items << { path: app_versions_path(app_name: AppVersion.app_names['patchwork']), id: 'app-versions-link', header: 'App versions', icon: 'sliders.svg', text: 'App versions', active_if: 'app_versions' }
+        end
       end
 
       # --- Build grouped structure ---
-      groups = [
-        { title: 'Community set-up', items: setup_items },
-        { title: 'Community management', items: management_items },
-        { title: 'Community operation', items: operation_items }
-      ]
+      groups = []
+      groups << { title: 'Community set-up', items: setup_items } if setup_items.any?
+      groups << { title: 'Community management', items: management_items } if management_items.any?
+      groups << { title: 'Community operation', items: operation_items } if operation_items.any?
 
       # Help & Support as standalone item (no group)
       groups << {
@@ -125,6 +154,10 @@ module ApplicationHelper
 
   def master_admin?
     current_user && policy(current_user).master_admin?
+  end
+
+  def dashboard_admin?
+    current_user && current_user.dashboard_admin?
   end
 
   def organisation_admin?

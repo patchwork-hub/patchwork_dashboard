@@ -1,4 +1,4 @@
-class ServerSettingPolicy < ApplicationPolicy
+class KeywordFilterPolicy < ApplicationPolicy
   def index?
     master_admin? || can?(:manage_server_settings)
   end
@@ -11,16 +11,20 @@ class ServerSettingPolicy < ApplicationPolicy
     master_admin? || can?(:manage_server_settings)
   end
 
+  def new?
+    create?
+  end
+
+  def edit?
+    update?
+  end
+
   def update?
     master_admin? || can?(:manage_server_settings)
   end
 
-  def group_data?
-    index?
-  end
-
-  def branding?
-    update?
+  def destroy?
+    master_admin? || can?(:manage_server_settings)
   end
 
   class Scope < ApplicationPolicy::Scope

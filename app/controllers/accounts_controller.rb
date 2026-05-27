@@ -1,4 +1,5 @@
 class AccountsController < BaseController
+  before_action :authorize_account!
   before_action :find_account, only: [:follow, :unfollow]
   before_action :find_admin, only: [:follow, :unfollow]
 
@@ -45,5 +46,11 @@ class AccountsController < BaseController
 
   def records_filter
     @filter = Filter::Account.new(params)
+  end
+
+  private
+
+  def authorize_account!
+    authorize :account, "#{action_name}?"
   end
 end
