@@ -172,7 +172,7 @@ class UserRole < ApplicationRecord
   scope :assignable, -> { where.not(id: EVERYONE_ROLE_ID).order(position: :asc) }
 
   def self.assignable_by(user)
-    return assignable if user&.role&.name == 'MasterAdmin'
+    return assignable if user&.master_admin?
     assignable.select { |role| user&.role&.overrides?(role) }
   end
 

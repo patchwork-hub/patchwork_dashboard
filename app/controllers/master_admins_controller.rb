@@ -4,8 +4,9 @@ class MasterAdminsController < ApplicationController
   before_action :set_master_admin, only: [:edit, :update]
 
   def index
+    allowed_role_ids = UserRole.all.select { |r| r.can?(:administrator) || r.can?(:view_newsmast_dashboard) }.map(&:id)
     @master_admins = User.joins(:account)
-                          .where(role_id: UserRole.assignable.select(:id))
+                          .where(role_id: allowed_role_ids)
                           .where.not(account_id: CommunityAdmin.where.not(account_id: nil).select(:account_id))
                           .select(
                             'users.id AS user_id,
