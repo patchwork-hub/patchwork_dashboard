@@ -77,7 +77,7 @@ class Form::MasterAdmin
 
   def validate_role_assignment
     return unless current_user.present?
-    return if current_user.role&.name == 'MasterAdmin'
+    return if current_user.master_admin?
 
     assigned_role = if role.to_s.match?(/\A\d+\z/)
                       UserRole.find_by(id: role)

@@ -38,7 +38,7 @@ class ApplicationPolicy
   private
 
   def master_admin?
-    user&.role&.name.in?(%w[MasterAdmin])
+    user&.master_admin?
   end
 
   def dashboard_admin?
