@@ -84,7 +84,7 @@ class User < ApplicationRecord
   end
 
   def master_admin?
-    role.name == 'MasterAdmin'
+    role.can?(:administrator)
   end
 
   def dashboard_admin?

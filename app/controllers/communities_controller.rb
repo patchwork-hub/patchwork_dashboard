@@ -405,7 +405,7 @@ class CommunitiesController < BaseController
 
   # Authorization and verification
   def authorize_channel_type!(channel_type)
-    return if current_user.role&.name == 'MasterAdmin'
+    return if current_user.master_admin?
 
     permission_map = {
       'channel'      => :manage_channels,
