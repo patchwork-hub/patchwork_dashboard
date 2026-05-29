@@ -47,6 +47,9 @@ class CommunityAdmin < ApplicationRecord
 
   validates :account_id, uniqueness: { scope: :patchwork_community_id, message: "is already an admin for this community" }, allow_blank: true
 
+  validates :password, presence: true, length: { minimum: 8 }, on: :create
+  validates :password, length: { minimum: 8 }, allow_blank: true, on: :update
+
   def self.ransackable_attributes(auth_object = nil)
     ["account_id", "created_at", "id", "id_value", "patchwork_community_id", "updated_at"]
   end
