@@ -24,9 +24,9 @@
 
           .row
             .col-md-6
-              = f.input :password, label: "Password", input_html: { class: "form-control" }
+              = f.input :password, label: "Password", hint: "Minimum 8 characters", hint_html: { class: "text-muted" }, input_html: { class: "form-control" }
             .col-md-6
-              = f.input :password_confirmation, label: "Confirm password", input_html: { class: "form-control" }
+              = f.input :password_confirmation, label: "Confirm password", hint: "Must match password", hint_html: { class: "text-muted" }, input_html: { class: "form-control" }
 
           .row
             .col-md-12
