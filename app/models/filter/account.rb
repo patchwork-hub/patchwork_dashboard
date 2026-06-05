@@ -6,11 +6,15 @@ class Filter::Account < Filter::Common
   end
 
   def paginated_scope
-    public_scope.offset((@current_page - 1) * @per_page).limit(@per_page)
+    build_search.result.offset((@current_page - 1) * @per_page).limit(@per_page)
   end
 
   def build_search
     base_scope.ransack(@q)
+  end
+
+  def get
+    paginated_scope
   end
 
   private
