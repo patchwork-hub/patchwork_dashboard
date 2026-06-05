@@ -20,7 +20,7 @@ class AccountsController < BaseController
   end
 
   def export
-    accounts = records_filter.public_scope
+    accounts = records_filter.build_search
 
     domain = ENV['LOCAL_DOMAIN'] || 'example.com'
 
