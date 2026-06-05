@@ -1,5 +1,4 @@
 class AccountsController < BaseController
-  before_action :authorize_account!
   before_action :find_account, only: [:follow, :unfollow]
   before_action :find_admin, only: [:follow, :unfollow]
 
