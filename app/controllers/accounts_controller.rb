@@ -57,7 +57,8 @@ class AccountsController < BaseController
   def filter_params
     {
       q: account_search_query,
-      page: params[:page]
+      page: params[:page],
+      role_id_nil: true
     }
   end
 
