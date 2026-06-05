@@ -58,7 +58,8 @@ class AccountsController < BaseController
   def filter_params
     {
       q: account_search_query,
-      page: params[:page]
+      page: params[:page],
+      role_id_nil: true
     }
   end
 
@@ -67,11 +68,5 @@ class AccountsController < BaseController
     return {} unless q_param.respond_to?(:permit)
 
     q_param.permit(:username_cont).to_h
-  end
-
-  private
-
-  def authorize_account!
-    authorize :account, "#{action_name}?"
   end
 end
