@@ -37,9 +37,12 @@ class Filter::Account < Filter::Common
     return scope if @query.blank?
 
     if exact_username_domain_query?
+      local_domain = ENV['LOCAL_DOMAIN'].presence || Rails.configuration.x.local_domain
+
       scope.where(
-        "LOWER(accounts.username) = :username AND LOWER(COALESCE(accounts.domain, '')) = :domain",
+        "LOWER(accounts.username) = :username AND LOWER(COALESCE(accounts.domain, :local_domain)) = :domain",
         username: exact_username,
+        local_domain: local_domain.to_s.downcase,
         domain: exact_domain
       )
     else
