@@ -2,6 +2,11 @@ class AccountsController < BaseController
   before_action :find_account, only: [:follow, :unfollow]
   before_action :find_admin, only: [:follow, :unfollow]
 
+  def index
+    super
+    @account_search_query = account_search_query
+  end
+
   def show; end
 
   def follow
@@ -15,13 +20,15 @@ class AccountsController < BaseController
   end
 
   def export
-    accounts = records_filter.public_scope.joins(:user).includes(:user).where.not(users: { confirmed_at: nil })
+    accounts = records_filter.build_search
 
-    domain = ENV['LOCAL_DOMAIN'] || 'example.com'
+    local_domain = ENV['LOCAL_DOMAIN'] || 'example.com'
 
     csv_data = CSV.generate(headers: true) do |csv|
       csv << ['Username', 'Display name', 'Email address', 'Time and date account opened']
       accounts.find_each do |account|
+        domain = account.domain.presence || local_domain
+
         csv << [
           "@#{account.username}@#{domain}",
           account.display_name,
@@ -44,6 +51,20 @@ class AccountsController < BaseController
   end
 
   def records_filter
-    @filter = Filter::Account.new(params)
+    @filter = Filter::Account.new(filter_params)
+  end
+
+  private
+
+  def filter_params
+    {
+      q: account_search_query,
+      page: params[:page],
+      role_id_nil: true
+    }
+  end
+
+  def account_search_query
+    params[:q].to_s.presence
   end
 end

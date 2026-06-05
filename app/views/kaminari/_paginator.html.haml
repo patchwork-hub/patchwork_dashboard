@@ -1,29 +1,32 @@
 - @custom_paginator = custom_paginator
-%nav{"aria-label" => "Page navigation example"}
-  %ul.pagination.pagination-sm.m-0.float-right
-    - if @custom_paginator.prev_page
-      %li.page-item
-        = link_to raw('&laquo;'), url_for_page(@custom_paginator.prev_page), class: 'page-link'
-    - else
-      %li.page-item.disabled
-        %span.page-link «
+- if @custom_paginator.total_pages > 1
+  %nav{"aria-label" => "Page navigation example"}
+    %ul.pagination.pagination-sm.m-0.float-right
+      - if @custom_paginator.prev_page
+        %li.page-item
+          = link_to raw('&laquo;'), url_for_page(@custom_paginator.prev_page), class: 'page-link'
+      - else
+        %li.page-item.disabled
+          %span.page-link «
 
-    - if @custom_paginator.current_page >= 5
-      %li.page-item.disabled
-        %span.page-link ...
+      - if @custom_paginator.current_page >= 5
+        %li.page-item.disabled
+          %span.page-link ...
 
-    - @custom_paginator.each_page.take(5).each do |page|
-      - if page
-        %li{class: "page-item #{'active' if page.current?}"}
-          = link_to page.number, url_for_page(page.number), class: 'page-link'
+      - visible_pages = @custom_paginator.each_page.take(5)
+      - visible_pages.each do |page|
+        - if page
+          %li{class: "page-item #{'active' if page.current?}"}
+            = link_to page.number, url_for_page(page.number), class: 'page-link'
 
-    - if @custom_paginator.total_pages >= @custom_paginator.current_page
-      %li.page-item.disabled
-        %span.page-link ...
+      - last_visible_page = visible_pages.last&.number || 0
+      - if @custom_paginator.total_pages > last_visible_page
+        %li.page-item.disabled
+          %span.page-link ...
 
-    - if @custom_paginator.next_page
-      %li.page-item
-        = link_to raw('&raquo;'), url_for_page(@custom_paginator.next_page), class: 'page-link'
-    - else
-      %li.page-item.disabled
-        %span.page-link »
+      - if @custom_paginator.next_page
+        %li.page-item
+          = link_to raw('&raquo;'), url_for_page(@custom_paginator.next_page), class: 'page-link'
+      - else
+        %li.page-item.disabled
+          %span.page-link »
