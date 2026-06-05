@@ -186,7 +186,7 @@ jobs:
           wait-for-service-stability: false
   
   Deploy-csidnet-dashboard-staging:
-    name: Deploy to findout-dashboard-staging
+    name: Deploy to csidnet-dashboard-staging
     needs: Build
     runs-on: ubuntu-latest
     steps:
