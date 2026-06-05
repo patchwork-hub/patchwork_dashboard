@@ -22,11 +22,13 @@ class AccountsController < BaseController
   def export
     accounts = records_filter.build_search
 
-    domain = ENV['LOCAL_DOMAIN'] || 'example.com'
+    local_domain = ENV['LOCAL_DOMAIN'] || 'example.com'
 
     csv_data = CSV.generate(headers: true) do |csv|
       csv << ['Username', 'Display name', 'Email address', 'Time and date account opened']
       accounts.find_each do |account|
+        domain = account.domain.presence || local_domain
+
         csv << [
           "@#{account.username}@#{domain}",
           account.display_name,
