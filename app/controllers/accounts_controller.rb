@@ -2,6 +2,11 @@ class AccountsController < BaseController
   before_action :find_account, only: [:follow, :unfollow]
   before_action :find_admin, only: [:follow, :unfollow]
 
+  def index
+    super
+    @account_search_query = account_search_query
+  end
+
   def show; end
 
   def follow
@@ -44,6 +49,22 @@ class AccountsController < BaseController
   end
 
   def records_filter
-    @filter = Filter::Account.new(params)
+    @filter = Filter::Account.new(filter_params)
+  end
+
+  private
+
+  def filter_params
+    {
+      q: account_search_query,
+      page: params[:page]
+    }
+  end
+
+  def account_search_query
+    q_param = params[:q]
+    return {} unless q_param.respond_to?(:permit)
+
+    q_param.permit(:username_cont).to_h
   end
 end
