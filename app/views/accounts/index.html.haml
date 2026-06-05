@@ -9,9 +9,9 @@
           %a{ href: export_accounts_path(format: :csv, q: @account_search_query), class: "btn btn-danger", title: "export CSV", style: "display: inline-flex; align-items: center; color: #ffffff !important; margin-right: 8px;" }
             = image_tag("icons/download.svg", style: "width: 1em; height: 1em; margin-right: 5px;")
             Export CSV
-          = search_form_for @search do |f|
+          = form_tag(accounts_path, method: :get) do
             .input-group.input-group-sm{style: "width: 150px;"}
-              = f.search_field :username_cont, class: "form-control float-right", placeholder: "Search"
+              = text_field_tag :q, params[:q], class: "form-control float-right", placeholder: "Search"
               .input-group-append
                 %button.btn.btn-default{type: "submit"}
                   %i.fas.fa-search

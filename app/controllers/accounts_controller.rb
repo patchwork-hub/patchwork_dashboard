@@ -20,7 +20,7 @@ class AccountsController < BaseController
   end
 
   def export
-    accounts = records_filter.public_scope.joins(:user).includes(:user).where.not(users: { confirmed_at: nil })
+    accounts = records_filter.public_scope
 
     domain = ENV['LOCAL_DOMAIN'] || 'example.com'
 
@@ -63,9 +63,6 @@ class AccountsController < BaseController
   end
 
   def account_search_query
-    q_param = params[:q]
-    return {} unless q_param.respond_to?(:permit)
-
-    q_param.permit(:username_cont).to_h
+    params[:q].to_s.presence
   end
 end
