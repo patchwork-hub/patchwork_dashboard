@@ -21,7 +21,9 @@ class Filter::Common
   end
 
   def prev_page
-    @current_page > 1 ? @current_page - 1 : 1
+    return nil if @total_pages <= 1
+
+    @current_page > 1 ? @current_page - 1 : nil
   end
 
   def next_page
@@ -45,6 +47,8 @@ class Filter::Common
   end
 
   def each_page
+    return [] if @total_pages <= 1
+
     (display_page..@total_pages).map do |page|
       ::OpenStruct.new(number: page, current?: page == current_page)
     end
