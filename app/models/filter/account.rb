@@ -1,8 +1,8 @@
 class Filter::Account < Filter::Common
 
   def initialize(params)
-    super(params)
     @role_id_nil = params[:role_id_nil]
+    super(params)
   end
 
   def paginated_scope
