@@ -1,5 +1,4 @@
 class AccountsController < BaseController
-  before_action :authorize_account!
   before_action :find_account, only: [:follow, :unfollow]
   before_action :find_admin, only: [:follow, :unfollow]
 
@@ -21,7 +20,7 @@ class AccountsController < BaseController
   end
 
   def export
-    accounts = records_filter.public_scope.joins(:user).includes(:user).where.not(users: { confirmed_at: nil })
+    accounts = records_filter.build_search
 
     domain = ENV['LOCAL_DOMAIN'] || 'example.com'
 
@@ -58,20 +57,12 @@ class AccountsController < BaseController
   def filter_params
     {
       q: account_search_query,
-      page: params[:page]
+      page: params[:page],
+      role_id_nil: true
     }
   end
 
   def account_search_query
-    q_param = params[:q]
-    return {} unless q_param.respond_to?(:permit)
-
-    q_param.permit(:username_cont).to_h
-  end
-
-  private
-
-  def authorize_account!
-    authorize :account, "#{action_name}?"
+    params[:q].to_s.presence
   end
 end
