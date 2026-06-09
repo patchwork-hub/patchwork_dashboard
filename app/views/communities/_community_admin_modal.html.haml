@@ -64,6 +64,7 @@
             = f.label :password, class: "form-label"
             = f.password_field :password, class: "form-control", id: "community_admin_password"
             %i.fa-solid.fa-eye-slash.red{onclick: 'togglePassword(this)'}
+            %small.form-text.text-muted Minimum 8 characters
 
           - if current_user.master_admin?
             .modal-footer
