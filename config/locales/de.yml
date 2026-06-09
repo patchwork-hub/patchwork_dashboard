@@ -239,6 +239,16 @@ de:
               blank: "Einstellungen dürfen nicht leer sein."
               invalid: "Einstellungsformat ist ungültig."
 
+        user_role:
+          attributes:
+            permissions_as_keys:
+              own_role: "Sie können die Berechtigungen Ihrer eigenen Rolle nicht ändern."
+              elevated: "Sie können keine Berechtigungen vergeben, die Sie selbst nicht besitzen."
+              dangerous: "Sie können die Berechtigungen der Rolle 'Jeder' nicht ändern."
+            position:
+              own_role: "Sie können die Position Ihrer eigenen Rolle nicht ändern."
+              elevated: "Sie können keine Position festlegen, die höher ist als die Ihrer eigenen Rolle."
+
   # Time and date formats
   time:
     formats:

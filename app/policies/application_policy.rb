@@ -38,7 +38,11 @@ class ApplicationPolicy
   private
 
   def master_admin?
-    user&.role&.name.in?(%w[MasterAdmin])
+    user&.master_admin?
+  end
+
+  def dashboard_admin?
+    user&.role&.name.in?(%w[DashboardAdmin])
   end
 
   def organisation_admin?
@@ -51,6 +55,14 @@ class ApplicationPolicy
 
   def newsmast_admin?
     user&.role&.name.in?(%w[NewsmastAdmin])
+  end
+
+  def role
+    user&.role || UserRole.nobody
+  end
+
+  def can?(*privileges)
+    role.can?(*privileges)
   end
 
   class Scope

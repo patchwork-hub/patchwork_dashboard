@@ -3,7 +3,7 @@
     .card
       .card-header
         %h3.card-title
-          = "#{action_name.capitalize} master admin"
+          = "#{action_name.capitalize} dashboard admin"
       .card-body.w-250
         = simple_form_for @master_admin, url: (@master_admin.id ? master_admin_path(@master_admin.id) : master_admins_path), method: (@master_admin.id ? :patch : :post), local: true do |f|
           .row
@@ -16,13 +16,17 @@
             .col-md-6
               = f.input :email, label: "Email", input_html: { class: "form-control" }
             .col-md-6
-              =  f.input :role, label: "Role", input_html: { class: "form-control", value: "MasterAdmin", disabled: true }
+              - target_role = @master_admin.role ? (UserRole.find_by(id: @master_admin.role) || UserRole.find_by(name: @master_admin.role)) : nil
+              - is_master_admin = target_role&.can?(:administrator)
+              = f.input :role, label: "Role", as: :select, collection: UserRole.assignable_by(current_user).collect { |r| [r.name, r.id] }, include_blank: false, input_html: { class: "form-control", disabled: is_master_admin }
+              - if is_master_admin
+                = f.hidden_field :role, value: @master_admin.role
 
           .row
             .col-md-6
-              = f.input :password, label: "Password", input_html: { class: "form-control" }
+              = f.input :password, label: "Password", hint: "Minimum 8 characters", hint_html: { class: "text-muted" }, input_html: { class: "form-control" }
             .col-md-6
-              = f.input :password_confirmation, label: "Confirm password", input_html: { class: "form-control" }
+              = f.input :password_confirmation, label: "Confirm password", hint: "Must match password", hint_html: { class: "text-muted" }, input_html: { class: "form-control" }
 
           .row
             .col-md-12
@@ -30,5 +34,5 @@
 
           .row
             .col-md-12.d-flex.justify-content-center
-              = f.submit (@master_admin.id ? 'Update master admin' : 'Create master admin'), class: 'btn btn-primary mx-2 btn-custom'
+              = f.submit (@master_admin.id ? 'Update dashboard admin' : 'Create dashboard admin'), class: 'btn btn-primary mx-2 btn-custom'
               = link_to 'Cancel', master_admins_path, class: 'btn btn-secondary mx-2 btn-custom'

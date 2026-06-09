@@ -58,16 +58,21 @@ class ApplicationController < ActionController::Base
     else
       flash[:error] = "You are not authorized to perform this action."
 
-      if current_user.organisation_admin?
-        redirect_back_or_to(communities_path(channel_type: 'channel'))
-      elsif current_user.user_admin?
-        redirect_back_or_to(communities_path(channel_type: 'channel_feed'))
-      elsif current_user.hub_admin?
-        redirect_back_or_to(communities_path(channel_type: 'hub'))
-      elsif current_user.newsmast_admin?
-        redirect_back_or_to(communities_path(channel_type: 'newsmast'))
+      # Find the first accessible local sidebar page to avoid redirect loops
+      safe_path = begin
+        menu_items = view_context.sidebar_menu_items.flat_map { |group| group[:items] }
+        first_local = menu_items.find { |item| item[:path].to_s.start_with?('/') && item[:target] != '_blank' && item[:path] != request.path }
+        first_local&.dig(:path)
+      rescue => e
+        Rails.logger.error "Error resolving safe redirect path: #{e.message}"
+        nil
+      end
+
+      if safe_path
+        redirect_to safe_path
       else
-        redirect_back_or_to(root_path)
+        sign_out(current_user)
+        redirect_to new_user_session_path
       end
     end
   end

@@ -239,6 +239,16 @@ en:
             account_id:
               taken: "Account is already registered on wait list"
 
+        user_role:
+          attributes:
+            permissions_as_keys:
+              own_role: "You cannot change your own role's permissions."
+              elevated: "You cannot grant permissions that you do not have."
+              dangerous: "You cannot change the permissions of the everyone role."
+            position:
+              own_role: "You cannot change your own role's position."
+              elevated: "You cannot set a position higher than your own role's position."
+
   # Time and date formats
   time:
     formats:

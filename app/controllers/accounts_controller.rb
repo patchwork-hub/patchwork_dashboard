@@ -1,4 +1,5 @@
 class AccountsController < BaseController
+  before_action :authorize_account!
   before_action :find_account, only: [:follow, :unfollow]
   before_action :find_admin, only: [:follow, :unfollow]
 
@@ -66,5 +67,11 @@ class AccountsController < BaseController
 
   def account_search_query
     params[:q].to_s.presence
+  end
+
+  private
+
+  def authorize_account!
+    authorize :account, "#{action_name}?"
   end
 end

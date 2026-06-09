@@ -1,4 +1,5 @@
 class CustomEmojisController < ApplicationController
+  before_action :authorize_custom_emojis!
   before_action :set_custom_emoji, only: [:edit, :update, :destroy]
   
   def index
@@ -106,4 +107,7 @@ class CustomEmojisController < ApplicationController
     @custom_emoji = CustomEmoji.find(params[:id])
   end
 
+  def authorize_custom_emojis!
+    authorize :custom_emoji, "#{action_name}?"
+  end
 end

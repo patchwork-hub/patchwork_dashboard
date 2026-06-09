@@ -1,4 +1,4 @@
-class KeywordFiltersPolicy < ApplicationPolicy
+class KeywordFilterGroupPolicy < ApplicationPolicy
   def index?
     master_admin? || can?(:manage_server_settings)
   end
@@ -24,6 +24,18 @@ class KeywordFiltersPolicy < ApplicationPolicy
   end
 
   def destroy?
+    master_admin? || can?(:manage_server_settings)
+  end
+
+  def update_is_active?
+    master_admin? || can?(:manage_server_settings)
+  end
+
+  def download_csv?
+    master_admin? || can?(:manage_server_settings)
+  end
+
+  def download_csv_by_server_setting?
     master_admin? || can?(:manage_server_settings)
   end
 
