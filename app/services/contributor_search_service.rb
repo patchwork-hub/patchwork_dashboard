@@ -3,6 +3,10 @@ class ContributorSearchService
   include ActionView::Helpers::AssetTagHelper
   include ApplicationHelper
 
+  SEARCH_REQUEST_TIMEOUT_SECONDS = 3
+  SAVED_ACCOUNT_LOOKUP_ATTEMPTS = 3
+  SAVED_ACCOUNT_LOOKUP_SLEEP_SECONDS = 1
+
   def initialize(query, options = {})
     @query = query
     @api_base_url = options[:url]
@@ -27,18 +31,25 @@ class ContributorSearchService
       },
       headers: {
         'Authorization' => "Bearer #{@token}"
-      }
+      },
+      timeout: SEARCH_REQUEST_TIMEOUT_SECONDS
     )
+  rescue HTTParty::Error, Net::OpenTimeout, Net::ReadTimeout, Timeout::Error, SocketError
+    nil
   end
 
   def find_saved_accounts_with_retry(accounts)
     return [] unless accounts.present?
 
-    saved_accounts = []
-    while saved_accounts.empty?
+    saved_accounts = Account.none
+    SAVED_ACCOUNT_LOOKUP_ATTEMPTS.times do |attempt|
       saved_accounts = Account.where(username: accounts.map { |account| account['username'] })
-      sleep(2) if saved_accounts.empty?
+      break if saved_accounts.exists?
+
+      sleep(SAVED_ACCOUNT_LOOKUP_SLEEP_SECONDS) if attempt < SAVED_ACCOUNT_LOOKUP_ATTEMPTS - 1
     end
+
+    return [] unless saved_accounts.exists?
 
     saved_accounts.map do |account|
 

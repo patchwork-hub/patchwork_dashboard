@@ -9,7 +9,9 @@ module Api
       before_action :set_setting, only: [:destroy]
 
       def index
-        @setting = Setting.find_by(account: @account, app_name: @app_name)
+        @setting = with_timing('settings.index.find_by') do
+          Setting.find_by(account: @account, app_name: @app_name)
+        end
 
         if @setting
           render_success(@setting)
@@ -54,15 +56,20 @@ module Api
       end
 
       def authenticate_and_set_account
+        auth_started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
         if request.headers['Authorization'].present? && params[:instance_domain].present?
-          validate_mastodon_account
-          @account = current_remote_account
+          with_timing('settings.index.validate_mastodon_account') { validate_mastodon_account }
+          @account = with_timing('settings.index.current_remote_account') { current_remote_account }
         else
-          authenticate_user_from_header
-          @account = current_account
+          with_timing('settings.index.authenticate_user_from_header') { authenticate_user_from_header }
+          @account = with_timing('settings.index.current_account') { current_account }
         end
       rescue AuthenticationError
         render_unauthorized('api.setting.errors.authentication_failed')
+      ensure
+        elapsed_ms = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - auth_started_at) * 1000).round(1)
+        Rails.logger.info("[settings#index] authenticate_and_set_account=#{elapsed_ms}ms")
       end
 
       def validate_or_set_app_name
@@ -99,6 +106,14 @@ module Api
             }
           }
         }.compact
+      end
+
+      def with_timing(label)
+        started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        result = yield
+        elapsed_ms = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - started_at) * 1000).round(1)
+        Rails.logger.info("[settings#index] #{label}=#{elapsed_ms}ms")
+        result
       end
     end
   end

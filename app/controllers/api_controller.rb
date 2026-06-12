@@ -1,6 +1,8 @@
 class ApiController < ApplicationController
   respond_to :json
 
+  TOKEN_INFO_TIMEOUT_SECONDS = 3
+
   # Include internationalization support for API controllers
   include LocaleDetection
   # Include standardized API response helpers with I18n support
@@ -116,9 +118,13 @@ class ApiController < ApplicationController
         else
           'http://localhost:3001/oauth/token/info'
         end
-      response = HTTParty.get(url, headers: { 'Authorization' => "Bearer #{token}" })
+      response = HTTParty.get(
+        url,
+        headers: { 'Authorization' => "Bearer #{token}" },
+        timeout: TOKEN_INFO_TIMEOUT_SECONDS
+      )
       JSON.parse(response.body)
-    rescue HTTParty::Error => e
+    rescue HTTParty::Error, Net::OpenTimeout, Net::ReadTimeout, Timeout::Error, SocketError, JSON::ParserError => e
       Rails.logger.error "Error fetching user info: #{e.message}"
       nil
     end
