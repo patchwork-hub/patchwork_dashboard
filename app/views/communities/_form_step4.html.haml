@@ -63,7 +63,8 @@
                       = render_custom_emojis(account.display_name)
                       - domain = account&.domain.present? ? "https://#{account.domain}" : ENV.fetch('MASTODON_INSTANCE_URL', nil)
                       %br
-                      %a{ href: "#{account.url}", target: "_blank" }= "@#{account.username}@#{account.domain || 'channel.org'}"
+                      - local_domain = URI.parse(ENV.fetch('MASTODON_INSTANCE_URL', '')).host rescue nil
+                      %a{ href: "#{account.url}", target: "_blank" }= "@#{account.username}@#{account.domain || local_domain}"
                     %td{style: "width: 60px;"}
                       = form_with url: unmute_contributor_community_path, method: :post, remote: true, authenticity_token: true do |form|
                         = form.hidden_field :account_id, value: account.id
