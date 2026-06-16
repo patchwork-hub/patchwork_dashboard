@@ -167,7 +167,8 @@
                           = render_custom_emojis(record.display_name)
                           - domain = record&.domain.present? ? "https://#{record.domain}" : ENV.fetch('MASTODON_INSTANCE_URL', nil)
                           %br
-                          %a{ href: "#{record.url}", target: "_blank" }= "@#{record.username}@#{record.domain || 'channel.org'}"
+                          - local_domain = URI.parse(ENV.fetch('MASTODON_INSTANCE_URL', '')).host rescue nil
+                          %a{ href: "#{record.url}", target: "_blank" }= "@#{record.username}@#{record.domain || local_domain}"
                         %td{style: "width: 60px;"}
                           %button.btn.btn-sm.btn-outline-dark{ id: "follow_btn_#{record.id}", onclick: "unfollowContributor('#{record.id}', '#{@community.id}'); setTimeout(function() { location.reload(); }, 1000);" } Unfollow
             .pagination.pagination-sm.m-0.float-right

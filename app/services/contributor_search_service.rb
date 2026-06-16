@@ -46,7 +46,7 @@ class ContributorSearchService
         'id' => account.id.to_s,
         'username' => account.username,
         'display_name' => render_custom_emojis(account.display_name),
-        'domain' => account.domain,
+        'domain' => account.domain || URI.parse(ENV.fetch('MASTODON_INSTANCE_URL', '')).host,
         'note' => account.note,
         'avatar_url' => account.avatar_url,
         'profile_url' => account.url,
