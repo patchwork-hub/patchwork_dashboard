@@ -23,6 +23,9 @@ jobs:
   Build:
     name: Build and Push 
     runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.build-image.outputs.image }}
+      image_brazil: ${{ steps.build-image.outputs.image_brazil }}
 
     steps:
       - name: Checkout
@@ -80,6 +83,8 @@ jobs:
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY_BRAZIL/$ECR_REPOSITORY_BRAZIL:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY_BRAZIL/$ECR_REPOSITORY_BRAZIL:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          echo "image_brazil=$ECR_REGISTRY_BRAZIL/$ECR_REPOSITORY_BRAZIL:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
     
       
@@ -123,8 +128,7 @@ jobs:
         with:
           task-definition: ${{ env.DEFINITION }}
           container-name: ${{ secrets.DASHBOARD_STAGING_CONTAINER_NAME }}
-          # image: ${{ steps.build-image.outputs.image }}
-          image:  ${{ secrets.DASHBOARD_STAGING_IMAGE }}
+          image: ${{ needs.Build.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
@@ -174,8 +178,7 @@ jobs:
         with:
           task-definition: ${{ env.FINDOUT_DEFINITION }}
           container-name: ${{ secrets.FINDOUT_DASHBOARD_STAGING_CONTAINER_NAME }}
-          # image: ${{ steps.build-image.outputs.image }}
-          image:  ${{ secrets.FINDOUT_DASHBOARD_STAGING_IMAGE }}
+          image: ${{ needs.Build.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
@@ -225,8 +228,7 @@ jobs:
         with:
           task-definition: ${{ env.CSIDNET_DASHBOARD_STAGING_DEFINITION }}
           container-name: ${{ secrets.CSIDNET_DASHBOARD_STAGING_CONTAINER_NAME }}
-          # image: ${{ steps.build-image.outputs.image }}
-          image:  ${{ secrets.CSIDNET_DASHBOARD_STAGING_IMAGE }}
+          image: ${{ needs.Build.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
@@ -278,10 +280,10 @@ jobs:
   #         container-name: ${{ secrets.BRAZIL_DASHBOARD_STAGING_CONTAINER_NAME }}
   #         image: ${{ secrets.BRAZIL_DASHBOARD_STAGING_IMAGE }}
 
-      # - name: Deploy Amazon ECS task definition
-      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-      #   with:
-      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
-      #     service: ${{ secrets.BRAZIL_DASHBOARD_STAGING_SERVICE_NAME }}
-      #     cluster: ${{ secrets.BRAZIL_STAGING_CLUSTER_STAGING }}
-      #     wait-for-service-stability: false
+  #     - name: Deploy Amazon ECS task definition
+  #       uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+  #       with:
+  #         task-definition: ${{ steps.task-def.outputs.task-definition }}
+  #         service: ${{ secrets.BRAZIL_DASHBOARD_STAGING_SERVICE_NAME }}
+  #         cluster: ${{ secrets.BRAZIL_STAGING_CLUSTER_STAGING }}
+  #         wait-for-service-stability: false
