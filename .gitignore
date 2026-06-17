@@ -35,3 +35,7 @@
 
 .env
 .ruby-version
+
+# k6 test results and secrets
+/k6/results/*.json
+/k6/.env
