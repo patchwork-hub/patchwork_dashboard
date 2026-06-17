@@ -16,6 +16,11 @@ on:
 
 env:
   DEFINITION:   .task/internal-dashboard.json
+  FINDOUT_DEFINITION: .task/internal-findout.json
+  NEWSMAST_DEFINITION: .task/internal-newsmast.json
+  PATCHWORK_DEMO_DEFINITION: .task/internal-patchwork-demo.json
+  MOME_DEFINITION: .task/internal-mome.json
+  BRISTOLCABLE_DEFINITION: .task/internal-bristolcable.json
 
 jobs:
   Build:
@@ -92,53 +97,238 @@ jobs:
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY_2/$ECR_REPOSITORY_2:$IMAGE_TAG
           docker push $ECR_REGISTRY_2/$ECR_REPOSITORY_2:$IMAGE_TAG
 
-  # Deploy-patchwork-dashboard:
-  #   name: Deploy to patchwork-dashboard
-  #   needs: Build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
+  Deploy-patchwork-dashboard:
+    name: Deploy to patchwork-dashboard
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  #     - name: Configure AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@v1
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: ${{ secrets.AWS_REGION }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-  #     - name: Login to Amazon ECR
-  #       id: login-ecr
-  #       uses: aws-actions/amazon-ecr-login@v1
-  #       with:
-  #         mask-password: 'true'
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
 
-  #     # This is a separate action that sets up buildx runner
-  #     - name: Setup Docker Buildx
-  #       uses: docker/setup-buildx-action@v2
+      # This is a separate action that sets up buildx runner
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-  #     # Use Github action cache
-  #     - name: Cache Docker layers
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: /tmp/.buildx-cache
-  #         key: ${{ runner.os }}-buildx-${{ github.sha }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-buildx-
+      # Use Github action cache
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
       
-  #     - name: Fill in the new image ID in the Amazon ECS task definition
-  #       id: task-def
-  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
-  #       with:
-  #         task-definition: ${{ env.DEFINITION }}
-  #         container-name: ${{ secrets.DASHBOARD_CONTAINER_NAME }}
-  #         # image: ${{ steps.build-image.outputs.image }}
-  #         image:  ${{ secrets.DASHBOARD_IMAGE }}
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.DEFINITION }}
+          container-name: ${{ secrets.DASHBOARD_CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.PATCHWORK_DASHBOARD_REPOSITORY }}:${{ vars.IMAGE_PROD_TAG }}
 
-  #     - name: Deploy Amazon ECS task definition
-  #       uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-  #       with:
-  #         task-definition: ${{ steps.task-def.outputs.task-definition }}
-  #         service: ${{ secrets.DASHBOARD_SERVICE_NAME }}
-  #         cluster: ${{ secrets.DASHBOARD_CLUSTER }}
-  #         wait-for-service-stability: false
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ secrets.DASHBOARD_SERVICE_NAME }}
+          cluster: ${{ secrets.DASHBOARD_CLUSTER }}
+          wait-for-service-stability: false
+
+  Deploy-newsmast-dashboard:
+    name: Deploy to newsmast-dashboard
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.NEWSMAST_DEFINITION }}
+          container-name: ${{ secrets.NEWSMAST_CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.PATCHWORK_DASHBOARD_REPOSITORY }}:${{ vars.IMAGE_PROD_TAG }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ secrets.NEWSMAST_SERVICE_NAME }}
+          cluster: ${{ secrets.NEWSMAST_CLUSTER }}
+          wait-for-service-stability: false
+
+  Deploy-patchwork-demo-dashboard:
+    name: Deploy to patchwork-demo-dashboard
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.PATCHWORK_DEMO_DEFINITION }}
+          container-name: ${{ secrets.PATCHWORK_DEMO_CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.PATCHWORK_DASHBOARD_REPOSITORY }}:${{ vars.IMAGE_PROD_TAG }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ secrets.PATCHWORK_DEMO_SERVICE_NAME }}
+          cluster: ${{ secrets.PATCHWORK_DEMO_CLUSTER }}
+          wait-for-service-stability: false
+
+  Deploy-mome-dashboard:
+    name: Deploy to mome-dashboard
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.MOME_DEFINITION }}
+          container-name: ${{ secrets.MOME_CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.PATCHWORK_DASHBOARD_REPOSITORY }}:${{ vars.IMAGE_PROD_TAG }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ secrets.MOME_SERVICE_NAME }}
+          cluster: ${{ secrets.MOME_CLUSTER }}
+          wait-for-service-stability: false
+
+  Deploy-bristolcable-dashboard:
+    name: Deploy to bristolcable-dashboard
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.BRISTOLCABLE_DEFINITION }}
+          container-name: ${{ secrets.BRISTOLCABLE_CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.PATCHWORK_DASHBOARD_REPOSITORY }}:${{ vars.IMAGE_PROD_TAG }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ secrets.BRISTOLCABLE_SERVICE_NAME }}
+          cluster: ${{ secrets.BRISTOLCABLE_CLUSTER }}
+          wait-for-service-stability: false
+
+  Deploy-findout-dashboard:
+    name: Deploy to findout-dashboard
+    needs: Build
+    if: ${{ github.event_name == 'push' || inputs.deploy_findout }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials (Findout)
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_2 }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_2 }}
+          aws-region: ${{ secrets.AWS_REGION_2 }}
+
+      - name: Login to Amazon ECR (Findout)
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.FINDOUT_DEFINITION }}
+          container-name: ${{ secrets.FINDOUT_DASHBOARD_CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.FINDOUT_DASHBOARD_REPOSITORY }}:${{ vars.IMAGE_PROD_TAG }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ secrets.FINDOUT_DASHBOARD_SERVICE_NAME }}
+          cluster: ${{ secrets.FINDOUT_DASHBOARD_CLUSTER }}
+          wait-for-service-stability: false

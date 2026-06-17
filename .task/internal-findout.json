@@ -1,0 +1,54 @@
+{
+    "family": "findout-dashboard",
+    "containerDefinitions": [
+        {
+            "name": "findout-dashboard",
+            "image": "846532307786.dkr.ecr.ca-west-1.amazonaws.com/findout-dashboard:production",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp",
+                    "name": "findout-dashboard-3000-tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [
+                {
+                    "value": "arn:aws:s3:::fom-private-env-data/findout-prod-dashboard.env",
+                    "type": "s3"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/findout-dashboard",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "ca-west-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "systemControls": []
+        }
+    ],
+    "taskRoleArn": "arn:aws:iam::846532307786:role/findout-media-ecs-task-role-prod",
+    "executionRoleArn": "arn:aws:iam::846532307786:role/findout-media-ecs-exec-role-prod",
+    "networkMode": "awsvpc",
+    "volumes": [],
+    "placementConstraints": [],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "2048",
+    "memory": "4096",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "enableFaultInjection": false
+}
