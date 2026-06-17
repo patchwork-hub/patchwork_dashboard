@@ -29,7 +29,7 @@ class CorrectHashtagDataJob < ApplicationJob
         
         if tag_id.nil?
           clean_hashtag = record.community_tag.delete_prefix('#')
-          tag = Tag.find_or_create_by!(name: clean_hashtag)
+          tag = Tag.find_or_create_case_insensitive!(name: clean_hashtag)
           tag_id = tag.id
           Rails.logger.info "  -> Created missing Tag record for: #{clean_hashtag}"
         end
