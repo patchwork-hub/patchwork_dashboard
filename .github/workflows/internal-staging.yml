@@ -128,7 +128,7 @@ jobs:
         with:
           task-definition: ${{ env.DEFINITION }}
           container-name: ${{ secrets.DASHBOARD_STAGING_CONTAINER_NAME }}
-          image: ${{ needs.Build.outputs.image }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.STAGING_REPOSITORY }}:${{ vars.IMAGE_STAGING_TAG }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
@@ -178,7 +178,7 @@ jobs:
         with:
           task-definition: ${{ env.FINDOUT_DEFINITION }}
           container-name: ${{ secrets.FINDOUT_DASHBOARD_STAGING_CONTAINER_NAME }}
-          image: ${{ needs.Build.outputs.image }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.STAGING_REPOSITORY }}:${{ vars.IMAGE_STAGING_TAG }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
@@ -228,7 +228,7 @@ jobs:
         with:
           task-definition: ${{ env.CSIDNET_DASHBOARD_STAGING_DEFINITION }}
           container-name: ${{ secrets.CSIDNET_DASHBOARD_STAGING_CONTAINER_NAME }}
-          image: ${{ needs.Build.outputs.image }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.STAGING_REPOSITORY }}:${{ vars.IMAGE_STAGING_TAG }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
