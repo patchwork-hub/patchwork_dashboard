@@ -16,8 +16,10 @@ class SearchHashtagService
     return nil unless response.success?
 
     hashtag = response['hashtags']&.first
-    
-    hashtag = Tag.create(name: @query, display_name: @query) if hashtag.nil? || hashtag['name'] != @query
+
+    if hashtag.nil? || hashtag['name'].to_s.casecmp(@query.to_s) != 0
+      hashtag = Tag.find_or_create_case_insensitive!(name: @query, display_name: @query)
+    end
 
     hashtag ? { name: hashtag['name'] } : nil
   end
