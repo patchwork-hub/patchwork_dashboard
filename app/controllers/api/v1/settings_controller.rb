@@ -97,7 +97,7 @@ module Api
             theme: {
               type: setting_params.present? ? setting_params[:settings][:theme][:type] || nil : nil
             },
-            user_timeline: [1, 2, 3]
+            user_timeline: [2, 1, 3]
           }
         }.compact
       end
