@@ -96,7 +96,8 @@ module Api
           settings: {
             theme: {
               type: setting_params.present? ? setting_params[:settings][:theme][:type] || nil : nil
-            }
+            },
+            user_timeline: params[:app_name].to_s == 'bristol_cable' ? [1, 2, 3] : [2, 1, 3]
           }
         }.compact
       end
