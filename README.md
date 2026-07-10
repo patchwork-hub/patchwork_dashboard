@@ -62,6 +62,8 @@ bundle exec rspec
 
 Use `bundle exec rubocop` for style checks. The application also exposes Sidekiq Web at `/sidekiq` to authenticated users with `manage_sidekiq` permission or master-admin status.
 
+Internal teams should follow the [branching and merging workflow](docs/development/branching-and-merging.md).
+
 ## Maintainer checklist
 
 - Update `.env.sample` and the [configuration reference](docs/configuration/environment-variables.md) together.
