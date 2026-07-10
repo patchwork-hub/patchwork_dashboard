@@ -33,7 +33,8 @@ See [environment variables](docs/configuration/environment-variables.md) for the
 
 | Capability | Configuration owner | Runtime owner | Dependency mechanism | Without the other component |
 | --- | --- | --- | --- | --- |
-| Channels, collections, starter packs | Dashboard | Newsmast Mastodon | shared database and Newsmast custom API | Definitions can be managed, but gem-backed feeds are unavailable |
+| Channels and collections | Dashboard | Newsmast Mastodon | shared database and Newsmast custom API | Definitions can be managed, but gem-backed feeds are unavailable |
+| Starter packs | Dashboard | Dashboard | repository JSON and Dashboard API | No Newsmast Mastodon dependency |
 | Channel reblogging | Dashboard | Newsmast Mastodon | shared database, Mastodon REST API, Redis/Sidekiq | Boost-bot configuration remains data only |
 | Global and community filters | Dashboard | Newsmast Mastodon | shared database and Redis/Sidekiq | Filter definitions can be managed; gem enforcement is unavailable |
 | Search, long-post, and local-only settings | Dashboard | Newsmast Mastodon/Mastodon | shared database and Patchwork Hub API | Dashboard records remain; host behavior depends on its installed components |

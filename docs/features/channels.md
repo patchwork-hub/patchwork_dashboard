@@ -4,7 +4,7 @@
 
 ## Capabilities
 
-The Dashboard manages channels (internally communities), including names, slugs, branding, descriptions, visibility, content type, rules, links, additional information, collections, and starter-pack associations. Operators can configure hashtags and post hashtags, contributors, muted contributors, post types, channel administrators, and active boost bots.
+The Dashboard manages channels (internally communities), including names, slugs, branding, descriptions, visibility, content type, rules, links, additional information, and collections. Starter packs are served separately from repository JSON by the channel API. Operators can configure hashtags and post hashtags, contributors, muted contributors, post types, channel administrators, and active boost bots.
 
 The browser workflow is a multi-step channel creation/edit flow at `/channels`: define basic channel data, content type and hashtags, contributors, administrators, and presentation details. Existing channels can be recovered or upgraded through their member routes. The exact available fields vary by channel type and enabled feature flags.
 
@@ -22,7 +22,7 @@ See [Dashboard API](../api/dashboard-api.md) for the Dashboard credential model.
 
 ## Cross-component behavior
 
-The Dashboard owns the shared records. Newsmast Mastodon reads supported channel and community-admin data to expose custom feeds, starter packs, and channel-related automation. Dashboard services use the Mastodon REST API for operations such as account search, follows, hashtags, posting, and reblogging. A missing or incompatible gem leaves configuration data in place but does not provide gem-backed feed/automation behavior.
+The Dashboard owns the shared records. Newsmast Mastodon reads supported channel and community-admin data to expose custom feeds and channel-related automation. Dashboard services use the Mastodon REST API for operations such as account search, follows, hashtags, posting, and reblogging. A missing or incompatible gem leaves configuration data in place but does not provide gem-backed feed/automation behavior.
 
 Relay support is an external-service integration and depends on valid Mastodon credentials plus the relay endpoint. It is not a replacement for the gem's own relay configuration.
 

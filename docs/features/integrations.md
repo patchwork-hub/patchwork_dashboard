@@ -20,4 +20,4 @@ Relay operations call an external relay/Mastodon endpoint using Mastodon credent
 
 ## Explicit exclusions
 
-Ghost, WordPress, Firebase, CiviCRM, drafts, reactions, automatic ALT text, and gem-specific content-webhook integrations are owned by Newsmast Mastodon or other host components, not by this Dashboard configuration surface. See the Newsmast Mastodon public [integrations guide](https://github.com/TheNewsmastFoundation/documentation/blob/main/newsmast-mastodon/features_integrations.md).
+Ghost, WordPress, Firebase, CiviCRM, drafts, reactions, automatic ALT text, and gem-specific content-webhook integrations are owned by Newsmast Mastodon or other host components, not by this Dashboard configuration surface. See the [Newsmast Mastodon documentation](https://github.com/TheNewsmastFoundation/documentation/tree/main/newsmast-mastodon).
