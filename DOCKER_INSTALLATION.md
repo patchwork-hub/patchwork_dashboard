@@ -28,7 +28,7 @@ The default Compose file pulls `newsmast/patchwork_dashboard:latest`; it does no
 docker compose pull
 docker compose up -d
 docker compose ps
-docker compose logs -f app
+docker compose logs app
 docker compose exec app bundle exec rails db:migrate
 docker compose exec app bundle exec rails db:seed
 ```
@@ -40,9 +40,9 @@ The container health check calls `http://localhost:${EXTERNAL_PORT}/health_check
 ## Operations
 
 ```bash
-docker compose logs -f app
 docker compose exec app bundle exec rails runner "puts ActiveRecord::Base.connection.execute('SELECT 1').first"
 curl http://localhost:3001/health_check
+docker compose logs -f app
 ```
 
 To update the image:

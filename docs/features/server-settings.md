@@ -20,4 +20,4 @@ The Dashboard provides server-setting and branding administration routes. It own
 
 - [Configuration](../configuration/environment-variables.md)
 - [Architecture](../architecture/mastodon-integration.md)
-- Newsmast Mastodon public [posts guide](../../../documentation/newsmast-mastodon/features_posts.md)
+- Newsmast Mastodon public [posts guide](https://github.com/TheNewsmastFoundation/documentation/blob/main/newsmast-mastodon/features_posts.md)

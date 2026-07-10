@@ -16,8 +16,8 @@ The Dashboard contains Bluesky bridge services/jobs and can provision local-doma
 
 ## Relays and storage
 
-Relay operations call an external relay/Mastodon endpoint using Mastodon credentials. S3-compatible storage is conditional on `S3_ENABLED=true` and requires endpoint, bucket, region, and access credentials. Test each provider in the target deployment.
+Relay operations call an external relay/Mastodon endpoint using Mastodon credentials. In production, S3-compatible storage is configured through the S3 endpoint, bucket, region, and access credentials (it is not gated by `S3_ENABLED`). Test each provider in the target deployment.
 
 ## Explicit exclusions
 
-Ghost, WordPress, Firebase, CiviCRM, drafts, reactions, automatic ALT text, and gem-specific content-webhook integrations are owned by Newsmast Mastodon or other host components, not by this Dashboard configuration surface. See the Newsmast Mastodon public [integrations guide](../../../documentation/newsmast-mastodon/features_integrations.md).
+Ghost, WordPress, Firebase, CiviCRM, drafts, reactions, automatic ALT text, and gem-specific content-webhook integrations are owned by Newsmast Mastodon or other host components, not by this Dashboard configuration surface. See the Newsmast Mastodon public [integrations guide](https://github.com/TheNewsmastFoundation/documentation/blob/main/newsmast-mastodon/features_integrations.md).

@@ -10,7 +10,7 @@ Master-administrator management is restricted by the application authorization p
 
 ## API keys and API access
 
-Dashboard API-key records are managed under the browser `api-key` resource. Most versioned API routes require `x-api-key` and `x-api-secret`; selected endpoints use bearer-token or client-credential logic. Review [Dashboard API](../api/dashboard-api.md) before exposing a client integration.
+Dashboard API-key records are managed under the browser `api-key` resource. In the current versioned API surface, `x-api-key`/`x-api-secret` is enforced only for Accounts, API-key rotation, and Statuses. Community-administrator routes use bearer authentication (or `STATIC_TOKEN` bearer auth for boost-bot endpoints), and many discovery/supporting routes are unauthenticated or use optional client-credential checks. Review [Dashboard API](../api/dashboard-api.md) before exposing a client integration.
 
 ## Account and permission boundaries
 
@@ -20,4 +20,4 @@ The Dashboard can coordinate account, relationship, profile, status, and relay o
 
 - [Configuration](../configuration/environment-variables.md)
 - [Troubleshooting](../troubleshooting/common-issues.md)
-- Newsmast Mastodon public [accounts guide](../../../documentation/newsmast-mastodon/features_accounts.md)
+- Newsmast Mastodon public [accounts guide](https://github.com/TheNewsmastFoundation/documentation/blob/main/newsmast-mastodon/features_accounts.md)

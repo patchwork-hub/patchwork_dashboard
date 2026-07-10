@@ -17,7 +17,7 @@ See [environment variables](docs/configuration/environment-variables.md) for the
 
 ## Installation and updates
 
-- Source setup: `bin/setup`, then copy `.env.sample` to `.env`, run `bundle exec rails db:migrate db:seed`, and start Rails.
+- Source setup: copy `.env.sample` to `.env` and configure values, run `bin/setup`, then start Rails.
 - Docker setup: follow [DOCKER_INSTALLATION.md](DOCKER_INSTALLATION.md).
 - Update source deployments with the repository's normal dependency and migration workflow. Update Docker deployments with `docker compose pull`, `docker compose up -d`, then `docker compose exec app bundle exec rails db:migrate` when migrations are supplied.
 
@@ -53,11 +53,11 @@ See [environment variables](docs/configuration/environment-variables.md) for the
 ## Development
 
 ```bash
-bin/setup
 cp .env.sample .env
-bundle exec rails db:migrate db:seed
+$EDITOR .env
+bin/setup
 bundle exec rails server
-bundle exec rspec
+bundle exec rails test
 ```
 
 Use `bundle exec rubocop` for style checks. The application also exposes Sidekiq Web at `/sidekiq` to authenticated users with `manage_sidekiq` permission or master-admin status.

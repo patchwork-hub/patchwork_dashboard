@@ -20,4 +20,4 @@ Configure `PATCHWORK_HUB_URL`, Redis, and a Dashboard API key/secret before expe
 
 - [Server settings](server-settings.md)
 - [Troubleshooting filters](../troubleshooting/common-issues.md)
-- Newsmast Mastodon public [content-filters guide](../../../documentation/newsmast-mastodon/features_content_filters.md)
+- Newsmast Mastodon public [content-filters guide](https://github.com/TheNewsmastFoundation/documentation/blob/main/newsmast-mastodon/features_content_filters.md)

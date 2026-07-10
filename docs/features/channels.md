@@ -30,4 +30,4 @@ Relay support is an external-service integration and depends on valid Mastodon c
 
 - [Content filters](content-filters.md)
 - [Integrations](integrations.md)
-- Newsmast Mastodon public [custom feeds guide](../../../documentation/newsmast-mastodon/features_custom_feeds.md)
+- Newsmast Mastodon public [custom feeds guide](https://github.com/TheNewsmastFoundation/documentation/blob/main/newsmast-mastodon/features_custom_feeds.md)
