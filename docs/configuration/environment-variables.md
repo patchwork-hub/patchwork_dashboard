@@ -4,7 +4,7 @@ Copy `.env.sample` to `.env` and replace every placeholder before production use
 
 | Group | Variables | Required | Consumer and dependency |
 | --- | --- | --- | --- |
-| Rails runtime | `RAILS_ENV` (default `development`), `RAILS_SERVE_STATIC_FILES` (default `true`), `PORT` (default `3001`), `EXTERNAL_PORT` (default `3001`) | Yes | Rails and Docker Compose. `EXTERNAL_PORT` is the host port mapping. |
+| Rails runtime | `RAILS_ENV` (default `development`), `RAILS_SERVE_STATIC_FILES` (default `true`), `PORT` (sample value `3001`), `EXTERNAL_PORT` (sample value `3001`) | Yes | Rails and Docker Compose. `PORT` and `EXTERNAL_PORT` are deployment values; `.env.sample` sets both to `3001` for the documented Compose path. |
 | Mastodon identity | `LOCAL_DOMAIN`, `MASTODON_INSTANCE_URL` | Yes | Serializers and outbound Mastodon REST API services. Use an HTTPS URL for `MASTODON_INSTANCE_URL`. |
 | Mastodon application | `MASTODON_APPLICATION_TOKEN`, `MASTODON_CLIENT_ID`, `MASTODON_CLIENT_SECRET` | Yes | Dashboard calls to the host Mastodon API. Treat all as secrets. The documented scopes are `read`, `profile`, `write`, `follow`, and `push`. |
 | Shared PostgreSQL | `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS`, `DB_PORT` (default `5432`), `DB_POOL` (default `24`) | Yes | Active Record connection to the Mastodon database. This is a **shared database** dependency. |

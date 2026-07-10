@@ -8,7 +8,7 @@ The Dashboard uses `MASTODON_INSTANCE_URL` and configured application credential
 
 ## Patchwork Hub
 
-Patchwork Hub is optional. When configured, the Dashboard sends changed child server settings and obtains Hub-managed keyword-filter groups. Configure its URL and Dashboard API-key credentials; failures affect Hub synchronization, not the ability to retain local Dashboard records.
+Patchwork Hub is optional. When configured, the Dashboard sends changed child server settings and obtains Hub-managed keyword-filter groups. Configure its URL and Dashboard API-key credentials. During Hub failures or unparseable Hub responses, keyword-filter refresh can treat the response as empty and remove existing non-custom groups for the affected setting; verify and restore expected groups after outages.
 
 ## Bluesky, Bridgy Fed, and DNS
 

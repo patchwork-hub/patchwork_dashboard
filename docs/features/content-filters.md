@@ -14,7 +14,7 @@ This is configuration synchronization, not a claim that the Dashboard itself fil
 
 ## Configuration and failure behavior
 
-Configure `PATCHWORK_HUB_URL`, Redis, and a Dashboard API key/secret before expecting Hub-managed groups to refresh. The filter job returns without action when the referenced `ServerSetting` does not exist. Failed Hub requests are logged by the service/job path; inspect application and Sidekiq logs without exposing credentials.
+Configure `PATCHWORK_HUB_URL`, Redis, and a Dashboard API key/secret before expecting Hub-managed groups to refresh. The filter job returns without action when the referenced `ServerSetting` does not exist. Failed Hub requests are logged by the service/job path; inspect application and Sidekiq logs without exposing credentials. If Hub requests fail or return unparseable data, the current implementation can treat that as an empty Hub result and remove existing non-custom groups for the affected setting; verify group state after incidents.
 
 ## Related documentation
 
