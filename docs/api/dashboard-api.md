@@ -1,0 +1,24 @@
+# Dashboard API
+
+This reference covers the versioned JSON routes defined in `config/routes/api_v1.rb`. Browser administration routes are intentionally excluded. Treat API keys and bearer tokens as secrets and use TLS.
+
+## Authentication and errors
+
+`ApiController` enforces `x-api-key` and `x-api-secret` by default, but in the current route set this key check is retained only by Accounts, API-key rotation, and Statuses. Missing credentials return `401` with `{ "error": "API Key is missing" }`; invalid credentials return `401` with `{ "error": "API Key is invalid" }` on those key-protected routes. Most other API controllers explicitly skip the key check and use `Authorization: Bearer <token>`, optional `client-id`/`client-secret`, endpoint-specific tokens, or controller-defined public access as noted below. Responses are JSON; pagination-capable endpoints include metadata where their controller provides it.
+
+| Resource | Methods and paths | Auth | Purpose |
+| --- | --- | --- | --- |
+| Accounts | `GET/POST /api/v1/accounts`, `GET/PATCH/PUT/DELETE /api/v1/accounts/:id` | API key/secret | Account resource operations. |
+| API key | `PATCH /api/v1/api_key/rotate` | API key/secret | Rotate a Dashboard API key. |
+| Channels | `GET /api/v1/channels` collection routes for recommendation, search, detail, feeds, bridge information, and named channel sets; `PATCH /api/v1/channels/change_boost_bot_profile`; `GET /api/v1/channels/:id/starter_packs_detail` | No global API-key check; selected discovery actions use bearer/remote-account header auth, and remaining actions are controller-defined/no required auth | Channel discovery, detail, bridge, feed, and boost-bot operations. |
+| Channel management | `GET/POST /api/v1/channels`; `GET/PATCH/PUT /api/v1/channels/:id`; nested `community_filter_keywords`, `community_hashtags`, and `community_post_types` | No API-key check; nested `community_*` controllers authenticate with bearer tokens, and channel CRUD actions remain controller-defined | Manage channel resources and related data. |
+| Collections and content types | `GET /api/v1/collections`, `GET /api/v1/collections/{fetch_channels,newsmast_collections,channel_feed_collections}`, `GET/POST /api/v1/content_types` | Collections: no API-key check and no replacement auth required; content types: bearer auth | Read collections and manage content types. |
+| Community administrators | `GET/PATCH/PUT /api/v1/community_admins/:id`, `GET /api/v1/community_admins`, `GET /api/v1/community_admins/boost_bot_accounts`, `POST /api/v1/community_admins/modify_account_status` | No API-key check; non-boost-bot actions require `Authorization: Bearer <token>`, and `boost_bot_accounts` requires a bearer token matching `STATIC_TOKEN` | Admin and boost-bot state. |
+| Settings and server settings | `GET /api/v1/settings`, `DELETE /api/v1/settings/:id`, `POST /api/v1/settings/upsert`, `GET /api/v1/server_settings/menu_visibility` | No API-key check; settings endpoints require bearer/remote-account auth, and `menu_visibility` accepts unauthenticated requests while validating `client-id`/`client-secret` only when provided | User settings and server-setting visibility. |
+| Users and locales | `GET/POST /api/v1/users/bluesky_bridge`, locale collection/member routes | Bearer token | Bluesky preference and localized settings. |
+| Search and statuses | `POST /api/v1/search`, `POST /api/v1/statuses/boost_post` | Search: no API-key check and no required client credentials (supplied `client-id`/`client-secret` are validated); statuses: API key/secret | Search and status boost actions. |
+| Wait list | `POST /api/v1/wait_list`, `POST /api/v1/wait_list/request_invitation_code`, `GET /api/v1/wait_list/validate_code` | Controller-specific | Invitation and code validation. |
+| Joined memberships | `GET/POST/DELETE /api/v1/joined_communities` and `/joined_working_groups`; `POST /api/v1/joined_communities/set_primary` and `/api/v1/joined_working_groups/set_primary` | No API-key check; both controllers use `check_authorization_header` and require bearer authentication (`Authorization: Bearer <token>`) | Membership and primary-membership actions. |
+| Supporting data | `GET /api/v1/domains/verify`, `/general_icons`, `/social_icons`, `GET /api/v1/app_versions/check_version`, `GET /api/v1/categories/bristol_latest_print`, `GET /api/v1/custom_menus/display` | Domain verification: bearer auth; icon/category/custom-menu endpoints: no auth; version check: no API-key check and optional `client-id`/`client-secret` validation when supplied | Verification, display assets, compatibility, category data, and custom-menu visibility. |
+
+Route-specific parameters and response fields are controlled by their current controller/serializer. Consumers should use request tests or controller code for fields not represented by this public contract, rather than depending on browser-route payloads.
