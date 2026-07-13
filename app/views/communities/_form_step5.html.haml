@@ -1,116 +1,407 @@
-#postHashtagModel.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "exampleModalLabel", :role => "dialog", :tabindex => "-1"}
-  .modal-dialog{:role => "document"}
-    .modal-content
-      .modal-header
-        %h5#exampleModalLabel.modal-title Add new channel hashtag
-        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
-          %span{"aria-hidden" => "true"} ×
-      .modal-body
-        %p.text-muted.small Add up to three hashtags which will be automatically added to posts made by users on your server when they post to this channel.
-        = simple_form_for @form_post_hashtag, url: community_post_hashtags_path(@community) do |form|
-          = form.hidden_field :community_id, value: @community.id
-          .row
-            .col
-              .form-group
-                = form.label :hashtags
-                - max_hashtags = 3
-                - remaining_hashtags = max_hashtags - @records.length
-                - if remaining_hashtags > 0
-                  - (1..remaining_hashtags).each do |i|
-                    = form.text_field "hashtag#{max_hashtags - remaining_hashtags + i}", class: 'form-control my-2', value: '#', required: true
-                - else
-                  %p.text-muted.small You have already added the maximum of 3 hashtags.
-          .modal-footer
-            %div.d-flex.justify-content-between
-              .col
-                %button.btn.btn-secondary{"data-dismiss" => "modal", :type => "button"} Cancel
-              .col
-                = form.submit 'Save changes', class: 'btn btn-danger'
+- if @community.channel_feed?
+  .container-fluid
+    .row-md-12.my-4
+      .col
+        = carousel_indicators
 
-#postHashtagEditModel.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "exampleModalLabel", :role => "dialog", :tabindex => "-1"}
-  .modal-dialog{:role => "document"}
-    .modal-content
-      .modal-header
-        %h5#exampleModalLabel.modal-title Edit hashtag
-        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
-          %span{"aria-hidden" => "true"} ×
-      .modal-body
-        %p.text-muted.small Edit the hashtag for this channel.
-        = simple_form_for @form_post_hashtag, url: '#', method: :patch, html: { id: 'edit-post-hashtag-form' } do |form|
-          = form.hidden_field :community_id, value: @community.id
-          = form.hidden_field :id, id: 'post_hashtag_id' # Hidden field for the hashtag ID
-          .row
-            .col
-              .form-group
-                = form.label :hashtag, "Hashtag"
-                = form.text_field :hashtag, class: 'form-control', id: 'post_hashtag_name', required: true
-          .modal-footer
-            %div.d-flex.justify-content-between
-              .col
-                %button.btn.btn-secondary{"data-dismiss" => "modal", :type => "button"} Cancel
-              .col
-                = form.submit 'Save changes', class: 'btn btn-danger'
+    = simple_form_for @community, url: manage_additional_information_community_path, method: :post, html: { id: 'additionalForm' } do |form|
+      .row
+        .col-md-12
+          .card.mb-3
+            .card-header
+              %h3.card-title Step #{fetch_display_step} Additional information
+            .card-body
+              .row
+                .col
+                  %label Access settings
+                  %p.text-muted.small Choose how users can access and join your channel. This determines whether users can freely join, need to request access, or must be invited.
 
-.container-fluid
-  .row-md-12.my-4
-    .col
-      = carousel_indicators
-  .row
-    .col-md-12
-      .card
-        .card-header
-          %h3.card-title Step #{fetch_display_step} Share content
-        .card-body
-          .row.d-flex.justify-content-between
-            .col-md-10
-              %label Hashtags
-              %p.text-muted.small Choose a few hashtags that will be automatically added to posts made by users on your server when they post to this channel. The user can add more hashtags or remove them. This helps organise content on your server and boost its visibility in the wider federated network.
-            .col-md-2-auto.mt-auto.mb-2.mr-2
-              %button.btn.btn-outline-secondary{"data-toggle" => "modal", "data-target" => "#postHashtagModel"} Add new
-          .table-responsive
-            %table.table.mt-3.table-striped
-              %thead
-                %tr
-                  %th{style: "width: 10px"}
-                    %i.far.fa-square.mr-4
-                  %th
-                    %label.text-muted{ style: "font-size: 14px;" } Hashtags
-                  %th{style: "width: 200px"}
-              %tbody
-                - if @records.size == 0
-                  %tr
-                    %td{ colspan: 3, class: "text-center" }
-                      %p.text-muted.small You haven’t added any hashtags to this channel yet
-                      %a.text-danger.small{ href: '#', title: 'Add new channel hashtag', 'data-toggle': 'modal', 'data-target': '#postHashtagModel' }
-                        Click here to add one
+              .form-check
+                .d-flex.align-items-center
+                  %label.form-check-label.switch.mb-0
+                    %input.form-check-input.switch-input#open_access_mode{ type: 'radio', name: 'registration_mode', value: 'open', checked: @community.registration_mode == 'open' }
+                    %span.switch-slider.round
+                      %span.slider-tick
+                        %i.fa-solid.fa-check
+                      %span.slider-cross
+                        %i.fa-solid.fa-xmark
+                  %span.ml-2 Open
+                  %span.ml-2
+                    = render 'shared/tooltip_custom', tooltip_text: 'Anyone can join the channel freely without any approval or invitation needed.', tooltip_position: 'right'
 
-                - @records.each do |record|
-                  %tr
-                    %td
-                      %i.far.fa-square.mr-4
-                    %td{ style: 'width: 90%;' }
-                      %p= record.hashtag
-                    %td
-                      %a{"data-toggle" => "modal", "data-target" => "#postHashtagEditModel", "data-id" => record.id, "data-hashtag" => record.hashtag, "data-community-id" => @community.id, :class => 'edit-link'}
-                        = image_tag("icons/edit-btn.svg", class: "ml-2", width: "16", height: "16")
-                    %td
-                      = link_to community_post_hashtag_path(@community, record), method: :delete, class: 'text-danger', data: { confirm: 'Are you sure?' } do
-                        = image_tag("icons/trash-can.svg", class: "ml-2", width: "16", height: "16")
+              %hr
+                .row.mt-2
+                  .col
+                    .form-check
+                      .d-flex.align-items-center
+                        %label.form-check-label.switch.mb-0
+                          %input.form-check-input.switch-input#request_to_join_mode{ type: 'radio', name: 'registration_mode', value: 'approved', checked: @community.registration_mode == 'approved' }
+                          %span.switch-slider.round
+                            %span.slider-tick
+                              %i.fa-solid.fa-check
+                            %span.slider-cross
+                              %i.fa-solid.fa-xmark
+                        %span.ml-2 Request to Join
+                        %span.ml-2
+                          = render 'shared/tooltip_custom', tooltip_text: 'Users must send a join request and wait for admin approval before they can access the channel.', tooltip_position: 'right'
+              %hr
+                .row.mt-2
+                  .col
+                    .form-check
+                      .d-flex.align-items-center
+                        %label.form-check-label.switch.mb-0
+                          %input.form-check-input.switch-input#invite_only_access_mode{ type: 'radio', name: 'registration_mode', value: 'none', checked: @community.registration_mode.in?(['none', 'invite_only']) }
+                          %span.switch-slider.round
+                            %span.slider-tick
+                              %i.fa-solid.fa-check
+                            %span.slider-cross
+                              %i.fa-solid.fa-xmark
+                        %span.ml-2 Invite Only
+                        %span.ml-2
+                          = render 'shared/tooltip_custom', tooltip_text: 'Only users who receive an invitation from an admin or existing member can join the channel.', tooltip_position: 'right'
 
-          .btn-group
-            %button.btn.btn-default{type: "button"} Action
-            %button.btn.btn-default.dropdown-toggle.dropdown-icon{"data-toggle" => "dropdown", type: "button"}
-              %span.sr-only Toggle Dropdown
-            .dropdown-menu{role: "menu"}
-              %a.dropdown-item{href: "#"} Action
-              %a.dropdown-item{href: "#"} Another action
-              %a.dropdown-item{href: "#"} Something else here
-              .dropdown-divider
-              %a.dropdown-item{href: "#"} Separated link
+      .row
+        .col-md-12
+          .card.mb-3
+            .card-body
+              .row
+                .col
+                  %label Visibility settings
+                  %p.text-muted.small Choose who can find and see this channel.
+
+              .form-check
+                .d-flex.align-items-center
+                  %label.form-check-label.switch.mb-0
+                    %input.form-check-input.switch-input#public_visibility_mode{ type: 'radio', name: 'visibility', value: 'public_access', checked: @community.visibility.blank? || @community.visibility == 'public_access' }
+                    %span.switch-slider.round
+                      %span.slider-tick
+                        %i.fa-solid.fa-check
+                      %span.slider-cross
+                        %i.fa-solid.fa-xmark
+                  %span.ml-2 Public
+                  %span.ml-2
+                    = render 'shared/tooltip_custom', tooltip_text: 'Anyone can search for and find this channel. It will be visible in search results and directories.', tooltip_position: 'right'
+
+              %hr
+                .row.mt-2
+                  .col
+                    .form-check
+                      .d-flex.align-items-center
+                        %label.form-check-label.switch.mb-0
+                          %input.form-check-input.switch-input#private_visibility_mode{ type: 'radio', name: 'visibility', value: 'private_local', checked: @community.visibility == 'private_local' }
+                          %span.switch-slider.round
+                            %span.slider-tick
+                              %i.fa-solid.fa-check
+                            %span.slider-cross
+                              %i.fa-solid.fa-xmark
+                        %span.ml-2 Private
+                        %span.ml-2
+                          = render 'shared/tooltip_custom', tooltip_text: 'Only members on this server can view this channel and its contents.', tooltip_position: 'right'
+
+              %hr
+                .row.mt-2
+                  .col
+                    .form-check
+                      .d-flex.align-items-center
+                        %label.form-check-label.switch.mb-0
+                          %input.form-check-input.switch-input#unlisted_visibility_mode{ type: 'radio', name: 'visibility', value: 'hidden', checked: @community.visibility == 'hidden' }
+                          %span.switch-slider.round
+                            %span.slider-tick
+                              %i.fa-solid.fa-check
+                            %span.slider-cross
+                              %i.fa-solid.fa-xmark
+                        %span.ml-2 Hidden
+                        %span.ml-2
+                          = render 'shared/tooltip_custom', tooltip_text: 'This channel will not appear in search results or directory lists. Only users with the direct link can find it.', tooltip_position: 'right'
+
+      .row
+        .col-md-12
+          .card.mb-3
+            .card-body
+              .row.d-flex.justify-content-between
+                .col-md-9
+                  %label Admin and Moderator Assignment
+                  %p.text-muted.small Search and assign local accounts as group administrators or moderators.
+                .col-md-3.text-right.mt-auto
+                  %button.btn.btn-outline-secondary{ type: "button", "data-toggle" => "modal", "data-target" => "#assignRoleModal" } Search accounts
+
+              .table-responsive
+                %table.table.mt-3.table-striped
+                  %thead
+                    %tr
+                      %th{ style: 'width: 10%;' } Avatar
+                      %th{ style: 'width: 60%;' } Account
+                      %th{ style: 'width: 20%;' } Role
+                      %th{ style: 'width: 10%;' } Action
+                  %tbody
+                    - if @group_role_admins.blank?
+                      %tr
+                        %td.text-center{ colspan: 4 }
+                          %p.text-muted.small No administrators or moderators assigned yet.
+                    - else
+                      - @group_role_admins.each do |admin|
+                        %tr
+                          %td
+                            %img{ alt: "", src: admin.account&.avatar_url || image_path('newsmast-logo.png'), class: "rounded-circle", style: "width: 40px; height: 40px;" }
+                          %td
+                            = admin.account&.display_name.presence || admin.display_name
+                            %br
+                            %span.text-muted.small= "@#{admin.account&.username || admin.username}@channel.org"
+                          %td
+                            %span.badge{ class: (admin.role == 'GroupAdmin' ? 'badge-danger' : 'badge-secondary') }
+                              = admin.role == 'GroupAdmin' ? 'Group Admin' : 'Group Moderator'
+                          %td
+                            %button.btn.btn-sm.btn-outline-danger.remove-role-btn{ type: 'button', data: { account_id: admin.account_id } } Remove
+
       .row.d-flex.justify-content-between
         .col
-          - is_not_custom_channel = !@content_type&.custom_channel?
-          - back_path = is_not_custom_channel ? step3_community_path(id: @community.id) : step4_community_path(id: @community.id)
-          %a.btn.btn-outline-secondary{ href: back_path } Back
+          %a.btn.btn-outline-secondary{ href: step4_community_path(id: @community.id, channel_type: @community.channel_type) } Back
         .col-auto
-          %a.btn.btn-danger{ href: step6_community_path } Continue
+          %button.btn.btn-danger#save-and-preview-btn Save & Preview
+
+  = render "preview_community"
+
+  #assignRoleModal.modal.fade{ role: 'dialog', tabindex: "-1", aria: { labelledby: 'assignRoleModalLabel', hidden: 'true' } }
+    .modal-dialog.custom-modal-width{ role: 'document' }
+      .modal-content
+        .modal-header
+          %h5.modal-title Assign Admin or Moderator
+          %button.close{ type: 'button', 'data-dismiss': 'modal', 'aria-label': 'Close' }
+            = image_tag 'icons/circle-xmark.svg', alt: 'Close', width: 18, height: 18, 'aria-hidden': 'true'
+        .modal-body
+          %p.small Use the search functionality below to find local accounts and assign them as administrators or moderators.
+          .input-group.my-3
+            %div.input-group-prepend
+              %span.input-group-text
+                = image_tag("icons/search.svg", width: "16", height: "16")
+            %input.form-control#local-search-input{ "aria-label": "Search local accounts", placeholder: "Search by name or username", type: "text", data: { communityId: @community.id } }
+          %div#local-search-results.list-group
+            %p.text-muted.small No results yet...
+        .modal-footer
+          %button.btn.btn-secondary{ "data-dismiss": "modal" } Cancel
+
+  :javascript
+    $(document).ready(function() {
+      const searchInput = $('#local-search-input');
+      const resultsContainer = $('#local-search-results');
+      const communityId = searchInput.data('communityid');
+
+      searchInput.on('keydown', function(event) {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+          event.preventDefault();
+          const query = $(this).val();
+          if (query.length === 0) {
+            resultsContainer.html('<p class="text-muted small">No results yet...</p>');
+            return;
+          }
+
+          resultsContainer.html('<p class="text-muted small">Searching...</p>');
+
+          $.getJSON(`/channels/${communityId}/search_local_accounts`, { query: query }, function(accounts) {
+            resultsContainer.empty();
+            if (accounts.length === 0) {
+              resultsContainer.html('<p class="text-muted small">No local accounts found.</p>');
+              return;
+            }
+
+            accounts.forEach(function(account) {
+              let roleButtons = '';
+              if (account.current_role === 'GroupAdmin') {
+                roleButtons = `<span class="badge badge-danger mr-2">Assigned as Group Admin</span>`;
+              } else if (account.current_role === 'GroupModerator') {
+                roleButtons = `<span class="badge badge-secondary mr-2">Assigned as Group Moderator</span>`;
+              } else {
+                roleButtons = `
+                  <button class="btn btn-sm btn-outline-danger assign-btn mr-1" data-account-id="${account.id}" data-role="GroupAdmin">Assign Group Admin</button>
+                  <button class="btn btn-sm btn-outline-secondary assign-btn" data-account-id="${account.id}" data-role="GroupModerator">Assign Group Moderator</button>
+                `;
+              }
+
+              const item = $(`
+                <div class="list-group-item align-items-center d-flex justify-content-between my-1">
+                  <div class="d-flex align-items-center">
+                    <img src="${account.avatar_url}" alt="" class="rounded-circle mr-2" style="width: 40px; height: 40px;">
+                    <div>
+                      <p class="mb-0 font-weight-bold">${account.display_name || account.username}</p>
+                      <small class="text-muted">@${account.username}@channel.org</small>
+                    </div>
+                  </div>
+                  <div>
+                    ${roleButtons}
+                  </div>
+                </div>
+              `);
+              resultsContainer.append(item);
+            });
+          });
+        }
+      });
+
+      resultsContainer.on('click', '.assign-btn', function() {
+        const btn = $(this);
+        const accountId = btn.data('account-id');
+        const role = btn.data('role');
+
+        $.ajax({
+          url: `/channels/${communityId}/assign_role`,
+          method: 'POST',
+          dataType: 'json',
+          headers: {
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+          },
+          data: {
+            account_id: accountId,
+            role: role
+          },
+          success: function() {
+            location.reload();
+          },
+          error: function(xhr) {
+            alert('Failed to assign role: ' + (xhr.responseJSON?.error || 'Unknown error'));
+          }
+        });
+      });
+
+      $('.remove-role-btn').on('click', function() {
+        const btn = $(this);
+        const accountId = btn.data('account-id');
+
+        if (confirm('Are you sure you want to remove this assignment?')) {
+          $.ajax({
+            url: `/channels/${communityId}/remove_assigned_role`,
+            method: 'POST',
+            dataType: 'json',
+            headers: {
+              'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+              account_id: accountId
+            },
+            success: function() {
+              location.reload();
+            },
+            error: function(xhr) {
+              alert('Failed to remove assignment: ' + (xhr.responseJSON?.error || 'Unknown error'));
+            }
+          });
+        }
+      });
+    });
+
+- else
+  #postHashtagModel.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "exampleModalLabel", :role => "dialog", :tabindex => "-1"}
+    .modal-dialog{:role => "document"}
+      .modal-content
+        .modal-header
+          %h5#exampleModalLabel.modal-title Add new channel hashtag
+          %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+            %span{"aria-hidden" => "true"} ×
+        .modal-body
+          %p.text-muted.small Add up to three hashtags which will be automatically added to posts made by users on your server when they post to this channel.
+          = simple_form_for @form_post_hashtag, url: community_post_hashtags_path(@community) do |form|
+            = form.hidden_field :community_id, value: @community.id
+            .row
+              .col
+                .form-group
+                  = form.label :hashtags
+                  - max_hashtags = 3
+                  - remaining_hashtags = max_hashtags - @records.length
+                  - if remaining_hashtags > 0
+                    - (1..remaining_hashtags).each do |i|
+                      = form.text_field "hashtag#{max_hashtags - remaining_hashtags + i}", class: 'form-control my-2', value: '#', required: true
+                  - else
+                    %p.text-muted.small You have already added the maximum of 3 hashtags.
+            .modal-footer
+              %div.d-flex.justify-content-between
+                .col
+                  %button.btn.btn-secondary{"data-dismiss" => "modal", :type => "button"} Cancel
+                .col
+                  = form.submit 'Save changes', class: 'btn btn-danger'
+
+  #postHashtagEditModel.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "exampleModalLabel", :role => "dialog", :tabindex => "-1"}
+    .modal-dialog{:role => "document"}
+      .modal-content
+        .modal-header
+          %h5#exampleModalLabel.modal-title Edit hashtag
+          %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+            %span{"aria-hidden" => "true"} ×
+        .modal-body
+          %p.text-muted.small Edit the hashtag for this channel.
+          = simple_form_for @form_post_hashtag, url: '#', method: :patch, html: { id: 'edit-post-hashtag-form' } do |form|
+            = form.hidden_field :community_id, value: @community.id
+            = form.hidden_field :id, id: 'post_hashtag_id' # Hidden field for the hashtag ID
+            .row
+              .col
+                .form-group
+                  = form.label :hashtag, "Hashtag"
+                  = form.text_field :hashtag, class: 'form-control', id: 'post_hashtag_name', required: true
+            .modal-footer
+              %div.d-flex.justify-content-between
+                .col
+                  %button.btn.btn-secondary{"data-dismiss" => "modal", :type => "button"} Cancel
+                .col
+                  = form.submit 'Save changes', class: 'btn btn-danger'
+
+  .container-fluid
+    .row-md-12.my-4
+      .col
+        = carousel_indicators
+    .row
+      .col-md-12
+        .card
+          .card-header
+            %h3.card-title Step #{fetch_display_step} Share content
+          .card-body
+            .row.d-flex.justify-content-between
+              .col-md-10
+                %label Hashtags
+                %p.text-muted.small Choose a few hashtags that will be automatically added to posts made by users on your server when they post to this channel. The user can add more hashtags or remove them. This helps organise content on your server and boost its visibility in the wider federated network.
+              .col-md-2-auto.mt-auto.mb-2.mr-2
+                %button.btn.btn-outline-secondary{"data-toggle" => "modal", "data-target" => "#postHashtagModel"} Add new
+            .table-responsive
+              %table.table.mt-3.table-striped
+                %thead
+                  %tr
+                    %th{style: "width: 10px"}
+                      %i.far.fa-square.mr-4
+                    %th
+                      %label.text-muted{ style: "font-size: 14px;" } Hashtags
+                    %th{style: "width: 200px"}
+                %tbody
+                  - if @records.size == 0
+                    %tr
+                      %td{ colspan: 3, class: "text-center" }
+                        %p.text-muted.small You haven't added any hashtags to this channel yet
+                        %a.text-danger.small{ href: '#', title: 'Add new channel hashtag', 'data-toggle': 'modal', 'data-target': '#postHashtagModel' }
+                          Click here to add one
+
+                  - @records.each do |record|
+                    %tr
+                      %td
+                        %i.far.fa-square.mr-4
+                      %td{ style: 'width: 90%;' }
+                        %p= record.hashtag
+                      %td
+                        %a{"data-toggle" => "modal", "data-target" => "#postHashtagEditModel", "data-id" => record.id, "data-hashtag" => record.hashtag, "data-community-id" => @community.id, :class => 'edit-link'}
+                          = image_tag("icons/edit-btn.svg", class: "ml-2", width: "16", height: "16")
+                      %td
+                        = link_to community_post_hashtag_path(@community, record), method: :delete, class: 'text-danger', data: { confirm: 'Are you sure?' } do
+                          = image_tag("icons/trash-can.svg", class: "ml-2", width: "16", height: "16")
+
+            .btn-group
+              %button.btn.btn-default{type: "button"} Action
+              %button.btn.btn-default.dropdown-toggle.dropdown-icon{"data-toggle" => "dropdown", type: "button"}
+                %span.sr-only Toggle Dropdown
+              .dropdown-menu{role: "menu"}
+                %a.dropdown-item{href: "#"} Action
+                %a.dropdown-item{href: "#"} Another action
+                %a.dropdown-item{href: "#"} Something else here
+                .dropdown-divider
+                %a.dropdown-item{href: "#"} Separated link
+        .row.d-flex.justify-content-between
+          .col
+            - is_not_custom_channel = !@content_type&.custom_channel?
+            - back_path = is_not_custom_channel ? step3_community_path(id: @community.id) : step4_community_path(id: @community.id)
+            %a.btn.btn-outline-secondary{ href: back_path } Back
+          .col-auto
+            %a.btn.btn-danger{ href: step6_community_path } Continue

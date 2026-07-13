@@ -44,7 +44,7 @@
         - if @community.channel_feed? || @community.newsmast?
           = simple_form_for @community, url: set_visibility_community_path, method: :post, local: true do |form|
             .add-to-server.mt-4
-              = form.hidden_field :visibility, value: 'public_access'
+              = form.hidden_field :visibility, value: @community.visibility || 'public_access'
 
             .modal-footer
               %button.btn.btn-secondary{ "data-dismiss": "modal" } Cancel

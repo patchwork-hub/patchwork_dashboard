@@ -13,7 +13,7 @@
           .row
             .col
               = simple_form_for [@community, @community_post_type], url: community_community_post_type_path(@community), remote: true, html: { id: 'community_post_type_form' } do |f|
-                = hidden_field_tag :continue, "true", id: "continue_field" if @community.channel?
+                = hidden_field_tag :continue, "true", id: "continue_field" if @community.channel? || @community.channel_feed?
                 %label Type of posts
                 %p.text-muted.small Select which types of content are <strong>included</strong> in this channel.
 
@@ -111,8 +111,11 @@
             = paginate @filter_keywords, theme: 'bootstrap4'
       .row.d-flex.justify-content-between
         .col
-          %a.btn.btn-outline-secondary{ href: step3_community_path } Back
-        - if @community.channel_feed? || @community.newsmast?
+          %a.btn.btn-outline-secondary{ href: step3_community_path(channel_type: @community.channel_type) } Back
+        - if @community.channel_feed?
+          .col-auto
+            = button_tag 'Continue', type: 'submit', form: 'community_post_type_form', class: 'btn btn-danger', onclick: "$('#continue_field').val('true');"
+        - elsif @community.newsmast?
           .col-auto
             = button_tag 'Save & Preview', type: 'submit', form: 'community_post_type_form', class: 'btn btn-block btn-danger', data: { toggle: 'modal', target: '#previewCommunityModal' }
         - else
