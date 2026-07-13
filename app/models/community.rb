@@ -68,6 +68,8 @@ class Community < ApplicationRecord
 
   attribute :is_custom_domain, :boolean, default: false
 
+  before_validation :normalize_registration_mode
+
   validates :name, presence: true,
     length: { maximum: NAME_LENGTH_LIMIT, too_long: I18n.t('activerecord.errors.models.community.attributes.name.too_long') },
     uniqueness: { case_sensitive: false, message: I18n.t('activerecord.errors.models.community.attributes.name.taken') }
@@ -209,7 +211,7 @@ class Community < ApplicationRecord
 
   belongs_to :ip_address, optional: true
 
-  validates :registration_mode, inclusion: { in: ['open', 'approved', 'none'] }
+  validates :registration_mode, inclusion: { in: ['open', 'approved', 'none', 'invite_only'] }
 
   validates :position, uniqueness: { scope: :channel_type, message: 'has already been taken for this channel type' }, if: -> { deleted_at.nil? }
 
@@ -237,7 +239,7 @@ class Community < ApplicationRecord
 
   scope :exclude_deleted_channels, -> { where(patchwork_communities: { deleted_at: nil }) }
 
-  enum visibility: { public_access: 0, guest_access: 1, private_local: 2 }
+  enum visibility: { public_access: 0, guest_access: 1, private_local: 2, hidden: 3 }
 
   scope :exclude_array_ids, -> { where.not(id: EXCLUDE_ARRAY_IDS) }
 
@@ -293,7 +295,71 @@ class Community < ApplicationRecord
     CommunityAdmin.where(patchwork_community_id: self.id, is_boost_bot: true).exists?
   end
 
+  def sync_access_settings_to_account_lock!
+    account = local_boost_bot_account
+
+    return unless account&.local?
+
+    # Open channels remain unlocked; restricted modes map to locked accounts.
+    account.update(locked: registration_mode != 'open')
+  end
+
+  def sync_visibility_settings_to_account_flags!
+    account = local_boost_bot_account
+
+    return unless account&.local?
+
+    visibility_flags = case visibility
+                       when 'public_access'
+                         { indexable: true, discoverable: true, hide_collections: false, noindex: false }
+                       when 'private_local'
+                         { indexable: false, discoverable: true, hide_collections: true, noindex: true }
+                       when 'hidden'
+                         { indexable: false, discoverable: false, hide_collections: true, noindex: true }
+                       else
+                         # guest_access and unknown values are intentionally left unchanged.
+                         nil
+                       end
+
+    return if visibility_flags.nil?
+
+    account.update(
+      indexable: visibility_flags[:indexable],
+      discoverable: visibility_flags[:discoverable],
+      hide_collections: visibility_flags[:hide_collections]
+    )
+
+    sync_noindex_setting_for(account.user, visibility_flags[:noindex])
+  end
+
   private
+
+  def local_boost_bot_account
+    community_admins
+      .where(account_status: CommunityAdmin.account_statuses[:active], is_boost_bot: true)
+      .includes(:account)
+      .first
+      &.account
+  end
+
+  def sync_noindex_setting_for(user, noindex)
+    return unless user
+
+    settings_hash = if user.settings.present?
+                      JSON.parse(user.settings)
+                    else
+                      {}
+                    end
+
+    settings_hash['noindex'] = noindex
+    user.update_column(:settings, settings_hash.to_json)
+  rescue JSON::ParserError
+    user.update_column(:settings, { 'noindex' => noindex }.to_json)
+  end
+
+  def normalize_registration_mode
+    self.registration_mode = 'none' if registration_mode == 'invite_only'
+  end
 
   def unique_patchwork_community_links
     urls = patchwork_community_links.reject(&:marked_for_destruction?).map(&:url)

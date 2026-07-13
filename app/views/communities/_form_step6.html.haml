@@ -43,7 +43,7 @@
                 .form-check
                   .d-flex.align-items-center
                     %label.form-check-label.switch.mb-0
-                      %input.form-check-input.switch-input#closed_mode{ type: 'radio', name: 'registration_mode', value: 'none', checked: @community.registration_mode == 'none' }
+                      %input.form-check-input.switch-input#closed_mode{ type: 'radio', name: 'registration_mode', value: 'none', checked: @community.registration_mode.in?(['none', 'invite_only']) }
                       %span.switch-slider.round
                         %span.slider-tick
                           %i.fa-solid.fa-check

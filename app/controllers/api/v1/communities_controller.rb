@@ -158,6 +158,9 @@ module Api
 
         if @community.update(additional_community_params)
           @community.update(registration_mode: params[:community][:registration_mode])
+          @community.update(visibility: params[:community][:visibility]) if params.dig(:community, :visibility).present?
+          @community.sync_access_settings_to_account_lock!
+          @community.sync_visibility_settings_to_account_flags!
           render json: Api::V1::ChannelSerializer.new(@community, include: [:patchwork_community_additional_informations, :patchwork_community_links, :patchwork_community_rules]).serializable_hash.to_json
         else
           render_validation_failed(@community.errors)

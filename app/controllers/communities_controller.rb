@@ -5,7 +5,7 @@ class CommunitiesController < BaseController
   before_action :set_current_step
   before_action :set_content_type, only: %i[step3 step4 step5 step6]
   before_action :set_api_credentials, only: %i[search_contributor step3 step4]
-  before_action :fetch_community_admins, only: %i[step4 step6]
+  before_action :fetch_community_admins, only: %i[step4 step5 step6]
   before_action :initial_content_type, only: %i[index step0]
 
   include CommunityHelper
@@ -127,6 +127,7 @@ class CommunitiesController < BaseController
   def step2
     authorize_step(:step2?)
     @records = load_filtered_records(commu_admin_records_filter)
+               .where("patchwork_communities_admins.role IS NULL OR patchwork_communities_admins.role NOT IN (?)", %w[GroupAdmin GroupModerator])
     @community_admin = CommunityAdmin.new(patchwork_community_id: @community.id)
     invoke_bridged unless @community.hub? || Rails.env.development?
   end
@@ -152,9 +153,15 @@ class CommunitiesController < BaseController
 
   def step5
     authorize_step(:step5?)
-    @form_post_hashtag = Form::PostHashtag.new
-    @records = load_filtered_records(post_hashtag_records_filter)
-    @search = post_hashtag_records_filter.build_search
+    if @community.channel_feed?
+      @admin = Account.find_by(id: admin_account_id)
+      fetch_group_role_admins
+      @group_role_admins = @group_role_admins.includes(:account) if @group_role_admins
+    else
+      @form_post_hashtag = Form::PostHashtag.new
+      @records = load_filtered_records(post_hashtag_records_filter)
+      @search = post_hashtag_records_filter.build_search
+    end
     respond_to(&:html)
   end
 
@@ -241,6 +248,89 @@ class CommunitiesController < BaseController
     end
   end
 
+  def search_local_accounts
+    query = params[:query]
+    if query.blank?
+      render json: []
+      return
+    end
+
+    accounts = Account.where(domain: nil)
+                      .where("username ILIKE :q OR display_name ILIKE :q", q: "%#{query}%")
+                      .limit(20)
+
+    mapped_accounts = accounts.map do |account|
+      existing_admin = @community.community_admins.find_by(account_id: account.id, account_status: 0)
+      {
+        id: account.id.to_s,
+        username: account.username,
+        display_name: account.display_name,
+        avatar_url: account.avatar_url,
+        current_role: existing_admin&.role
+      }
+    end
+
+    render json: mapped_accounts
+  end
+
+  def assign_role
+    authorize @community, :manage_additional_information?
+    account = Account.find_by(id: params[:account_id])
+    unless account
+      render json: { success: false, error: "Account not found." }, status: :not_found
+      return
+    end
+    role = params[:role]
+
+    unless account.local?
+      render json: { success: false, error: "Only local accounts can be assigned." }, status: :unprocessable_entity
+      return
+    end
+
+    unless role.in?(%w[GroupAdmin GroupModerator])
+      render json: { success: false, error: "Invalid role." }, status: :unprocessable_entity
+      return
+    end
+
+    community_admin = @community.community_admins.find_or_initialize_by(account_id: account.id)
+
+    if community_admin.new_record?
+      community_admin.username = account.username
+      community_admin.display_name = account.display_name
+      community_admin.email = account.user&.email || "#{account.username}@localhost.local"
+      community_admin.password = SecureRandom.hex(16)
+    end
+
+    community_admin.role = role
+    community_admin.account_status = :active
+
+    if community_admin.save
+      render json: { success: true }
+    else
+      render json: { success: false, error: community_admin.errors.full_messages.join(', ') }, status: :unprocessable_entity
+    end
+  end
+
+  def remove_assigned_role
+    authorize @community, :manage_additional_information?
+    account = Account.find_by(id: params[:account_id])
+    unless account
+      render json: { success: false, error: "Account not found." }, status: :not_found
+      return
+    end
+
+    community_admin = @community.community_admins.find_by(account_id: account.id)
+    if community_admin
+      if community_admin.destroy
+        render json: { success: true }
+      else
+        render json: { success: false, error: community_admin.errors.full_messages.join(', ') }, status: :unprocessable_entity
+      end
+    else
+      render json: { success: false, error: "Admin not found." }, status: :not_found
+    end
+  end
+
   private
 
   # Before actions
@@ -298,7 +388,17 @@ class CommunitiesController < BaseController
   end
 
   def fetch_community_admins
-    @community_admins = CommunityAdmin.where(patchwork_community_id: @community.id, account_status: 0)
+    @community_admins = CommunityAdmin
+                        .where(patchwork_community_id: @community.id, account_status: 0)
+                        .where("patchwork_communities_admins.role IS NULL OR patchwork_communities_admins.role NOT IN (?)", %w[GroupAdmin GroupModerator])
+  end
+
+  def fetch_group_role_admins
+    @group_role_admins = CommunityAdmin.where(
+      patchwork_community_id: @community.id,
+      account_status: 0,
+      role: %w[GroupAdmin GroupModerator]
+    )
   end
 
   # Parameter handling
@@ -349,10 +449,11 @@ class CommunitiesController < BaseController
   end
 
   def update_additional_information
-    @community.assign_attributes(community_params)
+    @community.assign_attributes(community_params) if params[:community].present?
     @community.registration_mode = params[:registration_mode]
+    @community.visibility = params[:visibility] if params[:visibility].present?
 
-    if params[:community].blank?
+    if params[:community].blank? && !@community.channel_feed?
       @community.errors.add(:base, "Missing additional information")
       prepare_for_step6_rendering
       render :step6
@@ -361,18 +462,39 @@ class CommunitiesController < BaseController
 
     begin
       if @community.save
-        redirect_to step6_community_path(@community, show_preview: true)
+        @community.sync_access_settings_to_account_lock!
+        @community.sync_visibility_settings_to_account_flags!
+        if @community.channel_feed?
+          redirect_to step5_community_path(@community, show_preview: true, channel_type: @community.channel_type)
+        else
+          redirect_to step6_community_path(@community, show_preview: true)
+        end
       else
         flash.now[:error] = @community.formatted_error_messages.join(', ')
-        prepare_for_step6_rendering
-        render :step6
+        if @community.channel_feed?
+          @admin = Account.find_by(id: admin_account_id)
+          fetch_community_admins
+          fetch_group_role_admins
+          render :step5
+        else
+          prepare_for_step6_rendering
+          render :step6
+        end
       end
     rescue ActiveRecord::RecordNotUnique
       Rails.logger.error "#{'*'*10}Duplicate link URL for community #{@community.id} #{'*'*10}"
       @community.errors.add(:base, "Duplicate link URL for this community is not allowed.")
-      prepare_for_step6_rendering
-      flash.now[:error] = @community.formatted_error_messages.join(', ')
-      render :step6
+      if @community.channel_feed?
+        @admin = Account.find_by(id: admin_account_id)
+        fetch_community_admins
+        fetch_group_role_admins
+        flash.now[:error] = @community.formatted_error_messages.join(', ')
+        render :step5
+      else
+        prepare_for_step6_rendering
+        flash.now[:error] = @community.formatted_error_messages.join(', ')
+        render :step6
+      end
       return
     end
   end
@@ -506,7 +628,13 @@ class CommunitiesController < BaseController
   end
 
   def handle_failed_visibility_update
-    render @community.channel? ? :step6 : :step4
+    if @community.channel?
+      render :step6
+    elsif @community.channel_feed?
+      render :step5
+    else
+      render :step4
+    end
   end
 
   def channels_allowed?

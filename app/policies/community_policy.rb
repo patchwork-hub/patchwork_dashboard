@@ -49,7 +49,7 @@ class CommunityPolicy < ApplicationPolicy
 
   def step5?
     # !related_user_admin?
-    false
+    record&.channel_feed?
   end
 
   def step5_save?
@@ -69,6 +69,8 @@ class CommunityPolicy < ApplicationPolicy
   end
 
   def manage_additional_information?
+    return true if record&.channel_feed?
+
     !related_user_admin?
   end
 
