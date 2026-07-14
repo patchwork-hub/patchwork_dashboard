@@ -2,6 +2,7 @@ require "application_responder"
 
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
+  include DatabaseHelper
 
   helper_method :current_account
 

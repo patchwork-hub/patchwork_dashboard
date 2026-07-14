@@ -134,17 +134,19 @@ module Api
       end
 
       def search
-        query = params[:q].present? ? "%#{params[:q].downcase}%" : nil
-        communities = Community
-                      .filter_channels
-                      .exclude_array_ids
-                      .exclude_incomplete_channels
-                      .exclude_deleted_channels
-                      .where(
-                        "lower(name) LIKE :q OR lower(slug) LIKE :q",
-                        q: query
-                      )
-        render json: Api::V1::ChannelSerializer.new(communities).serializable_hash.to_json
+        with_read_replica do
+          query = params[:q].present? ? "%#{params[:q].downcase}%" : nil
+          communities = Community
+                        .filter_channels
+                        .exclude_array_ids
+                        .exclude_incomplete_channels
+                        .exclude_deleted_channels
+                        .where(
+                          "lower(name) LIKE :q OR lower(slug) LIKE :q",
+                          q: query
+                        )
+          render json: Api::V1::ChannelSerializer.new(communities).serializable_hash.to_json
+        end
       end
 
       def my_channel
@@ -247,8 +249,6 @@ module Api
           followers: followers
         }
       end
-
-      
 
       def change_boost_bot_profile
         if @channel.nil? || !@channel.boost_bot?
