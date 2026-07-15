@@ -55,7 +55,7 @@ staging:
     host: <%= ENV['REPLICA_DB_HOST'] || ENV['DB_HOST_REPLICA'] || 'localhost' %>
     port: <%= ENV['REPLICA_DB_PORT'] || ENV['DB_PORT'] || 5432 %>
     replica: true
-    database_tasks: <%= ENV['REPLICA_DB_TASKS'] || 'false' %>
+    database_tasks: <%= ENV['REPLICA_DB_TASKS'] || 'true' %>
     
 production:
   primary:
@@ -75,4 +75,5 @@ production:
     host: <%= ENV['REPLICA_DB_HOST'] || ENV['DB_HOST_REPLICA'] || ENV['DB_HOST'] || 'localhost' %>
     port: <%= ENV['REPLICA_DB_PORT'] || ENV['DB_PORT'] || 5432 %>
     replica: true
-    database_tasks: <%= ENV['REPLICA_DB_TASKS'] || 'false' %>
+    prepared_statements: <%= ENV['REPLICA_PREPARED_STATEMENTS'] || ENV['PREPARED_STATEMENTS'] || 'true' %>
+    database_tasks: <%= ENV['REPLICA_DB_TASKS'] || 'true' %>
