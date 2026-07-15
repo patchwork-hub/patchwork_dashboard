@@ -1,0 +1,47 @@
+groups:
+  - name: patchwork_dashboard
+    rules:
+      - alert: HighRequestLatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Patchwork Dashboard 95th percentile latency is high"
+          description: "95th percentile request latency is above 1 second for more than 5 minutes."
+
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Patchwork Dashboard error rate is high"
+          description: "More than 5% of requests are returning 5xx errors."
+
+      - alert: SidekiqQueueBacklog
+        expr: ruby_sidekiq_queue_backlog > 1000
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Sidekiq queue backlog is high"
+          description: "Sidekiq has more than 1000 jobs queued for over 10 minutes."
+
+      - alert: PostgresConnectionsHigh
+        expr: pg_stat_activity_count / pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "PostgreSQL connection usage is high"
+          description: "More than 80% of max_connections are in use."
+
+      - alert: PostgresReplicaLag
+        expr: pg_replication_lag_seconds > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "PostgreSQL replica lag is high"
+          description: "Replica lag has exceeded 5 seconds."

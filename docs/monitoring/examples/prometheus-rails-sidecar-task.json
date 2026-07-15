@@ -1,0 +1,82 @@
+{
+  "family": "patchwork-dashboard-with-metrics",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "executionRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "rails",
+      "image": "YOUR_ECR_REPO/patchwork_dashboard:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 3001,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "RAILS_ENV",
+          "value": "production"
+        },
+        {
+          "name": "RAILS_SERVE_STATIC_FILES",
+          "value": "true"
+        },
+        {
+          "name": "RAILS_LOG_TO_STDOUT",
+          "value": "true"
+        },
+        {
+          "name": "LOGRAGE_ENABLED",
+          "value": "true"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DATABASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:YOUR_REGION:YOUR_ACCOUNT_ID:secret:patchwork/database-url"
+        },
+        {
+          "name": "REDIS_URL",
+          "valueFrom": "arn:aws:secretsmanager:YOUR_REGION:YOUR_ACCOUNT_ID:secret:patchwork/redis-url"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/patchwork-dashboard",
+          "awslogs-region": "YOUR_REGION",
+          "awslogs-stream-prefix": "rails"
+        }
+      }
+    },
+    {
+      "name": "prometheus-exporter",
+      "image": "YOUR_ECR_REPO/patchwork_dashboard:latest",
+      "essential": false,
+      "portMappings": [
+        {
+          "containerPort": 9394,
+          "protocol": "tcp"
+        }
+      ],
+      "command": [
+        "bundle", "exec", "prometheus_exporter",
+        "--bind", "0.0.0.0",
+        "--port", "9394"
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/patchwork-dashboard",
+          "awslogs-region": "YOUR_REGION",
+          "awslogs-stream-prefix": "metrics"
+        }
+      }
+    }
+  ]
+}

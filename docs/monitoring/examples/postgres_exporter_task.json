@@ -1,0 +1,36 @@
+{
+  "family": "patchwork-postgres-exporter",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "postgres-exporter",
+      "image": "prometheuscommunity/postgres-exporter:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 9187,
+          "protocol": "tcp"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DATA_SOURCE_NAME",
+          "valueFrom": "arn:aws:secretsmanager:YOUR_REGION:YOUR_ACCOUNT_ID:secret:patchwork/postgres-exporter-dsn"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/patchwork-postgres-exporter",
+          "awslogs-region": "YOUR_REGION",
+          "awslogs-stream-prefix": "postgres-exporter"
+        }
+      }
+    }
+  ]
+}

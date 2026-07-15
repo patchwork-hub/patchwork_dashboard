@@ -1,0 +1,58 @@
+{
+  "family": "patchwork-prometheus",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "prometheus",
+      "image": "prom/prometheus:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 9090,
+          "protocol": "tcp"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "prometheus_data",
+          "containerPath": "/prometheus"
+        }
+      ],
+      "command": [
+        "--config.file=/etc/prometheus/prometheus.yml",
+        "--storage.tsdb.path=/prometheus",
+        "--storage.tsdb.retention.time=30d",
+        "--web.enable-lifecycle"
+      ],
+      "secrets": [
+        {
+          "name": "PROMETHEUS_CONFIG",
+          "valueFrom": "arn:aws:secretsmanager:YOUR_REGION:YOUR_ACCOUNT_ID:secret:patchwork/prometheus-config"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/patchwork-prometheus",
+          "awslogs-region": "YOUR_REGION",
+          "awslogs-stream-prefix": "prometheus"
+        }
+      }
+    }
+  ],
+  "volumes": [
+    {
+      "name": "prometheus_data",
+      "efsVolumeConfiguration": {
+        "fileSystemId": "fs-YOUR_EFS_ID",
+        "rootDirectory": "/prometheus",
+        "transitEncryption": "ENABLED"
+      }
+    }
+  ]
+}

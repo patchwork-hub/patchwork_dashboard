@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: patchwork_prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    networks:
+      - patchwork_network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: patchwork_grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - patchwork_network
+    depends_on:
+      - prometheus
+
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: patchwork_postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://pghero:secure_password@db:5432/mastodon_production?sslmode=disable"
+    ports:
+      - "9187:9187"
+    networks:
+      - patchwork_network
+
+  pghero:
+    image: ankane/pghero:latest
+    container_name: patchwork_pghero
+    environment:
+      DATABASE_URL: "postgresql://pghero:secure_password@db:5432/mastodon_production"
+      PGHERO_USERNAME: admin
+      PGHERO_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    networks:
+      - patchwork_network
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: patchwork_node_exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - patchwork_network
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  patchwork_network:
+    external: true

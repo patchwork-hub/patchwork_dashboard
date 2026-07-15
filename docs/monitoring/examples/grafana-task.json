@@ -1,0 +1,62 @@
+{
+  "family": "patchwork-grafana",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "grafana",
+      "image": "grafana/grafana:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "GF_SECURITY_ADMIN_USER",
+          "value": "admin"
+        },
+        {
+          "name": "GF_USERS_ALLOW_SIGN_UP",
+          "value": "false"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "GF_SECURITY_ADMIN_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:YOUR_REGION:YOUR_ACCOUNT_ID:secret:patchwork/grafana-admin-password"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "grafana_data",
+          "containerPath": "/var/lib/grafana"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/patchwork-grafana",
+          "awslogs-region": "YOUR_REGION",
+          "awslogs-stream-prefix": "grafana"
+        }
+      }
+    }
+  ],
+  "volumes": [
+    {
+      "name": "grafana_data",
+      "efsVolumeConfiguration": {
+        "fileSystemId": "fs-YOUR_EFS_ID",
+        "rootDirectory": "/grafana",
+        "transitEncryption": "ENABLED"
+      }
+    }
+  ]
+}
