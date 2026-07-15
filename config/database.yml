@@ -40,18 +40,20 @@ test:
 staging:
   primary:
     <<: *default
-    database: <%= ENV['DB_NAME'] || 'mastodon' %>_test<%= ENV['TEST_ENV_NUMBER'] %>
-    username: <%= ENV['DB_USER'] %>
+    database: <%= ENV['DB_NAME'] || 'mastodon_production' %>
+    username: <%= ENV['DB_USER'] || 'mastodon' %>
     password: <%= (ENV['DB_PASS'] || '').to_json %>
-    host: <%= ENV['DB_HOST'] %>
-    port: <%= ENV['DB_PORT'] %>
+    host: <%= ENV['DB_HOST'] || 'localhost' %>
+    port: <%= ENV['DB_PORT'] || 5432 %>
+    prepared_statements: <%= ENV['PREPARED_STATEMENTS'] || 'true' %>
   replica:
     <<: *default
-    database: <%= ENV['DB_NAME'] || 'mastodon' %>_test<%= ENV['TEST_ENV_NUMBER'] %>
-    username: <%= ENV['DB_USER'] %>
-    password: <%= (ENV['DB_PASS'] || '').to_json %>
-    host: <%= ENV['DB_HOST'] %>
-    port: <%= ENV['DB_PORT'] %>
+    database: <%= ENV['REPLICA_DB_NAME'] || ENV['DB_NAME'] || 'mastodon_production' %>
+    username: <%= ENV['REPLICA_DB_USER'] || ENV['DB_USER'] || 'mastodon' %>
+    password: <%= (ENV['REPLICA_DB_PASS'] || ENV['DB_PASS'] || '').to_json %>
+    host: <%= ENV['REPLICA_DB_HOST'] || ENV['DB_HOST'] || 'localhost' %>
+    port: <%= ENV['REPLICA_DB_PORT'] || ENV['DB_PORT'] || 5432 %>
+    prepared_statements: <%= ENV['REPLICA_PREPARED_STATEMENTS'] || ENV['PREPARED_STATEMENTS'] || 'true' %>
     replica: true
 
 production:
