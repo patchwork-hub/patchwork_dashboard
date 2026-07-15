@@ -1,114 +1,77 @@
-## Overview
+# Newsmast Dashboard
 
-Welcome to the Patchwork. Developed and maintained by The Newsmast Foundation.
+Newsmast Dashboard is the administrative Rails application in this repository (`patchwork_dashboard`). It works alongside a host Mastodon server, the `newsmast_mastodon` gem, and optionally Patchwork Hub. It is not a gem dependency of `newsmast_mastodon`: the components cooperate through a shared database, HTTP APIs, OAuth/Doorkeeper, and Redis/Sidekiq.
 
-Patchwork is a plugin dashboard designed to enhance your Mastodon server with advanced features and a streamlined admin experience, making stewardship of a Mastodon server easier, safer and more fun.
+## Terminology
 
-## Features
+- **Newsmast Dashboard** is the public product name.
+- **Patchwork Dashboard** and `patchwork_dashboard` identify this repository, application, container image, and implementation names.
+- **Patchwork Hub** is an optional external service used for server-setting and keyword-filter synchronization.
+- **Newsmast Mastodon** is the gem installed in the host Mastodon application; it consumes shared records and provides custom Mastodon behavior.
 
-#### Opt users in to search 
+## Compatibility and prerequisites
 
-By default, Mastodon users have to opt-in to allowing their profile and public posts to be indexed during searches. Patchwork enables the admin to choose whether all new users are opted-in to Search when they join. Users can always opt out if they choose.
-#### Custom post length
+Run the Dashboard against a compatible, already-running Mastodon installation. It requires network access to the Mastodon REST API, the Mastodon PostgreSQL database, and Redis. Production deployments also need a reverse proxy/TLS configuration outside this Compose file.
 
-Choose the maximum number of characters you want a post to be.
-#### Auto-Bluesky bridge
+See [environment variables](docs/configuration/environment-variables.md) for the required connection and credential values. Use [DOCKER_INSTALLATION.md](DOCKER_INSTALLATION.md) for the canonical container procedure.
 
-Automatically bridge new users to Bluesky via Bridgy Fed. Users can always opt out if they choose. Please note, bridging takes place two weeks after the account has been created.
-#### Spam block
+## Installation and updates
 
-Block spam posts arriving on your server from the federated network. Filters identify keywords or phrases associated with spam in a post. Create your own list for customised filters.
-#### Content filters
+- Source setup: copy `.env.sample` to `.env` and configure values, run `bin/setup`, then start Rails.
+- Docker setup: follow [DOCKER_INSTALLATION.md](DOCKER_INSTALLATION.md).
+- Update source deployments with the repository's normal dependency and migration workflow. Update Docker deployments with `docker compose pull`, `docker compose up -d`, then `docker compose exec app bundle exec rails db:migrate` when migrations are supplied.
 
-Block harmful content arriving on your server from the federated network. Filters identify keywords or phrases in lists of words for specific harms eg. NSFW, Hate speech etc. Each list can be toggled on or off. Create your own list for customised filters.
-#### Channel Management
+## Feature index
 
-Channel Types: Support for multiple channel types including Channels, Channel Feeds, Hubs, and Newsmast channels.
-Content Types: Configure channels as hashtag-based, contributor-based, group channels, or custom channels with flexible content rules.
-Community Rules: Define and display community guidelines and rules for each channel.
-Additional Information: Add custom headings and text blocks to provide context for channel visitors.
-Social & General Links: Configure sidebar links to external resources, social media profiles, and related content.
-#### Channel Content Curation
+- [Channels](docs/features/channels.md): channel data, contributors, hashtags, collections, boost bots, relays, and recovery.
+- [Content filters](docs/features/content-filters.md): server and community filter data, Hub synchronization, and cache refresh.
+- [Server settings](docs/features/server-settings.md): feature settings, branding, and setting synchronization.
+- [Administration](docs/features/administration.md): accounts, roles, administrators, wait lists, API keys, exports, and Sidekiq access.
+- [Integrations](docs/features/integrations.md): Mastodon, Patchwork Hub, Bluesky/Bridgy Fed, DNS, relay, and object storage contracts.
 
-Hashtag-Based Content: Populate channels with content from specific hashtags across the Fediverse.
-Contributor Management: Add, search, and manage contributors who can post to channels.
-Mute Contributors: Mute specific accounts from appearing in channel feeds.
-Relay Integration: Connect to relay services like relay.fedi.buzz for hashtag content distribution.
-Post Boosting: Automatic boosting of posts through designated boost bot accounts.
-#### Customise email branding
+## Dependency matrix
 
-Replace the Mastodon logo in automatic emails with your own. This feature allows you to add your own header image, footer image and accent colour.
+| Capability | Configuration owner | Runtime owner | Dependency mechanism | Without the other component |
+| --- | --- | --- | --- | --- |
+| Channels and collections | Dashboard | Newsmast Mastodon | shared database and Newsmast custom API | Definitions can be managed, but gem-backed feeds are unavailable |
+| Starter packs | Dashboard | Dashboard | repository JSON and Dashboard API | No Newsmast Mastodon dependency |
+| Channel reblogging | Dashboard | Newsmast Mastodon | shared database, Mastodon REST API, Redis/Sidekiq | Boost-bot configuration remains data only |
+| Global and community filters | Dashboard | Newsmast Mastodon | shared database and Redis/Sidekiq | Filter definitions can be managed; gem enforcement is unavailable |
+| Search, long-post, and local-only settings | Dashboard | Newsmast Mastodon/Mastodon | shared database and Patchwork Hub API | Dashboard records remain; host behavior depends on its installed components |
+| Account deletion and relay APIs | Dashboard | Newsmast Mastodon/Mastodon | Newsmast custom API and Mastodon REST API | Relevant external operation is unavailable |
+| Bluesky bridge | Dashboard | Dashboard jobs and external service | Mastodon REST API, external service, DNS provider | The bridge cannot be provisioned without its external dependencies |
+| Email branding | Dashboard | host Mastodon/Newsmast Mastodon | shared database | Branding data is not applied without host support |
+| Gem-only APIs and integrations | Newsmast Mastodon | Newsmast Mastodon | gem configuration | Dashboard is not required |
 
-## Installing Patchwork
+## Technical references
 
-Find full instructions on how to install Patchwork on your Mastodon server [here](https://github.com/patchwork-hub/patchwork_dashboard/wiki/Installation-guide).
-
-Patchwork works as a plugin dashboard for existing Mastodon servers. If you have not already installed Mastodon, please do so now.
-
-Before running Patchwork, please ensure you have set up a Mastodon server and it is running properly.
-
-You can find the instructions to set up a Mastodon server [here](https://docs.joinmastodon.org/admin/install/).
+- [Configuration reference](docs/configuration/environment-variables.md)
+- [Mastodon integration architecture](docs/architecture/mastodon-integration.md)
+- [Dashboard API reference](docs/api/dashboard-api.md)
+- [Troubleshooting](docs/troubleshooting/common-issues.md)
+- [DNS provider contribution guide](CONTRIBUTING_DNS_PROVIDERS.md)
 
 ## Development
 
-### Prerequisites
-- Ruby (check `.ruby-version` for required version)
-- PostgreSQL
-- Redis
-
-### Setup
-
-1. Clone the repository and install dependencies:
-```bash
-git clone https://github.com/patchwork-hub/patchwork_dashboard.git
-cd patchwork_dashboard
-bin/setup
-```
-
-2. Configure environment variables:
 ```bash
 cp .env.sample .env
-# Edit .env with your configuration
-```
-
-3. Set up the database:
-```bash
-bundle exec rails db:create
-bundle exec rails db:migrate
-bundle exec rails db:seed
-```
-
-4. Start the development server:
-```bash
+$EDITOR .env
+bin/setup
 bundle exec rails server
+bundle exec rails test
 ```
 
-### Code Quality Tools
+Use `bundle exec rubocop` for style checks. The application also exposes Sidekiq Web at `/sidekiq` to authenticated users with `manage_sidekiq` permission or master-admin status.
 
-The project includes several development tools:
-- **Bullet**: N+1 query detection
-- **Rack Mini Profiler**: Request profiling
-- **RuboCop**: Ruby style guide enforcement
-- **AnnotateRB**: Schema annotation for models
+Internal teams should follow the [branching and merging workflow](docs/development/branching-and-merging.md).
 
-## The Newsmast Foundation
+## Maintainer checklist
 
-The Newsmast Foundation is a UK based charity, building digital infrastructure to empower communities with social media they control.
+- Update `.env.sample` and the [configuration reference](docs/configuration/environment-variables.md) together.
+- Update [Dashboard API documentation](docs/api/dashboard-api.md) when supported routes change.
+- Update Dashboard and Newsmast Mastodon dependency notes when a shared contract changes.
+- Review the public documentation summaries as part of releases.
 
-We’ve built apps for news publishers, place based communities and NGO activists to create meaningful online connections.
+## Support, contributing, and license
 
-Visit our website to learn [more](https://www.newsmastfoundation.org/).
-
-For support in installing Patchwork, or for more information on our partnerships, please contact us at support@newsmastfoundation.org
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/patchwork-hub/patchwork_dashboard. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the code of conduct.
-
-## Licenses
-
-Patchwork is an open source project, licensed under AGPL-3.0. Have fun!
-
-## Code of Conduct
-Everyone interacting in the Patchwork Dashboard project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the code of conduct.
-
+Report issues and contribute through this repository. Read the [DNS provider contribution guide](CONTRIBUTING_DNS_PROVIDERS.md) when extending DNS support, and review the [LICENSE](LICENSE). For installation or partnership support, contact `support@newsmastfoundation.org`.

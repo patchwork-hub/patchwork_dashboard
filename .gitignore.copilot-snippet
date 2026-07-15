@@ -1,0 +1,5 @@
+# --- Copilot workflow scratch files (add these lines to your repo .gitignore) ---
+# plan.md and progress.md are build-time scratch. They live locally while you work
+# on a ticket and are removed when the ticket closes. Never commit them.
+plan.md
+progress.md
