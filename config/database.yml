@@ -45,7 +45,7 @@ development:
     <<: *default
     database: <%= ENV['REPLICA_DB_NAME'] || ENV['DB_NAME'] || 'mastodon_production' %>
     username: <%= ENV['REPLICA_DB_USER'] || ENV['DB_READ_ONLY_USER'] || 'mastodon' %>
-    password: <%= [ENV['REPLICA_DB_PASS']].compact.reject(&:empty?).first.to_json %>
+    password: <%= (ENV['REPLICA_DB_PASS'] || ENV['DB_PASS'] || '').to_json %>
     host: <%= ENV['REPLICA_DB_HOST'] || ENV['DB_HOST_REPLICA'] || 'localhost' %>
     port: <%= ENV['REPLICA_DB_PORT'] || ENV['DB_PORT'] || 5432 %>
     replica: true
@@ -123,7 +123,7 @@ staging:
     <<: *default
     database: <%= ENV['REPLICA_DB_NAME'] || ENV['DB_NAME'] || 'mastodon_production' %>
     username: <%= ENV['REPLICA_DB_USER'] || ENV['DB_READ_ONLY_USER'] || 'mastodon' %>
-    password: <%= [ENV['REPLICA_DB_PASS'], ENV['DB_READ_ONLY_PASS']].compact.reject(&:empty?).first.to_json %>
+    password: <%= (ENV['REPLICA_DB_PASS'] || '').to_json %>
     host: <%= ENV['REPLICA_DB_HOST'] || ENV['DB_HOST_REPLICA'] || 'localhost' %>
     port: <%= ENV['REPLICA_DB_PORT'] || ENV['DB_PORT'] || 5432 %>
     replica: true
@@ -143,7 +143,7 @@ production:
     <<: *default
     database: <%= ENV['REPLICA_DB_NAME'] || ENV['DB_NAME'] || 'mastodon_production' %>
     username: <%= ENV['REPLICA_DB_USER'] || ENV['DB_READ_ONLY_USER'] || ENV['DB_USER'] || 'mastodon' %>
-    password: <%= [ENV['REPLICA_DB_PASS'], ENV['DB_READ_ONLY_PASS'], ENV['DB_PASS']].compact.reject(&:empty?).first.to_json %>
+    password: <%= (ENV['REPLICA_DB_PASS'] || ENV['DB_PASS'] || '').to_json %>
     host: <%= ENV['REPLICA_DB_HOST'] || ENV['DB_HOST_REPLICA'] || ENV['DB_HOST'] || 'localhost' %>
     port: <%= ENV['REPLICA_DB_PORT'] || ENV['DB_PORT'] || 5432 %>
     replica: true
