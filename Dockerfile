@@ -1,12 +1,12 @@
 FROM ruby:3.3.0-slim
 
-# Set environment variables early (keep build-safe defaults only)
+# Set environment variables early
 ENV DEBIAN_FRONTEND=noninteractive \
     app_path=/usr/app \
     RAILS_SERVE_STATIC_FILES=true \
     RAILS_LOG_TO_STDOUT=true \
-    RAILS_ENV=production \
-    NODE_ENV=production
+    LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2 \
+    RAILS_ENV="production"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libjemalloc-dev \
@@ -16,11 +16,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     && mkdir -p /etc/apt/keyrings
 
-# 1. Install Node.js 20 (LTS)
+# 1. Install Node.js 20 (LTS) - Modern Method
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 
-# 2. Install Node.js and enable Yarn via corepack
+# 2. Install Node.js and enable Yarn via corepack (more reliable than yarn apt package)
 RUN apt-get update && apt-get install -y --no-install-recommends nodejs \
     && corepack enable \
     && corepack prepare yarn@stable --activate
@@ -58,11 +58,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR $app_path
 
-# Enable jemalloc only after it is installed
-ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
-
 # Install Bundler
-RUN gem install bundler -v 2.6.6
+RUN gem install bundler -v 2.6.6 
 
 # Copy Gemfile first for better caching
 COPY Gemfile* ./
@@ -73,12 +70,9 @@ RUN bundle config set --local deployment 'true' \
 # Copy the rest of the application
 COPY . $app_path
 
-# Precompile Assets in explicit production build context
-RUN SECRET_KEY_BASE_DUMMY=1 \
-    RAILS_ENV=production \
-    NODE_ENV=production \
-    DATABASE_URL=postgresql://localhost/dummy \
-    bundle exec rails assets:clean assets:precompile
+# Precompile Assets
+RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rake assets:clean \
+    && SECRET_KEY_BASE_DUMMY=1 bundle exec rake assets:precompile
 
 # Set Executable Permission for Entrypoint
 RUN chmod +x /usr/app/docker-entrypoint.sh
