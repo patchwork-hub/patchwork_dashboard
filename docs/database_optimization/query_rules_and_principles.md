@@ -20,7 +20,7 @@ A list endpoint must never return an unbounded number of rows.
 @records = Collection.all
 ```
 
-See [collections_controller.rb](../app/controllers/collections_controller.rb#L9) for the project convention.
+See [collections_controller.rb](../../app/controllers/collections_controller.rb#L9) for the project convention.
 
 ---
 
@@ -128,7 +128,7 @@ end
 
 ## Rule 6 — Route reads to the replica, writes to the primary
 
-Use the helpers from [app/helpers/database_helper.rb](../app/helpers/database_helper.rb).
+Use the helpers from [app/helpers/database_helper.rb](../../app/helpers/database_helper.rb).
 
 **Read-only:**
 

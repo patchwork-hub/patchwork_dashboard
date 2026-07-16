@@ -20,10 +20,10 @@ Use this as a backlog. Tackle **Critical** items first, then **High**, then **Me
 
 ### 1. `KeywordFilterGroup.all` returns every row without pagination
 
-- **File**: [app/controllers/keyword_filter_groups_controller.rb](../app/controllers/keyword_filter_groups_controller.rb#L6)
+- **File**: [app/controllers/keyword_filter_groups_controller.rb](../../app/controllers/keyword_filter_groups_controller.rb#L6)
 - **Method**: `index`
 - **Problem**: `KeywordFilterGroup.all` loads the entire table into memory and renders it. As the number of filter groups grows, the request becomes slower and uses more memory.
-- **Suggested fix**: Add Kaminari pagination, consistent with [collections_controller.rb](../app/controllers/collections_controller.rb#L9):
+- **Suggested fix**: Add Kaminari pagination, consistent with [collections_controller.rb](../../app/controllers/collections_controller.rb#L9):
 
 ```ruby
 PER_PAGE = 10
@@ -37,7 +37,7 @@ end
 
 ### 2. `UserRole.all` loaded into memory to filter permissions in Ruby
 
-- **File**: [app/controllers/master_admins_controller.rb](../app/controllers/master_admins_controller.rb#L7-L9)
+- **File**: [app/controllers/master_admins_controller.rb](../../app/controllers/master_admins_controller.rb#L7-L9)
 - **Method**: `index`
 - **Problem**: `UserRole.all.select { |r| r.can?(:administrator) || r.can?(:view_newsmast_dashboard) }.map(&:id)` instantiates every role, then calls `can?` in Ruby. This is an N+1-like pattern when the role table is large and prevents the database from doing the filtering.
 - **Suggested fix**: Replace with a database-level query. The exact implementation depends on how permissions are stored in `UserRole`:
@@ -59,7 +59,7 @@ allowed_role_ids = UserRole.where(administrator: true).or(UserRole.where(view_ne
 
 ### 3. `load_follow_records` filters accounts in Ruby after loading them
 
-- **File**: [app/controllers/communities_controller.rb](../app/controllers/communities_controller.rb#L386-L392)
+- **File**: [app/controllers/communities_controller.rb](../../app/controllers/communities_controller.rb#L386-L392)
 - **Method**: `load_follow_records`
 - **Problem**:
   - Combines two `pluck` queries in Ruby (`+`) instead of a single query.
@@ -96,7 +96,7 @@ account_ids = Follow.where(account_id: admin_account_id)
 
 ### 4. `fetch_contributors` triggers N+1 `following_ids` queries
 
-- **File**: [app/controllers/api/v1/communities_controller.rb](../app/controllers/api/v1/communities_controller.rb#L281-L290)
+- **File**: [app/controllers/api/v1/communities_controller.rb](../../app/controllers/api/v1/communities_controller.rb#L281-L290)
 - **Method**: `fetch_contributors`
 - **Problem**: For the `:followed` branch, the code loads each `Account` and calls `account.following_ids`, which issues a query per account.
 - **Suggested fix**: Eager-load the `following` association, or better, fetch the IDs in one query:
@@ -112,7 +112,7 @@ This avoids loading accounts entirely when only the follower IDs are needed.
 
 ### 5. `boost_bot_accounts_list` queries `community_admins` once per community
 
-- **File**: [app/controllers/api/v1/community_admins_controller.rb](../app/controllers/api/v1/community_admins_controller.rb#L57-L67)
+- **File**: [app/controllers/api/v1/community_admins_controller.rb](../../app/controllers/api/v1/community_admins_controller.rb#L57-L67)
 - **Method**: `boost_bot_accounts_list`
 - **Problem**: `community.community_admins.first` runs a query for every community in the loop.
 - **Suggested fix**: Eager-load `community_admins` and, if needed, `account`:
@@ -137,7 +137,7 @@ If `community_admins` is large, consider a `has_one` association for the boost b
 
 ### 6. `prepare_filter_group_data` iterates `keyword_filters` without eager loading
 
-- **File**: [app/controllers/keyword_filter_groups_controller.rb](../app/controllers/keyword_filter_groups_controller.rb#L120)
+- **File**: [app/controllers/keyword_filter_groups_controller.rb](../../app/controllers/keyword_filter_groups_controller.rb#L120)
 - **Method**: `prepare_filter_group_data`
 - **Problem**: `@keyword_filter_group.keyword_filters.map { ... }` may trigger N+1 if the association is not already loaded.
 - **Suggested fix**: Ensure the group is loaded with its filters before serialization:
@@ -155,7 +155,7 @@ Or use `@keyword_filter_group.keyword_filters.load` before the map.
 
 ### 7. `load_follower_records` and `load_muted_accounts` could combine count and list queries
 
-- **File**: [app/controllers/communities_controller.rb](../app/controllers/communities_controller.rb#L394-L408)
+- **File**: [app/controllers/communities_controller.rb](../../app/controllers/communities_controller.rb#L394-L408)
 - **Methods**: `load_follower_records`, `load_muted_accounts`
 - **Problem**: `load_muted_accounts` plucks IDs, gets `.size` on the array, then loads the same IDs again for pagination. `load_follower_records` does not filter the bridge bot.
 - **Suggested fix** for `load_muted_accounts`:
@@ -174,7 +174,7 @@ For `load_follower_records`, apply the same `where.not(username: 'bsky.brid.gy')
 
 ### 8. `download_csv_by_server_setting` builds CSV without streaming
 
-- **File**: [app/controllers/keyword_filter_groups_controller.rb](../app/controllers/keyword_filter_groups_controller.rb#L100-L118)
+- **File**: [app/controllers/keyword_filter_groups_controller.rb](../../app/controllers/keyword_filter_groups_controller.rb#L100-L118)
 - **Method**: `download_csv_by_server_setting`
 - **Problem**: Although `find_each` is used, the entire CSV string is built in memory before `send_data`. For very large filter sets this can consume significant memory.
 - **Suggested fix**: Use `CSV` streaming with `response.stream` or `Enumerator` so rows are written to the client as they are generated:
@@ -214,7 +214,7 @@ Add a helper for streaming headers if one does not already exist.
 
 ### 9. `download_csv` serializes one group without eager loading
 
-- **File**: [app/controllers/keyword_filter_groups_controller.rb](../app/controllers/keyword_filter_groups_controller.rb#L80-L95)
+- **File**: [app/controllers/keyword_filter_groups_controller.rb](../../app/controllers/keyword_filter_groups_controller.rb#L80-L95)
 - **Method**: `download_csv`
 - **Problem**: `filters = @keyword_filter_group.keyword_filters` is small for a single group, but it could still benefit from being loaded eagerly in `set_keyword_filter_group`.
 - **Suggested fix**: Update `set_keyword_filter_group`:
@@ -229,7 +229,7 @@ end
 
 ### 10. Nested subquery in `AccountsController`
 
-- **File**: [app/controllers/accounts_controller.rb](../app/controllers/accounts_controller.rb#L51)
+- **File**: [app/controllers/accounts_controller.rb](../../app/controllers/accounts_controller.rb#L51)
 - **Problem**: A nested subquery in `pluck` is acceptable but can often be flattened to a join or an `EXISTS` clause for better performance.
 - **Suggested fix**: Review the generated SQL with `EXPLAIN ANALYZE` and rewrite as a `JOIN` or `EXISTS` if the planner shows poor performance.
 

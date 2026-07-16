@@ -30,7 +30,7 @@ gem 'lograge'
 gem 'logstash-event' # optional, for Logstash-compatible JSON
 ```
 
-Create or update [config/initializers/lograge.rb](../config/initializers/lograge.rb):
+Create or update [config/initializers/lograge.rb](../../config/initializers/lograge.rb):
 
 ```ruby
 Rails.application.configure do
@@ -46,7 +46,7 @@ Rails.application.configure do
 end
 ```
 
-In Docker Compose / ECS, set `RAILS_LOG_TO_STDOUT=true` (already set in the [Dockerfile](../Dockerfile)) so logs flow to CloudWatch or your log aggregator.
+In Docker Compose / ECS, set `RAILS_LOG_TO_STDOUT=true` (already set in the [Dockerfile](../../Dockerfile)) so logs flow to CloudWatch or your log aggregator.
 
 ### 1.2 Add `prometheus_exporter` for Rails metrics
 
@@ -56,7 +56,7 @@ Add to the `Gemfile`:
 gem 'prometheus_exporter'
 ```
 
-Add a metrics initializer [config/initializers/prometheus.rb](../config/initializers/prometheus.rb):
+Add a metrics initializer [config/initializers/prometheus.rb](../../config/initializers/prometheus.rb):
 
 ```ruby
 unless Rails.env.test?
@@ -295,7 +295,7 @@ gem 'opentelemetry-sdk'
 gem 'opentelemetry-instrumentation-all'
 ```
 
-Create [config/initializers/opentelemetry.rb](../config/initializers/opentelemetry.rb):
+Create [config/initializers/opentelemetry.rb](../../config/initializers/opentelemetry.rb):
 
 ```ruby
 require 'opentelemetry/sdk'

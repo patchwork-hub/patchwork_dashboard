@@ -10,9 +10,9 @@ This guide describes the day-to-day workflow every team member should follow whe
 
 The repo already includes the tools you need for day-to-day query debugging:
 
-- **Bullet** — N+1 query detection. Configured in [config/initializers/bullet.rb](../config/initializers/bullet.rb).
-- **rack-mini-profiler** — Request timing and SQL counts in the browser footer. Configured in [config/initializers/rack_profiler.rb](../config/initializers/rack_profiler.rb).
-- **Custom query profiler** — [lib/middleware/query_profiler.rb](../lib/middleware/query_profiler.rb) adds an `X-SQL-Profile` header. It is currently commented out in [config/application.rb](../config/application.rb#L41-L42).
+- **Bullet** — N+1 query detection. Configured in [config/initializers/bullet.rb](../../config/initializers/bullet.rb).
+- **rack-mini-profiler** — Request timing and SQL counts in the browser footer. Configured in [config/initializers/rack_profiler.rb](../../config/initializers/rack_profiler.rb).
+- **Custom query profiler** — [lib/middleware/query_profiler.rb](../../lib/middleware/query_profiler.rb) adds an `X-SQL-Profile` header. It is currently commented out in [config/application.rb](../../config/application.rb#L41-L42).
 
 ### 1.2 Enable the custom query profiler for API debugging
 
@@ -67,7 +67,7 @@ Ask these questions:
 
 ## 3. Read-write replica guidelines
 
-The project uses Rails 7.1 multi-database support. The replica is configured in [config/database.yml](../config/database.yml) and the helpers live in [app/helpers/database_helper.rb](../app/helpers/database_helper.rb).
+The project uses Rails 7.1 multi-database support. The replica is configured in [config/database.yml](../config/database.yml) and the helpers live in [app/helpers/database_helper.rb](../../app/helpers/database_helper.rb).
 
 ### 3.1 When to use `with_read_replica`
 

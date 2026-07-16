@@ -10,7 +10,7 @@ Returning an unbounded result set loads the database and allocates memory propor
 
 ### Good example in this repo
 
-[app/controllers/collections_controller.rb](../app/controllers/collections_controller.rb#L9)
+[app/controllers/collections_controller.rb](../../app/controllers/collections_controller.rb#L9)
 
 ```ruby
 PER_PAGE = 10
@@ -27,7 +27,7 @@ The controller also wraps the read in `with_read_replica`, so it routes to the r
 
 ### Anti-pattern to avoid
 
-[app/controllers/keyword_filter_groups_controller.rb](../app/controllers/keyword_filter_groups_controller.rb#L6)
+[app/controllers/keyword_filter_groups_controller.rb](../../app/controllers/keyword_filter_groups_controller.rb#L6)
 
 ```ruby
 def index
@@ -45,7 +45,7 @@ Loading records into memory and then calling `select`, `reject`, or `map` is alm
 
 ### Anti-pattern in this repo
 
-[app/controllers/master_admins_controller.rb](../app/controllers/master_admins_controller.rb#L7-L9)
+[app/controllers/master_admins_controller.rb](../../app/controllers/master_admins_controller.rb#L7-L9)
 
 ```ruby
 allowed_role_ids = UserRole.all.select { |r| r.can?(:administrator) || r.can?(:view_newsmast_dashboard) }.map(&:id)
@@ -58,7 +58,7 @@ allowed_role_ids = UserRole.all.select { |r| r.can?(:administrator) || r.can?(:v
 
 #### Another anti-pattern: filtering in Ruby
 
-[app/controllers/communities_controller.rb](../app/controllers/communities_controller.rb#L386-L390)
+[app/controllers/communities_controller.rb](../../app/controllers/communities_controller.rb#L386-L390)
 
 ```ruby
 accounts = Account.where(id: account_ids)
@@ -81,7 +81,7 @@ Iterating over a collection and touching associations produces N+1 queries. Use 
 
 ### Good example
 
-[app/controllers/custom_emojis_controller.rb](../app/controllers/custom_emojis_controller.rb#L6)
+[app/controllers/custom_emojis_controller.rb](../../app/controllers/custom_emojis_controller.rb#L6)
 
 ```ruby
 def index
@@ -92,7 +92,7 @@ end
 
 ### Model-level scope example
 
-[app/models/community.rb](../app/models/community.rb#L246-L257)
+[app/models/community.rb](../../app/models/community.rb#L246-L257)
 
 ```ruby
 scope :with_all_includes, -> {
@@ -109,7 +109,7 @@ scope :with_all_includes, -> {
 
 ### Anti-pattern: following_ids inside a loop
 
-[app/controllers/api/v1/communities_controller.rb](../app/controllers/api/v1/communities_controller.rb#L283-L286)
+[app/controllers/api/v1/communities_controller.rb](../../app/controllers/api/v1/communities_controller.rb#L283-L286)
 
 ```ruby
 accounts = Account.where(id: account_ids)
@@ -120,7 +120,7 @@ accounts.map{ |account| account.following_ids }.flatten.uniq
 
 #### Another anti-pattern: association inside a loop
 
-[app/controllers/api/v1/community_admins_controller.rb](../app/controllers/api/v1/community_admins_controller.rb#L63)
+[app/controllers/api/v1/community_admins_controller.rb](../../app/controllers/api/v1/community_admins_controller.rb#L63)
 
 ```ruby
 communities.each do |community|
@@ -139,7 +139,7 @@ When exporting CSV or processing many rows, `find_each` fetches records in batch
 
 ### Good example: batched CSV export
 
-[app/controllers/keyword_filter_groups_controller.rb](../app/controllers/keyword_filter_groups_controller.rb#L110-L112)
+[app/controllers/keyword_filter_groups_controller.rb](../../app/controllers/keyword_filter_groups_controller.rb#L110-L112)
 
 ```ruby
 keyword_filters.find_each do |kf|
@@ -153,7 +153,7 @@ Use `find_each` or `find_in_batches` whenever the dataset is unbounded or large.
 
 ## 5. Use read replicas for read-heavy endpoints
 
-The `feat-db-WR` branch already configures primary + replica in [config/database.yml](../config/database.yml#L19-L30). Use the helpers in [app/helpers/database_helper.rb](../app/helpers/database_helper.rb):
+The `feat-db-WR` branch already configures primary + replica in [config/database.yml](../config/database.yml#L19-L30). Use the helpers in [app/helpers/database_helper.rb](../../app/helpers/database_helper.rb):
 
 ```ruby
 module DatabaseHelper
@@ -179,7 +179,7 @@ Wrap read-only controller actions in `with_read_replica` and any writes in `with
 
 ### Example
 
-[app/controllers/base_controller.rb](../app/controllers/base_controller.rb#L8)
+[app/controllers/base_controller.rb](../../app/controllers/base_controller.rb#L8)
 
 ```ruby
 def index
@@ -204,7 +204,7 @@ Scopes that are easy to chain encourage reuse and help avoid duplicating conditi
 
 ### Good example: reusable scopes
 
-[app/models/community.rb](../app/models/community.rb#L232-L244)
+[app/models/community.rb](../../app/models/community.rb#L232-L244)
 
 ```ruby
 scope :filter_channels, -> { where(patchwork_communities: { channel_type: Community.channel_types[:channel] }).exclude_deleted_channels }
@@ -255,7 +255,7 @@ The repo already ships with profiling tools. Use them:
 
 - **Bullet** — detects N+1 queries and unused eager loading. Enabled in development/test.
 - **rack-mini-profiler** — shows request timing, SQL, and memory in the browser footer.
-- **Custom query profiler** — [lib/middleware/query_profiler.rb](../lib/middleware/query_profiler.rb) adds an `X-SQL-Profile` header. It is currently commented out in [config/application.rb](../config/application.rb#L41-L42); enable it temporarily for API debugging.
+- **Custom query profiler** — [lib/middleware/query_profiler.rb](../../lib/middleware/query_profiler.rb) adds an `X-SQL-Profile` header. It is currently commented out in [config/application.rb](../../config/application.rb#L41-L42); enable it temporarily for API debugging.
 
 See [database_development_guideline.md](database_development_guideline.md) for the exact workflow.
 

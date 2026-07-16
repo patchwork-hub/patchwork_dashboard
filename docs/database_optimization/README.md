@@ -12,11 +12,11 @@ This directory contains the database optimization playbook for the Patchwork Das
 
 ## Quick links to existing code
 
-- Read/write replica configuration: [config/database.yml](../config/database.yml)
-- Replica helper methods: [app/helpers/database_helper.rb](../app/helpers/database_helper.rb)
-- Example replica usage in a controller: [app/controllers/base_controller.rb](../app/controllers/base_controller.rb)
-- Existing query profiler middleware: [lib/middleware/query_profiler.rb](../lib/middleware/query_profiler.rb)
-- Where the profiler is currently disabled: [config/application.rb](../config/application.rb#L41-L42)
-- N+1 detection initializer: [config/initializers/bullet.rb](../config/initializers/bullet.rb)
-- Local request profiler initializer: [config/initializers/rack_profiler.rb](../config/initializers/rack_profiler.rb)
+- Read/write replica configuration: [config/database.yml](../../config/database.yml)
+- Replica helper methods: [app/helpers/database_helper.rb](../../app/helpers/database_helper.rb)
+- Example replica usage in a controller: [app/controllers/base_controller.rb](../../app/controllers/base_controller.rb)
+- Existing query profiler middleware: [lib/middleware/query_profiler.rb](../../lib/middleware/query_profiler.rb)
+- Where the profiler is currently disabled: [config/application.rb](../../config/application.rb#L41-L42)
+- N+1 detection initializer: [config/initializers/bullet.rb](../../config/initializers/bullet.rb)
+- Local request profiler initializer: [config/initializers/rack_profiler.rb](../../config/initializers/rack_profiler.rb)
 - Existing multi-DB guideline: [read_write_database_guideline.md](read_write_database_guideline.md)
