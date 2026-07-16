@@ -1,196 +1,64 @@
-# Patchwork Dashboard - Docker Installation Guide
+# Newsmast Dashboard Docker installation
 
-This guide provides step-by-step instructions for installing Patchwork Dashboard using Docker containers.
+This is the canonical Docker Compose procedure for the Patchwork Dashboard repository. The Compose service is named `app`; use that name in `docker compose` commands.
 
 ## Prerequisites
 
-Before starting, ensure you have:
+- Docker Engine and Docker Compose v2.
+- A running Mastodon deployment, including reachable PostgreSQL and Redis.
+- A Docker network named `mastodon_internal_network`, or a Compose-file change that connects `app` to the correct network.
+- Mastodon application credentials with the scopes listed in `.env.sample`.
 
-- **Docker Engine** installed (version 20.10+ recommended)
-- **Docker Compose** installed (version 2.0+ recommended)
-- **A running Mastodon server** with database access
-- **Basic knowledge** of Docker and environment variables
-
-### Verify Docker Installation
-
-```bash
-docker --version
-docker compose version
-```
-
-## Step 1: Clone the Repository
-
-Clone the Patchwork Dashboard repository to your server:
+## Configure the deployment
 
 ```bash
 git clone https://github.com/patchwork-hub/patchwork_dashboard.git
 cd patchwork_dashboard
-```
-
-## Step 2: Configure Environment Variables
-
-### Create Environment File
-
-Copy the sample environment file and configure it:
-
-```bash
 cp .env.sample .env
+chmod 600 .env
 ```
 
-### Edit Environment Configuration
+Set the required Mastodon, PostgreSQL, Redis, administrator, and Rails secret values in `.env`. Set `EXTERNAL_PORT` to the host port to publish; the container listens on port `3001`. Do not commit `.env` or reuse its placeholder secrets.
 
-Open the `.env` file and configure it accordingly:
+The default Compose file pulls `newsmast/patchwork_dashboard:latest`; it does not contain a `build:` definition. `docker compose up -d --build` is therefore unnecessary unless you add one locally.
 
-```bash
-nano .env
-```
-
-## Step 3: Start the Application
-
-### Pull and Start Services
+## Start and initialize
 
 ```bash
-# Pull the latest image
 docker compose pull
-
-# Start the services in detached mode
-docker compose up -d --build
-```
-
-### Verify Container Status
-
-```bash
-# Check if container is running
+docker compose up -d
 docker compose ps
-
-# Check container logs
-docker compose logs -f dashboard
+docker compose logs app
+docker compose exec app bundle exec rails db:migrate
+docker compose exec app bundle exec rails db:seed
 ```
 
-## Step 4: Initialize the Database
+Seeding creates initial application data, including the configured master administrator where supported by the application. Open the Dashboard at the externally published URL and sign in with the configured master-administrator credentials.
 
-### Run Database Migrations
+The container health check calls `http://localhost:${EXTERNAL_PORT}/health_check`. Because the application itself listens on `3001`, keep `EXTERNAL_PORT=3001` unless you have validated a Compose override that makes the health check use the container port.
 
-```bash
-# Run migrations
-docker compose exec dashboard bundle exec rails db:migrate
-
-# Seed the database (creates initial data and master admin)
-docker compose exec dashboard bundle exec rails db:seed
-```
-
-## Step 5: Access the Dashboard
-
-1. Open your browser and go to: `http://your-server-ip:3001` (or your configured domain)
-2. You should see the Patchwork Dashboard login page
-3. Login with the master admin credentials you created
-
-## Step 6: Activate Patchwork Dashboard
-
-### Get API Key from Patchwork Hub
-
-1. Go to [Patchwork Hub](https://hub.patchwork.online/)
-2. Register a new account and verify it
-3. Generate an API key on the landing page
-
-### Add API Key to Dashboard
-
-1. Login to your Patchwork Dashboard
-2. Click **"API key"** in the left sidebar
-3. Enter the **Key** and **Secret** from Patchwork Hub
-4. Save the configuration
-
-## Step 7: Health Check and Monitoring
-
-### Check Application Health
+## Operations
 
 ```bash
-# Check health endpoint
+docker compose exec app bundle exec rails runner "puts ActiveRecord::Base.connection.execute('SELECT 1').first"
 curl http://localhost:3001/health_check
-
-# Monitor container health
-docker compose ps
+docker compose logs -f app
 ```
 
-### View Logs
+To update the image:
 
 ```bash
-# View application logs
-docker compose logs -f dashboard
-
-# View logs with timestamps
-docker compose logs -f -t dashboard
-```
-
-## Step 8: Maintenance Commands
-
-### Update the Application
-
-```bash
-# Pull latest image
 docker compose pull
-
-# Restart with new image
 docker compose up -d
+docker compose exec app bundle exec rails db:migrate
 ```
 
-### Backup Data
+The Compose file persists Dashboard storage, public system files, and logs in the `patchwork_storage`, `patchwork_public`, and `patchwork_logs` volumes. It does not back up the shared Mastodon PostgreSQL database or Redis. Back up those systems with the Mastodon deployment's documented tooling; test restore procedures before relying on volume archives.
 
-```bash
-# Backup volumes
-docker run --rm -v patchwork_storage:/data -v $(pwd):/backup alpine tar czf /backup/patchwork_storage_backup.tar.gz -C /data .
-docker run --rm -v patchwork_public:/data -v $(pwd):/backup alpine tar czf /backup/patchwork_public_backup.tar.gz -C /data .
-docker run --rm -v patchwork_logs:/data -v $(pwd):/backup alpine tar czf /backup/patchwork_logs_backup.tar.gz -C /data .
-```
+## Production security
 
-### Restore Data
-
-```bash
-# Restore volumes (stop container first)
-docker compose down
-docker run --rm -v patchwork_storage:/data -v $(pwd):/backup alpine tar xzf /backup/patchwork_storage_backup.tar.gz -C /data
-docker compose up -d
-```
+Terminate TLS at a reverse proxy, limit published ports and database/Redis network access, and protect `.env` with restrictive file permissions. Rotate `STATIC_TOKEN`, `SECRET_KEY_BASE`, Mastodon credentials, object-storage keys, DNS credentials, and Patchwork Hub API credentials according to your operational policy. Never place secrets in logs, issue reports, or documentation.
 
 ## Troubleshooting
 
-### Common Issues
-
-1. **Container won't start**: Check logs with `docker compose logs app`
-2. **Database connection errors**: Verify database credentials in `.env`
-3. **Permission issues**: Ensure Docker has proper permissions
-4. **Port conflicts**: Make sure `EXTERNAL_PORT` is not in use
-
-### Debug Commands
-
-```bash
-# Access container shell
-docker compose exec dashboard bash
-
-# Check environment variables
-docker compose exec dashboard env
-
-# Test database connection
-docker compose exec dashboard bundle exec rails runner "puts ActiveRecord::Base.connection.execute('SELECT 1').first"
-```
-
-## Security Considerations
-
-1. **Use HTTPS** in production with proper SSL certificates
-2. **Secure your environment file** with appropriate permissions:
-   ```bash
-   chmod 600 .env
-   ```
-3. **Regular updates**: Keep Docker images updated
-4. **Firewall**: Restrict access to necessary ports only
-5. **Backup strategy**: Implement regular automated backups
-
-## Support
-
-For additional help:
-- Review container logs for specific error messages
-- Contact support at support@newsmastfoundation.org
-
----
-
-**Congratulations!** Your Patchwork Dashboard should now be running successfully with Docker. You can now install additional plug-ins and customize your server through the dashboard interface.
+Use `docker compose logs app` first. Connection errors normally indicate inaccessible shared PostgreSQL/Redis services or incorrect `.env` values. See [docs/troubleshooting/common-issues.md](docs/troubleshooting/common-issues.md) for the verified diagnostic paths.
