@@ -13,7 +13,7 @@ namespace :api, defaults: { format: :json } do
         when 'patchwork'
           { display: true, app_name: 'patchwork' }
         when 'newsmast'
-          { display: false, app_name: 'newsmast' }
+          { display: true, app_name: 'newsmast' }
         when 'channel'
           { display: true, app_name: 'channel' }
         when 'mo-me'
