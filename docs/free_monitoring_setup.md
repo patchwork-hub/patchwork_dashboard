@@ -271,6 +271,51 @@ After deploying monitoring:
 
 ---
 
+## Part 7 — Optional: distributed tracing with OpenTelemetry
+
+OpenTelemetry is **not required** for the database optimization work in this guide, but it becomes useful once you want to trace requests across Rails, Sidekiq, PostgreSQL, and upstream services (for example, the Mastodon/Patchwork federation layer).
+
+### When to add it
+
+- Requests cross multiple services and you need to correlate spans end-to-end.
+- You want to link a slow controller action to the exact SQL queries, N+1 pattern, or background job that caused it.
+- The team is already running a trace backend such as Jaeger, Grafana Tempo, or Zipkin.
+
+### When to skip it
+
+- This remains a single Rails monolith with no urgent latency mysteries.
+- You want to keep the self-hosted stack minimal; tracing adds an OpenTelemetry Collector plus a trace backend.
+
+### Suggested Rails setup
+
+Add to the `Gemfile`:
+
+```ruby
+gem 'opentelemetry-sdk'
+gem 'opentelemetry-instrumentation-all'
+```
+
+Create [config/initializers/opentelemetry.rb](../config/initializers/opentelemetry.rb):
+
+```ruby
+require 'opentelemetry/sdk'
+require 'opentelemetry/instrumentation/all'
+
+OpenTelemetry::SDK.configure do |c|
+  c.service_name = 'patchwork_dashboard'
+  c.use_all
+end
+```
+
+Run an [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/) sidecar or DaemonSet to receive traces and forward them to your backend. For a self-hosted stack, pair it with [Jaeger](https://www.jaegertracing.io/) or [Grafana Tempo](https://grafana.com/oss/tempo/).
+
+### What you gain
+
+- End-to-end trace IDs across HTTP requests, ActiveRecord queries, and Sidekiq jobs.
+- Faster root-cause analysis for slow endpoints beyond what PgHero and Prometheus provide.
+
+---
+
 ## Next steps
 
 1. Decide whether to deploy on ECS, EKS, or Docker Compose.
@@ -280,3 +325,4 @@ After deploying monitoring:
 5. Deploy the monitoring stack using the example manifests.
 6. Import the Grafana dashboards and configure retention.
 7. Set up alerting once the team chooses Slack/email/Discord.
+8. Add OpenTelemetry tracing later if request latency spans multiple services.

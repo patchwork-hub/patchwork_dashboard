@@ -282,3 +282,275 @@ N+1 queries and slow filters only appear once tables grow. Before merging perfor
 - [ ] New indexes use `algorithm: :concurrently` via `strong_migrations`.
 - [ ] List views select only the columns they need.
 - [ ] Bullet/rack-mini-profiler are checked during local development.
+
+---
+
+## 11. Additional Ruby on Rails best practices
+
+The rules above are tied to patterns already found in Patchwork Dashboard. The following guidelines are also worth adopting as the codebase grows.
+
+### 11.1 Prefer `exists?` / `any?` / `none?` over `present?` / `empty?`
+
+`present?` and `empty?` on an Active Record relation load records into memory. Use relation-level predicates when you only need to know whether rows exist.
+
+```ruby
+# Good
+User.where(active: true).exists?
+Account.where(domain: 'example.com').any?
+Community.where(deleted_at: nil).none?
+
+# Avoid
+User.where(active: true).present?
+Account.where(domain: 'example.com').empty?
+```
+
+### 11.2 Use `pluck` / `pick` for value-only access
+
+Avoid instantiating Active Record objects when you only need column values.
+
+```ruby
+# Good
+Account.where(domain: 'example.com').pluck(:id, :username)
+Account.where(username: 'admin').pick(:id, :display_name)
+
+# Avoid
+Account.where(domain: 'example.com').map { |a| [a.id, a.username] }
+```
+
+### 11.3 Batch inserts and upserts
+
+For imports, seeds, or syncs, use `insert_all` / `upsert_all` to generate a single SQL statement instead of creating records one by one.
+
+```ruby
+# Good
+User.insert_all([
+  { email: 'a@example.com', created_at: Time.current, updated_at: Time.current },
+  { email: 'b@example.com', created_at: Time.current, updated_at: Time.current }
+])
+
+User.upsert_all(
+  [{ id: 1, email: 'a@example.com' }],
+  unique_by: :email
+)
+```
+
+> `insert_all` / `upsert_all` skip validations and callbacks. Use them only when that is safe, or validate the data beforehand.
+
+### 11.4 Counter caches
+
+Use Rails counter caches to avoid repeated `COUNT(*)` queries on associations.
+
+```ruby
+# Migration
+add_column :posts, :comments_count, :integer, default: 0, null: false
+
+# Model
+class Comment < ApplicationRecord
+  belongs_to :post, counter_cache: true
+end
+
+# Use post.comments_count instead of post.comments.count
+```
+
+Backfill existing data with a one-off background job or rake task.
+
+### 11.5 Use transactions deliberately
+
+Wrap multi-step writes in a database transaction so partial failures roll back cleanly.
+
+```ruby
+# Good
+ActiveRecord::Base.transaction do
+  order = Order.create!(...)
+  order.items.create!(...)
+  payment.charge!
+end
+```
+
+Avoid long-running transactions and do not call external APIs inside a transaction.
+
+### 11.6 Avoid heavy work in callbacks
+
+Callbacks that send email, call external services, or enqueue many jobs make models hard to reason about and can slow writes. Prefer explicit service objects.
+
+```ruby
+# Avoid
+class User < ApplicationRecord
+  after_create :send_welcome_email, :notify_slack, :sync_crm
+end
+
+# Better
+class UserRegistrationService
+  def call(user)
+    user.save!
+    UserMailer.welcome(user).deliver_later
+    SlackNotifier.new_user(user)
+    CrmSyncJob.perform_later(user.id)
+  end
+end
+```
+
+### 11.7 Enqueue jobs after commit when they read their own writes
+
+If a job enqueued inside a transaction reads the record it just created, use `after_commit` or pass the ID and reload. Otherwise the job may run before the commit is visible.
+
+```ruby
+# Avoid
+after_create :enqueue_index_job
+
+# Better
+after_commit :enqueue_index_job, on: [:create, :update]
+```
+
+### 11.8 Background job hygiene
+
+- Keep jobs idempotent and retry-safe.
+- Pass IDs, not Active Record objects.
+- Use dedicated queues for slow/reporting work.
+- Set sensible retry limits and dead-letter handling.
+
+```ruby
+class GenerateReportJob < ApplicationJob
+  queue_as :reports
+
+  def perform(community_id)
+    community = Community.find(community_id)
+    # idempotent work
+  end
+end
+```
+
+### 11.9 Cache hot, rarely-changing data
+
+Use Rails cache to reduce database load for frequently accessed data.
+
+```ruby
+# Fragment caching
+<% cache community do %>
+  <%= render community %>
+<% end %>
+
+# Low-level caching
+def total_active_users
+  Rails.cache.fetch("stats/active_users", expires_in: 5.minutes) do
+    User.active.count
+  end
+end
+```
+
+For nested partials, use Russian Doll caching with `touch: true` on parent associations.
+
+### 11.10 Size the database connection pool
+
+Ensure `pool` matches Puma + Sidekiq concurrency to avoid `ConnectionTimeoutError`.
+
+```yaml
+production:
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5).to_i + ENV.fetch("SIDEKIQ_CONCURRENCY", 0).to_i %>
+```
+
+### 11.11 Use `EXPLAIN ANALYZE` for complex queries
+
+Before merging a complex query, review the execution plan.
+
+```sql
+EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT)
+SELECT * FROM accounts
+WHERE domain = 'example.com'
+ORDER BY created_at DESC
+LIMIT 20;
+```
+
+Watch for sequential scans on large tables, high buffer counts, and nested loops over large relations.
+
+### 11.12 Avoid SQL injection
+
+Never interpolate user input into SQL strings. Use parameterized queries.
+
+```ruby
+# Good
+User.where("email = ?", params[:email])
+User.where(email: params[:email])
+
+# Never
+User.where("email = '#{params[:email]}'")
+```
+
+### 11.13 Use strong parameters
+
+Always whitelist params before passing them to `create` or `update`.
+
+```ruby
+def user_params
+  params.require(:user).permit(:email, :display_name, :role_id)
+end
+```
+
+### 11.14 Use database views for complex reports
+
+For complex read-only reports, consider PostgreSQL views or materialized views to pre-compute results.
+
+```ruby
+# Migration
+execute <<-SQL
+  CREATE MATERIALIZED VIEW community_stats AS
+    SELECT community_id, COUNT(*) AS posts_count
+    FROM patchwork_communities_statuses
+    GROUP BY community_id;
+SQL
+
+add_index :community_stats, :community_id, unique: true
+```
+
+Refresh concurrently on a schedule:
+
+```ruby
+ActiveRecord::Base.connection.execute(
+  "REFRESH MATERIALIZED VIEW CONCURRENTLY community_stats"
+)
+```
+
+### 11.15 Default scopes and `unscoped`
+
+Default scopes often cause surprising queries and N+1s. Prefer explicit scopes.
+
+```ruby
+# Avoid
+default_scope { where(deleted_at: nil) }
+
+# Better
+scope :active, -> { where(deleted_at: nil) }
+```
+
+If you must override a scope, use `unscoped` sparingly and document why.
+
+### 11.16 JSONB queries
+
+For JSONB columns, use PostgreSQL operators (`?`, `->`, `@>`) and GIN indexes.
+
+```ruby
+# Good
+Account.where("fields @> ?", [{ name: "Website" }].to_json)
+
+# Migration
+add_index :accounts, :fields, using: :gin, algorithm: :concurrently
+```
+
+Avoid loading large JSONB payloads in list views.
+
+### 11.17 Health checks
+
+Add lightweight health endpoints for load balancers and orchestrators.
+
+```ruby
+class HealthController < ApplicationController
+  def index
+    ActiveRecord::Base.connection.execute('SELECT 1')
+    head :ok
+  rescue
+    head :service_unavailable
+  end
+end
+```
+
+Use separate liveness (`/health`) and readiness (`/ready`) probes that also check Redis/DB when appropriate.
