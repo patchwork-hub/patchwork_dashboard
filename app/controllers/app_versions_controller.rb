@@ -6,13 +6,15 @@ class AppVersionsController < ApplicationController
   PER_PAGE = 10
 
   def index
-    app_name_key = params[:app_name]&.to_s
-    scope = if AppVersion.app_names.value?(app_name_key&.to_i)
-      AppVersion.send(AppVersion.app_names.key(app_name_key.to_i)).ransack(params[:q])
-    else
-      AppVersion.patchwork.ransack(params[:q])
+    with_read_replica do
+      app_name_key = params[:app_name]&.to_s
+      scope = if AppVersion.app_names.value?(app_name_key&.to_i)
+        AppVersion.send(AppVersion.app_names.key(app_name_key.to_i)).ransack(params[:q])
+      else
+        AppVersion.patchwork.ransack(params[:q])
+      end
+      @app_versions = scope.result.includes(:app_version_histories).order(created_at: :asc).page(params[:page]).per(PER_PAGE)
     end
-    @app_versions = scope.result.includes(:app_version_histories).order(created_at: :asc).page(params[:page]).per(PER_PAGE)
   end
 
   def new

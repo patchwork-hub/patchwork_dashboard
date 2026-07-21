@@ -4,14 +4,17 @@ module Api
       skip_before_action :verify_key!
       before_action :authenticate_client_credentials, only: [:search]
 
+      # GET /api/v1/search
       def search
-        query = build_query(params[:q])
+        with_read_replica do
+          query = build_query(params[:q])
 
-        render json: {
-          communities: serialize_communities(query),
-          channel_feeds: serialize_channel_feeds(query),
-          newsmast_channels: serialize_newsmast_communities(query)
-        }
+          render json: {
+            communities: serialize_communities(query),
+            channel_feeds: serialize_channel_feeds(query),
+            newsmast_channels: serialize_newsmast_communities(query)
+          }
+        end
       end
 
       private

@@ -114,8 +114,10 @@ module Api
       ]
 
       def recommend_channels
-        @recommended_channels = Community.recommended.exclude_array_ids
-        render json: Api::V1::ChannelSerializer.new(@recommended_channels).serializable_hash.to_json
+        with_read_replica do
+          @recommended_channels = Community.recommended.exclude_array_ids
+          render json: Api::V1::ChannelSerializer.new(@recommended_channels).serializable_hash.to_json
+        end
       end
 
       def channel_detail
@@ -129,22 +131,26 @@ module Api
       end
 
       def group_recommended_channels
-        recommended_group_channels = Collection.recommended_group_channels
-        render json: Api::V1::CollectionSerializer.new(recommended_group_channels, { params: { recommended: true, type: 'channel' } }).serializable_hash.to_json
+        with_read_replica do
+          recommended_group_channels = Collection.recommended_group_channels
+          render json: Api::V1::CollectionSerializer.new(recommended_group_channels, { params: { recommended: true, type: 'channel' } }).serializable_hash.to_json
+        end
       end
 
       def search
-        query = params[:q].present? ? "%#{params[:q].downcase}%" : nil
-        communities = Community
-                      .filter_channels
-                      .exclude_array_ids
-                      .exclude_incomplete_channels
-                      .exclude_deleted_channels
-                      .where(
-                        "lower(name) LIKE :q OR lower(slug) LIKE :q",
-                        q: query
-                      )
-        render json: Api::V1::ChannelSerializer.new(communities).serializable_hash.to_json
+        with_read_replica do
+          query = params[:q].present? ? "%#{params[:q].downcase}%" : nil
+          communities = Community
+                        .filter_channels
+                        .exclude_array_ids
+                        .exclude_incomplete_channels
+                        .exclude_deleted_channels
+                        .where(
+                          "lower(name) LIKE :q OR lower(slug) LIKE :q",
+                          q: query
+                        )
+          render json: Api::V1::ChannelSerializer.new(communities).serializable_hash.to_json
+        end
       end
 
       def my_channel
@@ -159,16 +165,20 @@ module Api
       end
 
       def channel_feeds
-        channel_feeds = Community.filter_channel_feeds.exclude_incomplete_channels.exclude_deleted_channels.exclude_not_recommended.with_all_includes.ordered_pos_name
-        render json: Api::V1::ChannelSerializer.new(channel_feeds , { params: { current_account: current_account } }).serializable_hash.to_json
+        with_read_replica do
+          channel_feeds = Community.filter_channel_feeds.exclude_incomplete_channels.exclude_deleted_channels.exclude_not_recommended.with_all_includes.ordered_pos_name
+          render json: Api::V1::ChannelSerializer.new(channel_feeds , { params: { current_account: current_account } }).serializable_hash.to_json
+        end
       end
 
       def newsmast_channels
-        newsmast_channels = Community.filter_newsmast_channels.exclude_incomplete_channels.exclude_deleted_channels.exclude_not_recommended.with_all_includes.ordered_pos_name
-        if newsmast_channels.present?
-          render json: Api::V1::ChannelSerializer.new(newsmast_channels , { params: { current_account: current_remote_account } }).serializable_hash.to_json
-        else
-          render json: NEWSMAST_CHANNELS.size > 0 ? { data: NEWSMAST_CHANNELS } : { data: [] }
+        with_read_replica do
+          newsmast_channels = Community.filter_newsmast_channels.exclude_incomplete_channels.exclude_deleted_channels.exclude_not_recommended.with_all_includes.ordered_pos_name
+          if newsmast_channels.present?
+            render json: Api::V1::ChannelSerializer.new(newsmast_channels , { params: { current_account: current_remote_account } }).serializable_hash.to_json
+          else
+            render json: NEWSMAST_CHANNELS.size > 0 ? { data: NEWSMAST_CHANNELS } : { data: [] }
+          end
         end
       end
 
@@ -248,8 +258,6 @@ module Api
         }
       end
 
-      
-
       def change_boost_bot_profile
         if @channel.nil? || !@channel.boost_bot?
           return render_errors('api.community.errors.not_found', :not_found)
@@ -300,16 +308,18 @@ module Api
       end
 
       def render_custom_channels(channels_list)
-        account = local_account? ? current_account : current_remote_account
+        with_read_replica do
+          account = local_account? ? current_account : current_remote_account
 
-        slugs_with_types = channels_list.map { |entry| [entry[:slug], entry[:channel_type]] }
-        communities = Community.where(slug: slugs_with_types.map(&:first), channel_type: slugs_with_types.map(&:last)).exclude_incomplete_channels.with_all_includes
+          slugs_with_types = channels_list.map { |entry| [entry[:slug], entry[:channel_type]] }
+          communities = Community.where(slug: slugs_with_types.map(&:first), channel_type: slugs_with_types.map(&:last)).exclude_incomplete_channels.with_all_includes
 
-        sorted_communities = channels_list.map do |entry|
-          communities.find { |community| community.slug == entry[:slug] && community.channel_type == entry[:channel_type] }
-        end.compact
+          sorted_communities = channels_list.map do |entry|
+            communities.find { |community| community.slug == entry[:slug] && community.channel_type == entry[:channel_type] }
+          end.compact
 
-        render json: Api::V1::ChannelSerializer.new(sorted_communities, { params: { current_account: account } }).serializable_hash.to_json
+          render json: Api::V1::ChannelSerializer.new(sorted_communities, { params: { current_account: account } }).serializable_hash.to_json
+        end
       end
 
       def load_json_data(filename)
