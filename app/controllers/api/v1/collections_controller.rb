@@ -58,24 +58,26 @@ module Api
       private
 
       def fetch_all_channels_by_type(type:)
-        collections = case type
-        when COLLECTION_TYPES[:channel]
-          Collection.filter_by_channel_type(type).order(sorting_index: :asc).to_a
-        when COLLECTION_TYPES[:channel_feed]
-          Collection.filter_by_channel_type(type).order(sorting_index: :asc).to_a
-        else
-          newsmast_collections = if Community.has_local_newsmast_channel?
+        with_read_replica do
+          collections = case type
+          when COLLECTION_TYPES[:channel]
+            Collection.filter_by_channel_type(type).order(sorting_index: :asc).to_a
+          when COLLECTION_TYPES[:channel_feed]
             Collection.filter_by_channel_type(type).order(sorting_index: :asc).to_a
           else
-            patchwork_collection_ids = extract_patchwork_collection_ids
-            fetch_collections_by_ids(patchwork_collection_ids)
+            newsmast_collections = if Community.has_local_newsmast_channel?
+              Collection.filter_by_channel_type(type).order(sorting_index: :asc).to_a
+            else
+              patchwork_collection_ids = extract_patchwork_collection_ids
+              fetch_collections_by_ids(patchwork_collection_ids)
+            end
+            newsmast_collections = newsmast_collections.sort_by do |collection|
+              NEWSMAST_CHANNELS_SORTING_ORDERS.index(collection.name) || Float::INFINITY
+            end
+            newsmast_collections
           end
-          newsmast_collections = newsmast_collections.sort_by do |collection|
-            NEWSMAST_CHANNELS_SORTING_ORDERS.index(collection.name) || Float::INFINITY
-          end
-          newsmast_collections
+          add_all_collection(collections, type: type)
         end
-        add_all_collection(collections, type: type)
       end
 
       def extract_patchwork_collection_ids

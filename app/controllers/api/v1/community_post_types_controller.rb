@@ -7,19 +7,21 @@ module Api
 
       def index
         authorize @community, :index?
-        @community_post_type = @community.community_post_type
-        if @community_post_type
-          render json: {
-            posts: @community_post_type.posts,
-            reposts: @community_post_type.reposts,
-            replies: @community_post_type.replies
-          }
-        else
-          render json: {
-            posts: false,
-            reposts: false,
-            replies: false
-          }
+        with_read_replica do
+          @community_post_type = @community.community_post_type
+          if @community_post_type
+            render json: {
+              posts: @community_post_type.posts,
+              reposts: @community_post_type.reposts,
+              replies: @community_post_type.replies
+            }
+          else
+            render json: {
+              posts: false,
+              reposts: false,
+              replies: false
+            }
+          end
         end
       end
 

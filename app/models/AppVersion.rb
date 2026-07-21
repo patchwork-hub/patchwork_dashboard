@@ -26,6 +26,10 @@ class AppVersion < ApplicationRecord
   # Virtual attribute for form handling
   attr_accessor :released_date
 
+  def latest_history_for(os_type)
+    app_version_histories.where(os_type: os_type).order(released_date: :desc).first
+  end
+
   private
   def version_name_format
     return if version_name.blank?

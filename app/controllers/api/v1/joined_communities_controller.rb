@@ -99,18 +99,22 @@ module Api
         end
 
         def load_joined_channels
-          channel_type = is_newsmast? ? Community.channel_types[:newsmast] : Community.channel_types[:channel]
-          @joined_communities = @account&.communities.where(deleted_at: nil).where(
-            channel_type: channel_type
-            )
-          @community = Community.find_by(slug: params[:id])
+          with_read_replica do
+            channel_type = is_newsmast? ? Community.channel_types[:newsmast] : Community.channel_types[:channel]
+            @joined_communities = @account&.communities.where(deleted_at: nil).where(
+              channel_type: channel_type
+              )
+            @community = Community.find_by(slug: params[:id])
+          end
         end
 
         def sort_by_primary!
-          @joined_communities = @joined_communities&.to_a || []
-          @joined_communities.sort_by! do |community|
-            joined = community.joined_communities.find_by(account_id: @account.id)
-            joined&.is_primary ? 0 : 1
+          with_read_replica do
+            @joined_communities = @joined_communities&.to_a || []
+            @joined_communities.sort_by! do |community|
+              joined = community.joined_communities.find_by(account_id: @account.id)
+              joined&.is_primary ? 0 : 1
+            end
           end
         end
 
