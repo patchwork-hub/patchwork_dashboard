@@ -51,9 +51,10 @@ module Dashboard
 
     config.middleware.use Rack::Attack
 
-    #  N+1 query logging for Postman and SQL profiling in API responses
-    # config.middleware.insert_after ActionDispatch::Executor, BulletLogger
-    # config.middleware.insert_before 0, QueryProfiler
-
+    #  N+1 query logging for Postman and SQL profiling in API responses for development and local environments
+    if Rails.env.development? || Rails.env.local?
+      config.middleware.insert_after ActionDispatch::Executor, BulletLogger
+      config.middleware.insert_before 0, QueryProfiler
+    end
   end
 end

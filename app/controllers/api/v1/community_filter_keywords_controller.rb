@@ -68,6 +68,8 @@ class Api::V1::CommunityFilterKeywordsController < ApiController
   end
 
   def get_community_filter_keyword(filter_type)
-    @community.patchwork_community_filter_keywords.where(filter_type: filter_type).order(created_at: :desc).page(params[:page]).per(params[:per_page] || PER_PAGE)
+    with_read_replica do
+      @community.patchwork_community_filter_keywords.where(filter_type: filter_type).order(created_at: :desc).page(params[:page]).per(params[:per_page] || PER_PAGE)
+    end
   end
 end
