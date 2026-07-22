@@ -27,7 +27,9 @@ namespace :api, defaults: { format: :json } do
         when 'ibram-museus'
           { display: true, app_name: 'ibram-museus' }
         when 'jacobin'
-          { display: false, app_name: 'jacobin' }
+          { display: true, app_name: 'jacobin' }
+        when 'jacobin_android'
+          { display: false, app_name: 'jacobin_android' }
         else
           { display: true, app_name: app_name }
         end
