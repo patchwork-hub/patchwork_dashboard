@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,6 +35,7 @@ jobs:
       - name: Lint GitHub workflows
         uses: reviewdog/action-actionlint@v1
         with:
+          reporter: github-check  
           fail_level: error
 
   ci-ok:
