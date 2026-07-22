@@ -12,6 +12,7 @@ module Api
 
         desired_value = parse_boolean_param(user_params[:bluesky_bridge_enabled])
         user = @account.user
+        return render_not_found unless user
 
         # Validate parameter presence first
         if desired_value.nil?
@@ -35,6 +36,7 @@ module Api
         return render_not_found unless @account
 
         user = @account.user
+        return render_not_found unless user
 
         render_success({ id: user.id, bluesky_bridge_enabled: user.bluesky_bridge_enabled })
       end
