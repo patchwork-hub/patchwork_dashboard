@@ -1,0 +1,70 @@
+name: Required status checks
+
+on:
+  merge_group:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    name: dependency-review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependency review
+        uses: actions/dependency-review-action@v4
+
+  bundler-audit:
+    name: bundler-audit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Install bundle-audit
+        run: gem install bundler-audit --no-document
+
+      - name: Run bundle-audit
+        run: bundle-audit check --update
+
+  lint-workflows:
+    name: lint-workflows
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Lint GitHub workflows
+        uses: reviewdog/action-actionlint@v1
+        with:
+          fail_level: error
+
+  ci-ok:
+    name: ci-ok
+    runs-on: ubuntu-latest
+    needs:
+      - dependency-review
+      - bundler-audit
+      - lint-workflows
+    if: ${{ needs.dependency-review.result == 'success' && needs.bundler-audit.result == 'success' && needs.lint-workflows.result == 'success' }}
+    steps:
+      - name: All required checks passed
+        run: echo "All required status checks completed successfully."
