@@ -6,7 +6,7 @@ module Api
       skip_before_action :verify_key!
       before_action :check_authorization_header
       before_action :set_authenticated_account
-      before_action :ensure_civicrm_membership_eligibility!, only: [:create]
+      before_action :ensure_civicrm_membership_eligibility!, only: [:create], if: :check_civicrm_membership_enabled?
       before_action :load_joined_channels, only: [:index, :set_primary]
 
       def index
@@ -157,6 +157,11 @@ module Api
       rescue StandardError => e
         Rails.logger.error("CiviCRM membership eligibility check failed: #{e.class} #{e.message}")
         render_membership_not_eligible
+      end
+
+      def check_civicrm_membership_enabled?
+        raw_value = ENV.fetch('CHECK_CIVICRM_MEMBERSHIP', nil)
+        raw_value.present? && ActiveModel::Type::Boolean.new.cast(raw_value)
       end
 
       def render_membership_not_eligible
