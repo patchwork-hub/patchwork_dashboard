@@ -6,6 +6,7 @@ module Api
       skip_before_action :verify_key!
       before_action :check_authorization_header
       before_action :set_authenticated_account
+      before_action :ensure_civicrm_membership_eligibility!, only: [:create]
       before_action :load_joined_channels, only: [:index, :set_primary]
 
       def index
@@ -133,6 +134,37 @@ module Api
         return render_unauthorized unless @account
 
         @account
+      end
+
+      def ensure_civicrm_membership_eligibility!
+        # Remote account requests do not have local user-email context for membership validation.
+        return if params[:instance_domain].present?
+        return if params[:working_group_id].blank?
+
+        email = @account&.user&.email
+        return render_membership_not_eligible if email.blank?
+
+        membership_result = CivicrmMembershipCheckService.new(
+          email,
+          working_group_id: params[:working_group_id]
+        ).call
+        return if membership_result.valid?
+
+        render_validation_failed([membership_result.error_message])
+      rescue NameError => e
+        Rails.logger.error("CiviCRM membership service unavailable: #{e.class} #{e.message}")
+        render_membership_not_eligible
+      rescue StandardError => e
+        Rails.logger.error("CiviCRM membership eligibility check failed: #{e.class} #{e.message}")
+        render_membership_not_eligible
+      end
+
+      def render_membership_not_eligible
+        message = I18n.t(
+          'api.account.errors.membership_not_eligible',
+          default: 'Membership is not eligible for this action'
+        )
+        render_validation_failed([message])
       end
     end
   end
