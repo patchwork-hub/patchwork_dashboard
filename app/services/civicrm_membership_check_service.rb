@@ -9,7 +9,7 @@ class CivicrmMembershipCheckService
 
   CONTACT_GET_PATH = "/civicrm/ajax/api4/Contact/get"
 
-  Result = Struct.new(:valid?, :error_message, :user_groups, keyword_init: true)
+  Result = Struct.new(:valid?, :error_message, :user_groups, :values_present, keyword_init: true)
 
   def initialize(email, working_group_id:, force_remote: false)
     @email = email
@@ -35,8 +35,8 @@ class CivicrmMembershipCheckService
     body = response.parsed_response
     body = parse_response_body(response_body) unless body.is_a?(Hash)
     user_groups = extract_user_groups(body)
-    return valid_result(user_groups) if body.is_a?(Hash) && body["count"].to_i.positive?
-    return valid_result(user_groups) if values_present?(body)
+    values_present = values_present?(body)
+    return valid_result(user_groups, values_present: true) if values_present
 
     invalid_result
   rescue StandardError => e
@@ -239,15 +239,16 @@ class CivicrmMembershipCheckService
     end
   end
 
-  def valid_result(user_groups = [])
-    Result.new(valid?: true, error_message: nil, user_groups: user_groups)
+  def valid_result(user_groups = [], values_present: true)
+    Result.new(valid?: true, error_message: nil, user_groups: user_groups, values_present: values_present)
   end
 
   def invalid_result
     Result.new(
       valid?: false,
       error_message: I18n.t("api.account.errors.membership_not_eligible", default: "Membership is not eligible for this action"),
-      user_groups: []
+      user_groups: [],
+      values_present: false
     )
   end
 end
