@@ -148,7 +148,7 @@ module Api
           email,
           working_group_id: params[:working_group_id]
         ).call
-        return if membership_result.valid?
+        return if membership_result.valid? && membership_result.values_present
 
         render_validation_failed([membership_result.error_message])
       rescue NameError => e
