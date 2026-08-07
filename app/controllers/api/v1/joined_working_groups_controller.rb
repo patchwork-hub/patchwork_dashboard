@@ -139,16 +139,19 @@ module Api
       def ensure_civicrm_membership_eligibility!
         # Remote account requests do not have local user-email context for membership validation.
         return if params[:instance_domain].present?
-        return if params[:working_group_id].blank?
+        return render_membership_not_eligible if params[:working_group_id].blank?
 
         email = @account&.user&.email
         return render_membership_not_eligible if email.blank?
 
         membership_result = CivicrmMembershipCheckService.new(
           email,
-          working_group_id: params[:working_group_id]
+          working_group_id: params[:working_group_id],
+          force_remote: true
         ).call
         return if membership_result.valid? && membership_result.values_present
+
+        return render_membership_not_eligible if membership_result.error_message.blank?
 
         render_validation_failed([membership_result.error_message])
       rescue NameError => e
