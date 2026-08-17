@@ -21,7 +21,7 @@ module Api
       skip_before_action :verify_key!
       before_action :check_authorization_header
       before_action :set_authenticated_account
-      before_action :ensure_civicrm_membership_eligibility!, only: [:create]
+      before_action :ensure_civicrm_membership_eligibility!, only: [:create], if: :check_civicrm_membership_enabled?
       before_action :load_joined_channels, only: [:index, :set_primary]
 
       def index
@@ -148,10 +148,6 @@ module Api
       end
 
       def ensure_civicrm_membership_eligibility!
-        # Remote account requests do not have local user-email context for membership validation.
-        # return if params[:instance_domain].present?
-        return render_membership_not_eligible unless check_civicrm_membership_enabled?
-
         patchwork_community = find_patchwork_community(params[:id])
         return render_membership_not_eligible unless patchwork_community
 
