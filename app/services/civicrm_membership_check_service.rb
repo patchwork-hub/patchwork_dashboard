@@ -34,11 +34,9 @@ class CivicrmMembershipCheckService
 
     body = response.parsed_response
     body = parse_response_body(response_body) unless body.is_a?(Hash)
-    user_groups = extract_user_groups(body)
-    values_present = values_present?(body)
-    return valid_result(user_groups, values_present: true) if values_present
+    return invalid_result if response_values(body).empty?
 
-    invalid_result
+    valid_result(extract_user_groups(body), values_present: true)
   rescue StandardError => e
     Rails.logger.error("CiviCRM membership check failed: #{e.class} #{normalize_utf8(e.message)}")
     invalid_result
@@ -187,12 +185,7 @@ class CivicrmMembershipCheckService
   end
 
   def extract_user_groups(body)
-    return [] unless body.is_a?(Hash)
-
-    values = body["values"] || body[:values]
-    return [] unless values.present?
-
-    results = results_from_values(values)
+    results = response_values(body).select { |value| value.is_a?(Hash) }
     return [] if results.empty?
 
     results
@@ -200,17 +193,6 @@ class CivicrmMembershipCheckService
       .map { |group| group.to_s.strip }
       .reject(&:blank?)
       .uniq
-  end
-
-  def results_from_values(values)
-    case values
-    when Array
-      values.select { |value| value.is_a?(Hash) }
-    when Hash
-      values.values.select { |value| value.is_a?(Hash) }
-    else
-      []
-    end
   end
 
   def groups_from_result(result)
@@ -226,17 +208,12 @@ class CivicrmMembershipCheckService
     end
   end
 
-  def values_present?(body)
-    values = body["values"] || body[:values]
+  def response_values(body)
+    return [] unless body.is_a?(Hash)
+    return [] unless body.key?("values") || body.key?(:values)
 
-    case values
-    when Array
-      values.any?
-    when Hash
-      values.any?
-    else
-      false
-    end
+    values = body["values"] || body[:values]
+    values.is_a?(Array) ? values : []
   end
 
   def valid_result(user_groups = [], values_present: true)
