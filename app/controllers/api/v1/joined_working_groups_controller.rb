@@ -3,10 +3,25 @@
 module Api
   module V1
     class JoinedWorkingGroupsController < ApiController
+      CIVICRM_WORKING_GROUP_IDS_BY_COMMUNITY_NAME = {
+        'Atlas' => 20,
+        'Community Engagement' => 19,
+        'Ethical Framework' => 21,
+        'EWS in LMICS' => 22,
+        'Models, Data, Methods Repo' => 23,
+        'Advisory' => 24,
+        'Collaborative' => 25,
+        'Communications' => 26,
+        'Events' => 27,
+        'Finance' => 28,
+        'Governance' => 29,
+        'Committee - Membership' => 30
+      }.freeze
+
       skip_before_action :verify_key!
       before_action :check_authorization_header
       before_action :set_authenticated_account
-      before_action :ensure_civicrm_membership_eligibility!, only: [:create]
+      before_action :ensure_civicrm_membership_eligibility!, only: [:create], if: :check_civicrm_membership_enabled?
       before_action :load_joined_channels, only: [:index, :set_primary]
 
       def index
@@ -137,17 +152,18 @@ module Api
       end
 
       def ensure_civicrm_membership_eligibility!
-        # Remote account requests do not have local user-email context for membership validation.
-        # return if params[:instance_domain].present?
-        return render_membership_not_eligible unless check_civicrm_membership_enabled?
-        return render_membership_not_eligible if params[:working_group_id].blank?
+        patchwork_community = find_patchwork_community(params[:id])
+        return render_membership_not_eligible unless patchwork_community
+
+        working_group_id = CIVICRM_WORKING_GROUP_IDS_BY_COMMUNITY_NAME[patchwork_community.name]
+        return render_membership_not_eligible unless working_group_id
 
         email = @account&.user&.email
         return render_membership_not_eligible if email.blank?
 
         membership_result = CivicrmMembershipCheckService.new(
           email,
-          working_group_id: params[:working_group_id],
+          working_group_id: working_group_id,
           force_remote: true
         ).call
         return if membership_result.valid? && membership_result.values_present
