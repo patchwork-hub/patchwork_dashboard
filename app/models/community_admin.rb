@@ -17,6 +17,7 @@
 #
 # Indexes
 #
+#  index_patchwork_communities_admins_on_account_and_community   (account_id,patchwork_community_id) UNIQUE
 #  index_patchwork_communities_admins_on_account_id              (account_id)
 #  index_patchwork_communities_admins_on_patchwork_community_id  (patchwork_community_id)
 #  unique_community_admin_index                                  (account_id,patchwork_community_id) UNIQUE

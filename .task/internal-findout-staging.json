@@ -1,13 +1,13 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:eu-west-2:672691776916:task-definition/patchwork-dashboard-staging:192",
+    "taskDefinitionArn": "arn:aws:ecs:eu-west-2:672691776916:task-definition/findout-dashboard:2",
     "containerDefinitions": [
         {
-            "name": "patchwork-dashboard-staging",
-            "image": "672691776916.dkr.ecr.eu-west-2.amazonaws.com/patchwork-dashboard:staging",
+            "name": "findout-dashboard",
+            "image": "672691776916.dkr.ecr.eu-west-2.amazonaws.com/internal-dashboard-staging:staging",
             "cpu": 0,
             "portMappings": [
                 {
-                    "name": "patchwork-dashboard-staging-3000-tcp",
+                    "name": "findout-dashboard-3000-tcp",
                     "containerPort": 3000,
                     "hostPort": 3000,
                     "protocol": "tcp",
@@ -18,7 +18,7 @@
             "environment": [],
             "environmentFiles": [
                 {
-                    "value": "arn:aws:s3:::patchwork-private-env/staging-dashboard.env",
+                    "value": "arn:aws:s3:::patchwork-private-env/findout-dashboard.env",
                     "type": "s3"
                 }
             ],
@@ -27,21 +27,20 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/patchwork-dashboard-staging",
+                    "awslogs-group": "/ecs/findout-dashboard",
                     "awslogs-create-group": "true",
                     "awslogs-region": "eu-west-2",
                     "awslogs-stream-prefix": "ecs"
-                },
-                "secretOptions": []
+                }
             },
             "systemControls": []
         }
     ],
-    "family": "patchwork-dashboard-staging",
+    "family": "findout-dashboard",
     "taskRoleArn": "arn:aws:iam::672691776916:role/patchwork-ecs-task-role",
     "executionRoleArn": "arn:aws:iam::672691776916:role/patchwork-ecs-task-execution-role",
     "networkMode": "awsvpc",
-    "revision": 192,
+    "revision": 2,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -79,7 +78,8 @@
     "placementConstraints": [],
     "compatibilities": [
         "EC2",
-        "FARGATE"
+        "FARGATE",
+        "MANAGED_INSTANCES"
     ],
     "requiresCompatibilities": [
         "FARGATE"
@@ -90,7 +90,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2025-01-11T08:38:55.933Z",
+    "registeredAt": "2026-03-10T09:10:45.224Z",
     "registeredBy": "arn:aws:iam::672691776916:user/ahn",
     "enableFaultInjection": false,
     "tags": []

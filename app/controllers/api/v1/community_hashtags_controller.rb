@@ -105,10 +105,12 @@ module Api
       end
 
       def load_commu_hashtag_records
-        @community.patchwork_community_hashtags
-          .order(created_at: :desc)
-          .page(params[:page])
-          .per(params[:per_page] || PER_PAGE)
+        with_read_replica do
+          @community.patchwork_community_hashtags
+            .order(created_at: :desc)
+            .page(params[:page])
+            .per(params[:per_page] || PER_PAGE)
+        end
       end
 
       def perform_hashtag_action(hashtag_name, community_id = nil, action)
