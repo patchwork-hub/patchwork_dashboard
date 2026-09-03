@@ -11,8 +11,7 @@
 #
 # Indexes
 #
-#  index_patchwork_communities_hashtags_on_hashtag_and_community   (patchwork_community_id,hashtag) UNIQUE
-#  index_patchwork_communities_hashtags_on_patchwork_community_id  (patchwork_community_id)
+#  index_patchwork_communities_hashtags_on_hashtag_and_community  (patchwork_community_id,hashtag) UNIQUE
 #
 # Foreign Keys
 #

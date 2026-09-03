@@ -141,6 +141,13 @@ Add tests for:
 2. Endpoints wrapped in `with_read_replica`.
 3. Write paths wrapped in `with_primary`.
 4. Write prevention inside `with_read_replica`.
+5. Fresh test DB initialization when schema defaults rely on PostgreSQL helper functions.
+
+When a clean test database is created from schema load, PostgreSQL must already have the custom `timestamp_id(text)` helper function that several table defaults use. If you run into `PG::UndefinedFunction: timestamp_id(text)`, recreate the test database from schema after the migration that defines the function:
+
+```bash
+RAILS_ENV=test bundle exec rails db:drop db:create db:schema:load
+```
 
 Example safety test:
 

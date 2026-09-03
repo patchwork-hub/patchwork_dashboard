@@ -13,7 +13,6 @@
 # Indexes
 #
 #  index_patchwork_commu_amplifiers_on_account_and_patchwork_commu  (account_id,patchwork_community_id) UNIQUE
-#  index_patchwork_community_amplifiers_on_account_id               (account_id)
 #  index_patchwork_community_amplifiers_on_patchwork_community_id   (patchwork_community_id)
 #
 # Foreign Keys

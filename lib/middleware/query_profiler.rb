@@ -27,8 +27,8 @@ class QueryProfiler
     end
 
     [status, headers, response]
-  rescue => e
+    rescue => e
     Rails.logger.error "QueryProfiler Error: #{e.message}"
-    @app.call(env) # Fallback to original request
+    [500, { 'Content-Type' => 'text/plain' }, ["QueryProfiler encountered an error"]]
   end
 end

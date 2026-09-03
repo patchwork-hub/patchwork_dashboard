@@ -180,6 +180,20 @@ GEM
       raabro (~> 1.4)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    google-protobuf (4.36.0-aarch64-linux-gnu)
+      bigdecimal
+      rake (~> 13.3)
+    google-protobuf (4.36.0-arm64-darwin)
+      bigdecimal
+      rake (~> 13.3)
+    google-protobuf (4.36.0-x86_64-darwin)
+      bigdecimal
+      rake (~> 13.3)
+    google-protobuf (4.36.0-x86_64-linux-gnu)
+      bigdecimal
+      rake (~> 13.3)
+    googleapis-common-protos-types (1.23.0)
+      google-protobuf (~> 4.26)
     haml (6.3.0)
       temple (>= 0.8.2)
       thor
@@ -232,6 +246,11 @@ GEM
       mime-types
       terrapin (>= 0.6.0, < 2.0)
     logger (1.7.0)
+    lograge (0.12.0)
+      actionpack (>= 4)
+      activesupport (>= 4)
+      railties (>= 4)
+      request_store (~> 1.0)
     loofah (2.24.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -273,12 +292,85 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.6-x86_64-linux-gnu)
       racc (~> 1.4)
+    opentelemetry-api (1.11.0)
+      logger
+    opentelemetry-common (0.25.1)
+      opentelemetry-api (~> 1.0)
+    opentelemetry-exporter-otlp (0.34.1)
+      google-protobuf (>= 3.18)
+      googleapis-common-protos-types (~> 1.3)
+      opentelemetry-api (~> 1.1)
+      opentelemetry-common (~> 0.20)
+      opentelemetry-sdk (~> 1.10)
+      opentelemetry-semantic_conventions
+    opentelemetry-helpers-sql (0.4.0)
+      opentelemetry-api (~> 1.7)
+    opentelemetry-helpers-sql-processor (0.5.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-common (~> 0.21)
+    opentelemetry-instrumentation-action_mailer (0.8.1)
+      opentelemetry-instrumentation-active_support (~> 0.10)
+    opentelemetry-instrumentation-action_pack (0.18.1)
+      opentelemetry-instrumentation-rack (~> 0.29)
+    opentelemetry-instrumentation-action_view (0.13.0)
+      opentelemetry-instrumentation-active_support (~> 0.10)
+    opentelemetry-instrumentation-active_job (0.13.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-active_record (0.13.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-active_storage (0.5.1)
+      opentelemetry-instrumentation-active_support (~> 0.10)
+    opentelemetry-instrumentation-active_support (0.12.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-base (0.26.1)
+      opentelemetry-api (~> 1.7)
+      opentelemetry-common (~> 0.21)
+      opentelemetry-registry (~> 0.1)
+    opentelemetry-instrumentation-concurrent_ruby (0.25.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-faraday (0.33.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-net_http (0.29.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-pg (0.37.0)
+      opentelemetry-helpers-sql
+      opentelemetry-helpers-sql-processor
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-rack (0.31.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-rails (0.42.0)
+      opentelemetry-instrumentation-action_mailer (~> 0.7)
+      opentelemetry-instrumentation-action_pack (~> 0.17)
+      opentelemetry-instrumentation-action_view (~> 0.12)
+      opentelemetry-instrumentation-active_job (~> 0.11)
+      opentelemetry-instrumentation-active_record (~> 0.12)
+      opentelemetry-instrumentation-active_storage (~> 0.4)
+      opentelemetry-instrumentation-active_support (~> 0.11)
+      opentelemetry-instrumentation-concurrent_ruby (~> 0.25)
+    opentelemetry-instrumentation-redis (0.29.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-sidekiq (0.29.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-registry (0.6.3)
+      opentelemetry-api (~> 1.1)
+    opentelemetry-sdk (1.13.0)
+      logger
+      opentelemetry-api (~> 1.1)
+      opentelemetry-common (~> 0.20)
+      opentelemetry-registry (~> 0.2)
+      opentelemetry-semantic_conventions
+    opentelemetry-semantic_conventions (1.44.0)
+      opentelemetry-api (~> 1.0)
     orm_adapter (0.5.0)
     pg (1.5.9)
+    pghero (3.7.0)
+      activerecord (>= 7.1)
     popper_js (1.16.1)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
+    prometheus_exporter (2.3.1)
+      webrick
     psych (5.2.3)
       date
       stringio
@@ -332,7 +424,7 @@ GEM
       rake (>= 12.2)
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
-    rake (13.2.1)
+    rake (13.4.2)
     ransack (4.3.0)
       activerecord (>= 6.1.5)
       activesupport (>= 6.1.5)
@@ -345,6 +437,8 @@ GEM
     regexp_parser (2.10.0)
     reline (0.6.0)
       io-console (~> 0.5)
+    request_store (1.7.0)
+      rack (>= 1.4)
     resolv (0.6.0)
     responders (3.1.1)
       actionpack (>= 5.2)
@@ -435,6 +529,7 @@ PLATFORMS
   aarch64-linux
   arm64-darwin-23
   arm64-darwin-24
+  arm64-darwin-25
   x86_64-darwin-22
   x86_64-darwin-23
   x86_64-darwin-23
@@ -472,8 +567,23 @@ DEPENDENCIES
   jsonapi-serializer (~> 2.2)
   kaminari
   kt-paperclip (~> 7.2)
+  lograge (~> 0.12.0)
   memory_profiler
+  opentelemetry-api (~> 1.11.0)
+  opentelemetry-exporter-otlp (~> 0.34.0)
+  opentelemetry-instrumentation-active_job (~> 0.13.0)
+  opentelemetry-instrumentation-concurrent_ruby (~> 0.25.0)
+  opentelemetry-instrumentation-faraday (~> 0.33.0)
+  opentelemetry-instrumentation-net_http (~> 0.29.0)
+  opentelemetry-instrumentation-pg (~> 0.37.0)
+  opentelemetry-instrumentation-rack (~> 0.31.0)
+  opentelemetry-instrumentation-rails (~> 0.42.0)
+  opentelemetry-instrumentation-redis (~> 0.29.0)
+  opentelemetry-instrumentation-sidekiq (~> 0.29.0)
+  opentelemetry-sdk (~> 1.4)
   pg (~> 1.1)
+  pghero (~> 3.6)
+  prometheus_exporter (~> 2.2)
   puma (~> 5.0)
   pundit (~> 2.4)
   rack-attack

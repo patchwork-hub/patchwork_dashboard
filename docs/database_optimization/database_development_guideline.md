@@ -150,6 +150,12 @@ RAILS_ENV=test bundle exec rails db:drop db:create db:migrate
 bundle exec rails test
 ```
 
+- If schema load fails with `PG::UndefinedFunction: timestamp_id(text)`, the test database was created without the required PostgreSQL helper function. Rebuild the schema in a clean DB after the migration that defines the helper:
+
+```bash
+RAILS_ENV=test bundle exec rails db:drop db:create db:schema:load
+```
+
 - Bullet is loaded in development and test but guarded with `defined?(Bullet)`. If you see Bullet-related boot errors, confirm the gem is in the bundle.
 
 ### 5.3 Performance regression tests

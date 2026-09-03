@@ -20,6 +20,6 @@ class BulletLogger
     [status, headers, response]
   rescue => e
     Rails.logger.error "BulletLogger Error: #{e.message}"
-    @app.call(env) # Fallback to original request
+    [500, { 'Content-Type' => 'text/plain' }, ["BulletLogger encountered an error"]]
   end
 end

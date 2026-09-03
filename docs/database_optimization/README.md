@@ -8,7 +8,7 @@ This directory contains the database optimization playbook for the Patchwork Das
 2. [slow_query_inventory.md](slow_query_inventory.md) — Prioritized list of slow / inefficient queries that need fixing, with suggested fixes.
 3. [database_development_guideline.md](database_development_guideline.md) — How to work day-to-day, review code, and verify changes safely.
 4. [query_rules_and_principles.md](query_rules_and_principles.md) — Short reference card of hard rules for writing queries.
-5. [free_monitoring_setup.md](free_monitoring_setup.md) — Guide to deploy a free monitoring stack (Prometheus, Grafana, PgHero, lograge) locally and on AWS ECS/EKS/Fargate, plus an optional OpenTelemetry tracing section.
+5. [monitoring_and_observability_setup.md](monitoring_and_observability_setup.md) — Canonical guide for monitoring and observability (Prometheus/Grafana/PgHero/lograge baseline, optional OpenTelemetry tracing, and Patchwork compatibility notes).
 
 ## Quick links to existing code
 

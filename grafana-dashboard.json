@@ -1,0 +1,63 @@
+{
+  "dashboard": {
+    "title": "Patchwork Dashboard Monitoring",
+    "timezone": "browser",
+    "schemaVersion": 39,
+    "version": 1,
+    "refresh": "10s",
+    "panels": [
+      {
+        "id": 1,
+        "type": "timeseries",
+        "title": "HTTP Requests/sec",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+        "targets": [
+          {
+            "expr": "rate(http_requests_total[1m])",
+            "legendFormat": "{{controller}}#{{action}}",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "type": "timeseries",
+        "title": "HTTP Request Duration p95",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))",
+            "legendFormat": "p95",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "type": "timeseries",
+        "title": "SQL Duration p95",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum by (le) (rate(http_request_sql_duration_seconds_bucket[5m])))",
+            "legendFormat": "p95 SQL",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "type": "timeseries",
+        "title": "Monitoring Benchmark Latency",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{controller=\"monitoring\",action=\"benchmark\"}[1m])",
+            "legendFormat": "benchmark requests/sec",
+            "refId": "A"
+          }
+        ]
+      }
+    ]
+  }
+}

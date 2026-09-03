@@ -12,7 +12,6 @@
 #
 #  index_patchwork_communities_statuses_on_patchwork_community_id  (patchwork_community_id)
 #  index_patchwork_communities_statuses_on_status_and_community    (status_id,patchwork_community_id) UNIQUE
-#  index_patchwork_communities_statuses_on_status_id               (status_id)
 #
 # Foreign Keys
 #

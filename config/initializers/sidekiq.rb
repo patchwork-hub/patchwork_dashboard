@@ -22,3 +22,20 @@ Sidekiq.configure_client do |config|
     url: redis_url
   }
 end
+
+if ENV.fetch('MASTODON_PROMETHEUS_EXPORTER_ENABLED', 'false').to_s == 'true'
+  require 'prometheus_exporter'
+  require 'prometheus_exporter/instrumentation'
+
+  Sidekiq.configure_server do |config|
+    config.server_middleware do |chain|
+      chain.add PrometheusExporter::Instrumentation::Sidekiq
+    end
+  end
+
+  if ENV.fetch('MASTODON_PROMETHEUS_EXPORTER_SIDEKIQ_DETAILED_METRICS', 'false').to_s == 'true'
+    PrometheusExporter::Instrumentation::SidekiqProcess.start if defined?(PrometheusExporter::Instrumentation::SidekiqProcess)
+    PrometheusExporter::Instrumentation::SidekiqStats.start if defined?(PrometheusExporter::Instrumentation::SidekiqStats)
+    PrometheusExporter::Instrumentation::SidekiqQueue.start if defined?(PrometheusExporter::Instrumentation::SidekiqQueue)
+  end
+end

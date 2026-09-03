@@ -24,6 +24,10 @@ class Rack::Attack
   #   req.ip == '127.0.0.1' || req.ip == '::1'
   # end
 
+  safelist('allow-monitoring-benchmark') do |req|
+    req.path == '/monitoring/benchmark'
+  end
+
   PROTECTED_ENDPOINT_PATHS = %w[
     /api/v1/channels/my_channel
     /api/v1/collections/newsmast_collections

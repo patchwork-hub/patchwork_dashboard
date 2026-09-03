@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_05_08_093400) do
+ActiveRecord::Schema[7.1].define(version: 2026_09_01_093231) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
   create_table "account_aliases", force: :cascade do |t|
@@ -950,7 +951,6 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_08_093400) do
     t.integer "account_status", default: 0, null: false
     t.index ["account_id", "patchwork_community_id"], name: "index_patchwork_communities_admins_on_account_and_community", unique: true
     t.index ["account_id", "patchwork_community_id"], name: "unique_community_admin_index", unique: true
-    t.index ["account_id"], name: "index_patchwork_communities_admins_on_account_id"
     t.index ["patchwork_community_id"], name: "index_patchwork_communities_admins_on_patchwork_community_id"
   end
 
@@ -972,7 +972,6 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_08_093400) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["patchwork_community_id", "hashtag"], name: "index_patchwork_communities_hashtags_on_hashtag_and_community", unique: true
-    t.index ["patchwork_community_id"], name: "index_patchwork_communities_hashtags_on_patchwork_community_id"
   end
 
   create_table "patchwork_communities_statuses", force: :cascade do |t|
@@ -982,7 +981,6 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_08_093400) do
     t.datetime "updated_at", null: false
     t.index ["patchwork_community_id"], name: "index_patchwork_communities_statuses_on_patchwork_community_id"
     t.index ["status_id", "patchwork_community_id"], name: "index_patchwork_communities_statuses_on_status_and_community", unique: true
-    t.index ["status_id"], name: "index_patchwork_communities_statuses_on_status_id"
   end
 
   create_table "patchwork_community_additional_informations", force: :cascade do |t|
@@ -1002,7 +1000,6 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_08_093400) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id", "patchwork_community_id"], name: "index_patchwork_commu_amplifiers_on_account_and_patchwork_commu", unique: true
-    t.index ["account_id"], name: "index_patchwork_community_amplifiers_on_account_id"
     t.index ["patchwork_community_id"], name: "index_patchwork_community_amplifiers_on_patchwork_community_id"
   end
 
@@ -1111,6 +1108,17 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_08_093400) do
     t.integer "channel_type", default: 0, null: false
     t.index ["account_id"], name: "index_patchwork_wait_lists_on_account_id"
     t.index ["invitation_code"], name: "index_patchwork_wait_lists_on_invitation_code", unique: true
+  end
+
+  create_table "pghero_query_stats", force: :cascade do |t|
+    t.text "database"
+    t.text "user"
+    t.text "query"
+    t.bigint "query_hash"
+    t.float "total_time"
+    t.bigint "calls"
+    t.datetime "captured_at", precision: nil
+    t.index ["database", "captured_at"], name: "index_pghero_query_stats_on_database_and_captured_at"
   end
 
   create_table "pghero_space_stats", force: :cascade do |t|

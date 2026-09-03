@@ -45,6 +45,29 @@ group :test do
   gem "webdrivers"
 end
 
+# Database monitoring (Phase 1 - beginner)
+gem 'pghero', '~> 3.6'
+gem 'prometheus_exporter', '~> 2.2', require: false
+
+group :production do
+  gem 'lograge', '~> 0.12.0'
+end
+
+gem 'opentelemetry-api', '~> 1.11.0'
+group :opentelemetry do
+  gem 'opentelemetry-exporter-otlp', '~> 0.34.0', require: false
+  gem 'opentelemetry-instrumentation-active_job', '~> 0.13.0', require: false
+  gem 'opentelemetry-instrumentation-concurrent_ruby', '~> 0.25.0', require: false
+  gem 'opentelemetry-instrumentation-faraday', '~> 0.33.0', require: false
+  gem 'opentelemetry-instrumentation-net_http', '~> 0.29.0', require: false
+  gem 'opentelemetry-instrumentation-pg', '~> 0.37.0', require: false
+  gem 'opentelemetry-instrumentation-rack', '~> 0.31.0', require: false
+  gem 'opentelemetry-instrumentation-rails', '~> 0.42.0', require: false
+  gem 'opentelemetry-instrumentation-redis', '~> 0.29.0', require: false
+  gem 'opentelemetry-instrumentation-sidekiq', '~> 0.29.0', require: false
+  gem 'opentelemetry-sdk', '~> 1.4', require: false
+end
+
 gem 'responders'
 gem 'bootstrap', '~> 4.6.1'
 
