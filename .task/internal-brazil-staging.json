@@ -1,0 +1,107 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:sa-east-1:440893644165:task-definition/brazilian-staging-dashboard:17",
+    "containerDefinitions": [
+        {
+            "name": "dashboard",
+            "image": "440893644165.dkr.ecr.sa-east-1.amazonaws.com/brazilian/dashboard:staging",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [
+                {
+                    "value": "arn:aws:s3:::brazilian-staging-env/dashboard/.env",
+                    "type": "s3"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/brazilian-staging",
+                    "awslogs-region": "sa-east-1",
+                    "awslogs-stream-prefix": "dashboard"
+                }
+            },
+            "systemControls": []
+        }
+    ],
+    "family": "brazilian-staging-dashboard",
+    "taskRoleArn": "arn:aws:iam::440893644165:role/brazilian-staging-ecs-task",
+    "executionRoleArn": "arn:aws:iam::440893644165:role/brazilian-staging-ecs-execution",
+    "networkMode": "awsvpc",
+    "revision": 17,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.env-files.s3"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE",
+        "MANAGED_INSTANCES"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "2048",
+    "registeredAt": "2026-07-08T19:07:40.287Z",
+    "registeredBy": "arn:aws:sts::440893644165:assumed-role/AWSReservedSSO_AdministratorAccess_9af086087489831b/ahn",
+    "tags": [
+        {
+            "key": "Project",
+            "value": "brazilian"
+        },
+        {
+            "key": "Environment",
+            "value": "staging"
+        },
+        {
+            "key": "Service",
+            "value": "dashboard"
+        },
+        {
+            "key": "ManagedBy",
+            "value": "terraform"
+        },
+        {
+            "key": "Name",
+            "value": "brazilian-staging-dashboard-task"
+        }
+    ]
+}
