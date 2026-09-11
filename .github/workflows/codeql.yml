@@ -22,9 +22,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language:
-          - javascript
-          - ruby
+        language: ['javascript', 'ruby']
+        # - javascript
+        # - ruby
 
     steps:
       - name: Checkout repository
