@@ -8,11 +8,11 @@ development:
   :scheduler:
     :schedule:
       FetchContentKeywordScheduler:
-        every: '5m'
+        every: '1w'
         class: Scheduler::FetchContentKeywordScheduler
         queue: dashboard_development_scheduler
       FetchSpamKeywordScheduler:
-        every: '5m'
+        every: '1w'
         class: Scheduler::FetchSpamKeywordScheduler
         queue: dashboard_development_scheduler
       FollowBlueskyBotScheduler:
@@ -38,11 +38,11 @@ staging:
   :scheduler:
     :schedule:
       FetchContentKeywordScheduler:
-        every: '5m'
+        every: '1w'
         class: Scheduler::FetchContentKeywordScheduler
         queue: dashboard_staging_scheduler
       FetchSpamKeywordScheduler:
-        every: '5m'
+        every: '1w'
         class: Scheduler::FetchSpamKeywordScheduler
         queue: dashboard_staging_scheduler
       FollowBlueskyBotScheduler:
@@ -68,11 +68,11 @@ production:
   :scheduler:
     :schedule:
       FetchContentKeywordScheduler:
-        every: '5m'
+        every: '1w'
         class: Scheduler::FetchContentKeywordScheduler
         queue: dashboard_production_scheduler
       FetchSpamKeywordScheduler:
-        every: '5m'
+        every: '1w'
         class: Scheduler::FetchSpamKeywordScheduler
         queue: dashboard_production_scheduler
       FollowBlueskyBotScheduler:
