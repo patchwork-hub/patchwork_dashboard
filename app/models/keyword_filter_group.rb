@@ -171,8 +171,8 @@ class KeywordFilterGroup < ApplicationRecord
 
     redis.pipelined do |pipeline|
       pipeline.hset(redis_key, composite_key, new_value)
-      pipeline.sadd(group_key, composite_key)
-      pipeline.sadd(redis_group_registry_key(redis_key), group_key)
+      pipeline.sadd?(group_key, composite_key)
+      pipeline.sadd?(redis_group_registry_key(redis_key), group_key)
       if previous_group_id && previous_group_id != group_id
         pipeline.srem(redis_group_key(redis_key, previous_group_id), composite_key)
       end
@@ -198,8 +198,8 @@ class KeywordFilterGroup < ApplicationRecord
 
     if composite_keys.any?
       redis.pipelined do |pipeline|
-        pipeline.sadd(group_key, *composite_keys)
-        pipeline.sadd(redis_group_registry_key(redis_key), group_key)
+        composite_keys.each { |composite_key| pipeline.sadd?(group_key, composite_key) }
+        pipeline.sadd?(redis_group_registry_key(redis_key), group_key)
       end
     end
     composite_keys
