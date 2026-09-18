@@ -30,16 +30,19 @@ module Api
 
       def index
         @all_collections = fetch_all_channels_by_type(type: COLLECTION_TYPES[:channel])
+        @all_collections = paginate_if_requested(@all_collections)
         render_collections(@all_collections, type: COLLECTION_TYPES[:channel])
       end
 
       def channel_feed_collections
         @all_collections = fetch_all_channels_by_type(type: COLLECTION_TYPES[:channel_feed])
+        @all_collections = paginate_if_requested(@all_collections)
         render_collections(@all_collections, type: COLLECTION_TYPES[:channel_feed])
       end
 
       def newsmast_collections
         @all_collections = fetch_all_channels_by_type(type: COLLECTION_TYPES[:newsmast])
+        @all_collections = paginate_if_requested(@all_collections)
         render_collections(@all_collections, type: COLLECTION_TYPES[:newsmast])
       end
 
@@ -49,6 +52,7 @@ module Api
           @channels = @channels.respond_to?(:to_a) ? @channels.to_a : @channels
           @channels = @channels.sort_by { |c| c.try(:position).to_i }
           @channels.reverse! if order_direction == 'desc'
+          @channels = paginate_if_requested(@channels)
           render json: serialized_channels(type: params[:type])
         else
           render json: { data: [] }
@@ -90,16 +94,26 @@ module Api
 
       def render_collections(collections, type:)
         render json: Api::V1::CollectionSerializer.new(
-          collections, params: { recommended: false, type: type }
+          collections,
+          pagination_serializer_options(
+            collections,
+            params: { recommended: false, type: type }
+          )
         ).serializable_hash.to_json
       end
 
       def serialized_channels(type:)
         if type == COLLECTION_TYPES[:channel] || type == COLLECTION_TYPES[:channel_feed]
-          Api::V1::ChannelSerializer.new(@channels).serializable_hash.to_json
+          Api::V1::ChannelSerializer.new(
+            @channels,
+            pagination_serializer_options(@channels)
+          ).serializable_hash.to_json
         else
           if Community.has_local_newsmast_channel? && params[:type] == COLLECTION_TYPES[:newsmast]
-            data = Api::V1::ChannelSerializer.new(@channels).serializable_hash.to_json
+            data = Api::V1::ChannelSerializer.new(
+              @channels,
+              pagination_serializer_options(@channels)
+            ).serializable_hash.to_json
             # Need to remove after mobile lunch again
             parsed = JSON.parse(data)
             parsed["data"]

@@ -114,8 +114,8 @@ module Api
       ]
 
       def recommend_channels
-        @recommended_channels = Community.recommended.exclude_array_ids
-        render json: Api::V1::ChannelSerializer.new(@recommended_channels).serializable_hash.to_json
+        @recommended_channels = paginate_if_requested(Community.recommended.exclude_array_ids)
+        render json: serialize_channels(@recommended_channels)
       end
 
       def channel_detail
@@ -144,7 +144,8 @@ module Api
                         "lower(name) LIKE :q OR lower(slug) LIKE :q",
                         q: query
                       )
-        render json: Api::V1::ChannelSerializer.new(communities).serializable_hash.to_json
+        communities = paginate_if_requested(communities)
+        render json: serialize_channels(communities)
       end
 
       def my_channel
@@ -160,13 +161,15 @@ module Api
 
       def channel_feeds
         channel_feeds = Community.filter_channel_feeds.exclude_incomplete_channels.exclude_deleted_channels.exclude_not_recommended.with_all_includes.ordered_pos_name
-        render json: Api::V1::ChannelSerializer.new(channel_feeds , { params: { current_account: current_account } }).serializable_hash.to_json
+        channel_feeds = paginate_if_requested(channel_feeds)
+        render json: serialize_channels(channel_feeds, params: { current_account: current_account })
       end
 
       def newsmast_channels
         newsmast_channels = Community.filter_newsmast_channels.exclude_incomplete_channels.exclude_deleted_channels.exclude_not_recommended.with_all_includes.ordered_pos_name
         if newsmast_channels.present?
-          render json: Api::V1::ChannelSerializer.new(newsmast_channels , { params: { current_account: current_remote_account } }).serializable_hash.to_json
+          newsmast_channels = paginate_if_requested(newsmast_channels)
+          render json: serialize_channels(newsmast_channels, params: { current_account: current_remote_account })
         else
           render json: NEWSMAST_CHANNELS.size > 0 ? { data: NEWSMAST_CHANNELS } : { data: [] }
         end
@@ -262,6 +265,13 @@ module Api
       end
 
       private
+
+      def serialize_channels(channels, options = {})
+        Api::V1::ChannelSerializer.new(
+          channels,
+          pagination_serializer_options(channels, options)
+        ).serializable_hash.to_json
+      end
 
       def set_channel
         @channel = Community.find_by(slug: params[:id])

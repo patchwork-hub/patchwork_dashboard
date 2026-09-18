@@ -63,6 +63,35 @@ class KeywordFilterGroup < ApplicationRecord
     add_or_update_filter(redis_key, keyword, server_setting_id, filter_type, is_active, id, is_custom)
   end
 
+  def self.update_redis_group(redis_key, group_id, is_active)
+    redis = RedisService.client(namespace: 'channel')
+    composite_keys = redis_filter_keys_for_group(redis, redis_key, group_id)
+    return if composite_keys.empty?
+
+    entries = redis.hmget(redis_key, *composite_keys)
+    redis.pipelined do |pipeline|
+      composite_keys.zip(entries).each do |composite_key, json_entry|
+        next unless json_entry
+
+        entry = JSON.parse(json_entry)
+        entry['is_active'] = is_active
+        pipeline.hset(redis_key, composite_key, entry.to_json)
+      end
+    end
+  end
+
+  def self.delete_redis_group(redis_key, group_id)
+    redis = RedisService.client(namespace: 'channel')
+    composite_keys = redis_filter_keys_for_group(redis, redis_key, group_id)
+    group_key = redis_group_key(redis_key, group_id)
+
+    redis.pipelined do |pipeline|
+      pipeline.hdel(redis_key, *composite_keys) if composite_keys.any?
+      pipeline.del(group_key)
+      pipeline.srem(redis_group_registry_key(redis_key), group_key)
+    end
+  end
+
   private
 
   def self.fetch_data_from_api(setting_name)
@@ -110,9 +139,14 @@ class KeywordFilterGroup < ApplicationRecord
     redis = RedisService.client(namespace: 'channel')
     redis_key = redis_key_name(setting_name)
     composite_key = "#{keyword.downcase}:#{filter_type}"
-    is_exist = redis.hexists(redis_key, composite_key)
+    json_entry = redis.hget(redis_key, composite_key)
+    is_exist = json_entry.present?
     if process_del
-      redis.hdel(redis_key, composite_key) if is_exist
+      entry = JSON.parse(json_entry) if json_entry
+      redis.pipelined do |pipeline|
+        pipeline.hdel(redis_key, composite_key)
+        pipeline.srem(redis_group_key(redis_key, entry['group_id']), composite_key) if entry
+      end if is_exist
     else
       is_exist
     end
@@ -131,12 +165,52 @@ class KeywordFilterGroup < ApplicationRecord
       is_active: is_active,
       custom: is_custom
     }.to_json
-    redis.hset(redis_key, composite_key, new_value)
+    previous_entry = redis.hget(redis_key, composite_key)
+    previous_group_id = JSON.parse(previous_entry)['group_id'] if previous_entry
+    group_key = redis_group_key(redis_key, group_id)
+
+    redis.pipelined do |pipeline|
+      pipeline.hset(redis_key, composite_key, new_value)
+      pipeline.sadd(group_key, composite_key)
+      pipeline.sadd(redis_group_registry_key(redis_key), group_key)
+      if previous_group_id && previous_group_id != group_id
+        pipeline.srem(redis_group_key(redis_key, previous_group_id), composite_key)
+      end
+    end
   end
 
   def self.delete_redis_filters(redis_key)
     redis = RedisService.client(namespace: 'channel')
-    redis.del(redis_key) if redis.exists(redis_key)
+    registry_key = redis_group_registry_key(redis_key)
+    group_keys = redis.smembers(registry_key)
+    redis.del(redis_key, registry_key, *group_keys)
+  end
+
+  def self.redis_filter_keys_for_group(redis, redis_key, group_id)
+    group_key = redis_group_key(redis_key, group_id)
+    composite_keys = redis.smembers(group_key)
+    return composite_keys if composite_keys.any?
+
+    redis.hscan_each(redis_key) do |composite_key, json_entry|
+      entry = JSON.parse(json_entry)
+      composite_keys << composite_key if entry['group_id'] == group_id
+    end
+
+    if composite_keys.any?
+      redis.pipelined do |pipeline|
+        pipeline.sadd(group_key, *composite_keys)
+        pipeline.sadd(redis_group_registry_key(redis_key), group_key)
+      end
+    end
+    composite_keys
+  end
+
+  def self.redis_group_key(redis_key, group_id)
+    "#{redis_key}:group:#{group_id}"
+  end
+
+  def self.redis_group_registry_key(redis_key)
+    "#{redis_key}:group_indexes"
   end
 
   def self.redis_key_name(setting_name)

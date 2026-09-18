@@ -6,6 +6,13 @@ class Api::V1::ChannelSerializer
 
   set_type :channel
 
+  def initialize(resource, options = {})
+    options = options.dup
+    options[:params] = (options[:params] || {}).dup
+    options[:params][:favourited_counts] = favourited_counts_for(resource)
+    super(resource, options)
+  end
+
   attributes :id, :name, :slug, :description, :is_recommended, :admin_following_count,
              :patchwork_collection_id, :guides, :participants_count, :is_custom_domain,
              :visibility, :position, :channel_type, :created_at, :no_of_admins, :channel_content_type,
@@ -49,7 +56,7 @@ class Api::V1::ChannelSerializer
   end
 
   attribute :favourited_count do |object, params|
-    favourited_account_counts(object.id)
+    params[:favourited_counts].fetch(object.id, 0)
   end
 
   attribute :is_primary do |object, params|
@@ -84,6 +91,16 @@ class Api::V1::ChannelSerializer
 
   private
 
+  def favourited_counts_for(resource)
+    records = resource.respond_to?(:to_ary) ? resource.to_ary : [resource]
+    channel_ids = records.filter_map(&:id)
+    return {} if channel_ids.empty?
+
+    JoinedCommunity.where(patchwork_community_id: channel_ids)
+                   .group(:patchwork_community_id)
+                   .count
+  end
+
   def self.default_domain
     case ENV.fetch('RAILS_ENV', nil)
     when 'staging'
@@ -107,7 +124,4 @@ class Api::V1::ChannelSerializer
     JoinedCommunity.exists?(patchwork_community_id: channel_id, is_primary: true, account_id: account['id'])
   end
 
-  def self.favourited_account_counts(channel_id)
-    JoinedCommunity.where(patchwork_community_id: channel_id).size
-  end
 end
