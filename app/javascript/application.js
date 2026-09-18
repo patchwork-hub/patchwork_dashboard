@@ -19,7 +19,6 @@ import { far } from "@fortawesome/free-regular-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import "@fortawesome/fontawesome-free";
 library.add(far, fas, fab);
 
 import Rails from "@rails/ujs";
@@ -28,19 +27,24 @@ Rails.start();
 localStorage.setItem("selected", null);
 localStorage.setItem("unselected", null);
 
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-
 $(document).ready(function () {
-  document.querySelectorAll(".ckeditor").forEach((element) => {
-    ClassicEditor.create(element).catch((error) => {
-      console.error(error);
-    });
-  });
-
+  const editorElements = Array.from(document.querySelectorAll(".ckeditor"));
   const admin_note = document.getElementById("master_admin_note");
-  if (admin_note) {
-    ClassicEditor.create(admin_note, {
-      toolbar: ["bold", "italic", "link"],
+  if (editorElements.length > 0 || admin_note) {
+    import("@ckeditor/ckeditor5-build-classic").then(({ default: ClassicEditor }) => {
+      editorElements.forEach((element) => {
+        ClassicEditor.create(element).catch((error) => {
+          console.error(error);
+        });
+      });
+
+      if (admin_note) {
+        ClassicEditor.create(admin_note, {
+          toolbar: ["bold", "italic", "link"],
+        }).catch((error) => {
+          console.error(error);
+        });
+      }
     }).catch((error) => {
       console.error(error);
     });

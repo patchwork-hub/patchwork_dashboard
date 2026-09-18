@@ -3,6 +3,9 @@ class ContributorSearchService
   include ActionView::Helpers::AssetTagHelper
   include ApplicationHelper
 
+  MAX_LOCAL_LOOKUP_ATTEMPTS = 5
+  LOCAL_LOOKUP_RETRY_DELAY = 2.seconds
+
   def initialize(query, options = {})
     @query = query
     @api_base_url = options[:url]
@@ -34,13 +37,21 @@ class ContributorSearchService
   def find_saved_accounts_with_retry(accounts)
     return [] unless accounts.present?
 
-    saved_accounts = []
-    while saved_accounts.empty?
-      saved_accounts = Account.where(username: accounts.map { |account| account['username'] })
-      sleep(2) if saved_accounts.empty?
+    usernames = accounts.filter_map { |account| account['username'] }
+    return [] if usernames.empty?
+
+    MAX_LOCAL_LOOKUP_ATTEMPTS.times do |attempt|
+      saved_accounts = Account.where(username: usernames).to_a
+      return serialize_accounts(saved_accounts) if saved_accounts.present?
+
+      sleep(LOCAL_LOOKUP_RETRY_DELAY) if attempt < MAX_LOCAL_LOOKUP_ATTEMPTS - 1
     end
 
-    saved_accounts.map do |account|
+    []
+  end
+
+  def serialize_accounts(accounts)
+    accounts.map do |account|
 
       {
         'id' => account.id.to_s,
