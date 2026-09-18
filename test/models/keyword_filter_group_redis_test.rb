@@ -24,8 +24,8 @@ class KeywordFilterGroupRedisTest < ActiveSupport::TestCase
       yield self
     end
 
-    def sadd(key, *values)
-      sets[key].merge(values)
+    def sadd?(key, value)
+      sets[key].add(value)
     end
 
     def hmget(key, *fields)
