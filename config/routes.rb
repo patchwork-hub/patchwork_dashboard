@@ -2,6 +2,8 @@ require 'sidekiq/web'
 require 'sidekiq-scheduler'
 
 Rails.application.routes.draw do
+  get "/metrics", to: "metrics#index"
+
   authenticate :user, lambda { |u| u.master_admin? || u.can?(:manage_sidekiq) } do
     mount Sidekiq::Web, at: 'sidekiq', as: :sidekiq
   end
