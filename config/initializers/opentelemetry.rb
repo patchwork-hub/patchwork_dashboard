@@ -23,7 +23,7 @@ if ENV['OTEL_EXPORTER_OTLP_ENDPOINT'].present?
     config.use 'OpenTelemetry::Instrumentation::Rails'
     config.use 'OpenTelemetry::Instrumentation::ActiveJob'
     config.use 'OpenTelemetry::Instrumentation::Sidekiq'
-    config.use 'OpenTelemetry::Instrumentation::PG'
+    # config.use 'OpenTelemetry::Instrumentation::PG'
     config.use 'OpenTelemetry::Instrumentation::Faraday'
     config.use 'OpenTelemetry::Instrumentation::Redis'
     config.use 'OpenTelemetry::Instrumentation::ConcurrentRuby'
