@@ -34,6 +34,8 @@ class KeywordFilterGroup < ApplicationRecord
     redis_key = redis_key_name(setting_name)
 
     new_data.each do |group_data|
+      next unless group_data.is_a?(Hash)
+
       filter_group = find_or_initialize_filter_group(group_data, server_setting_id)
       filter_group.update(is_active: group_data['is_active'])
 

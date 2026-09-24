@@ -7,6 +7,7 @@ pin "popper.js", to: "https://ga.jspm.io/npm:popper.js@1.16.1/dist/umd/popper.js
 pin "@ckeditor/ckeditor5-build-classic", to: "https://ga.jspm.io/npm:@ckeditor/ckeditor5-build-classic@35.3.1/build/ckeditor.js"
 pin "@ckeditor/ckeditor5-build-decoupled-document", to: "https://ga.jspm.io/npm:@ckeditor/ckeditor5-build-decoupled-document@36.0.0/build/ckeditor.js"
 pin "@rails/ujs", to: "https://ga.jspm.io/npm:@rails/ujs@7.0.4/lib/assets/compiled/rails-ujs.js"
+pin "@fortawesome/fontawesome-free", to: "https://ga.jspm.io/npm:@fortawesome/fontawesome-free@6.2.1/js/fontawesome.js"
 pin "@fortawesome/fontawesome-svg-core", to: "https://ga.jspm.io/npm:@fortawesome/fontawesome-svg-core@6.2.1/index.mjs"
 pin "@fortawesome/free-brands-svg-icons", to: "https://ga.jspm.io/npm:@fortawesome/free-brands-svg-icons@6.2.1/index.mjs"
 pin "@fortawesome/free-regular-svg-icons", to: "https://ga.jspm.io/npm:@fortawesome/free-regular-svg-icons@6.2.1/index.mjs"
