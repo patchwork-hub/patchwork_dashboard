@@ -53,4 +53,16 @@ class KeywordFilterGroupRedisTest < ActiveSupport::TestCase
     assert_equal true, JSON.parse(redis.hashes["content_filters"]["one:keyword"])["is_active"]
     assert_equal true, JSON.parse(redis.hashes["content_filters"]["two:keyword"])["is_active"]
   end
+
+  test "normalizes spam filter names across casing and separators" do
+    assert_equal "spam_filters", KeywordFilterGroup.send(:filter_type_for, "Spam filters")
+    assert_equal "spam_filters", KeywordFilterGroup.send(:filter_type_for, "spam_filters")
+    assert_equal "spam_filters", KeywordFilterGroup.send(:filter_type_for, "Spam_filters")
+    assert_equal "spam_filters", KeywordFilterGroup.send(:filter_type_for, "Spam Filters")
+
+    assert_equal "spam_filters", KeywordFilterGroup.send(:redis_key_name, "Spam filters")
+    assert_equal "spam_filters", KeywordFilterGroup.send(:redis_key_name, "spam_filters")
+    assert_equal "spam_filters", KeywordFilterGroup.send(:redis_key_name, "Spam_filters")
+    assert_equal "spam_filters", KeywordFilterGroup.send(:redis_key_name, "Spam Filters")
+  end
 end

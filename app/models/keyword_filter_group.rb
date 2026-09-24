@@ -100,7 +100,7 @@ class KeywordFilterGroup < ApplicationRecord
   end
 
   def self.filter_type_for(setting_name)
-    setting_name == ServerSetting::KEY_SPAM_FILTERS ? 'spam_filters' : 'keyword_filters'
+    normalized_setting_name(setting_name) == ServerSetting::KEY_SPAM_FILTERS ? 'spam_filters' : 'keyword_filters'
   end
 
   def self.find_or_initialize_filter_group(group_data, server_setting_id)
@@ -214,6 +214,11 @@ class KeywordFilterGroup < ApplicationRecord
   end
 
   def self.redis_key_name(setting_name)
-    setting_name == ServerSetting::KEY_SPAM_FILTERS ? 'spam_filters' : 'content_filters'
+    normalized_setting_name(setting_name) == ServerSetting::KEY_SPAM_FILTERS ? 'spam_filters' : 'content_filters'
   end
+
+  def self.normalized_setting_name(setting_name)
+    setting_name.to_s.strip.downcase.gsub(/[\s_-]+/, '_')
+  end
+  private_class_method :normalized_setting_name
 end
