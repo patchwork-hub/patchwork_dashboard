@@ -77,6 +77,23 @@ class Api::V1::ChannelSerializer
     } : {}
   end
 
+  attribute :group_member do |object|
+    object.community_admins.select { |admin| %w[GroupAdmin GroupModerator GroupMember].include?(admin.role) }.map do |admin|
+      username = if object&.channel_type == Community.channel_types[:newsmast]
+        admin&.account&.username ? "@#{admin&.account&.username}@newsmast.community" : ""
+      else
+        admin&.account&.username ? "@#{admin&.account&.username}@#{self.default_domain}" : ""
+      end
+
+      {
+        id: admin.id,
+        role: admin.role,
+        account_id: admin&.account&.id.to_s,
+        username: username,
+      }
+    end
+  end
+
   attribute :channel_content_type do |object|
     if object&.content_type&.custom_channel?
       'Curated'

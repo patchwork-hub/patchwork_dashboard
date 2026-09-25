@@ -120,8 +120,8 @@
             .card-body
               .row.d-flex.justify-content-between
                 .col-md-9
-                  %label Admin and Moderator Assignment
-                  %p.text-muted.small Search and assign local accounts as group administrators or moderators.
+                  %label Admin, Moderator and Member Assignment
+                  %p.text-muted.small Search and assign local accounts as group administrators, moderators or members.
                 .col-md-3.text-right.mt-auto
                   %button.btn.btn-outline-secondary{ type: "button", "data-toggle" => "modal", "data-target" => "#assignRoleModal" } Search accounts
 
@@ -148,8 +148,8 @@
                             %br
                             %span.text-muted.small= "@#{admin.account&.username || admin.username}@channel.org"
                           %td
-                            %span.badge{ class: (admin.role == 'GroupAdmin' ? 'badge-danger' : 'badge-secondary') }
-                              = admin.role == 'GroupAdmin' ? 'Group Admin' : 'Group Moderator'
+                            %span.badge{ class: (admin.role == 'GroupAdmin' ? 'badge-danger' : (admin.role == 'GroupModerator' ? 'badge-secondary' : 'badge-info')) }
+                              = { 'GroupAdmin' => 'Group Admin', 'GroupModerator' => 'Group Moderator', 'GroupMember' => 'Group Member' }[admin.role]
                           %td
                             %button.btn.btn-sm.btn-outline-danger.remove-role-btn{ type: 'button', data: { account_id: admin.account_id } } Remove
 
@@ -165,11 +165,11 @@
     .modal-dialog.custom-modal-width{ role: 'document' }
       .modal-content
         .modal-header
-          %h5.modal-title Assign Admin or Moderator
+          %h5.modal-title Assign Admin, Moderator and Member
           %button.close{ type: 'button', 'data-dismiss': 'modal', 'aria-label': 'Close' }
             = image_tag 'icons/circle-xmark.svg', alt: 'Close', width: 18, height: 18, 'aria-hidden': 'true'
         .modal-body
-          %p.small Use the search functionality below to find local accounts and assign them as administrators or moderators.
+          %p.small Use the search functionality below to find local accounts and assign them as administrators, moderators or members.
           .input-group.my-3
             %div.input-group-prepend
               %span.input-group-text
@@ -179,6 +179,21 @@
             %p.text-muted.small No results yet...
         .modal-footer
           %button.btn.btn-secondary{ "data-dismiss": "modal" } Cancel
+
+  :css
+    .role-assign-item .assign-btn,
+    .role-assign-item .badge {
+      font-size: 13px;
+      padding: 4px 10px;
+      white-space: nowrap;
+    }
+    .role-assign-item .account-info p,
+    .role-assign-item .account-info small {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
+    }
 
   :javascript
     $(document).ready(function() {
@@ -207,26 +222,29 @@
             accounts.forEach(function(account) {
               let roleButtons = '';
               if (account.current_role === 'GroupAdmin') {
-                roleButtons = `<span class="badge badge-danger mr-2">Assigned as Group Admin</span>`;
+                roleButtons = `<span class="badge badge-danger">Group Admin</span>`;
               } else if (account.current_role === 'GroupModerator') {
-                roleButtons = `<span class="badge badge-secondary mr-2">Assigned as Group Moderator</span>`;
+                roleButtons = `<span class="badge badge-secondary">Group Moderator</span>`;
+              } else if (account.current_role === 'GroupMember') {
+                roleButtons = `<span class="badge badge-info">Group Member</span>`;
               } else {
                 roleButtons = `
-                  <button class="btn btn-sm btn-outline-danger assign-btn mr-1" data-account-id="${account.id}" data-role="GroupAdmin">Assign Group Admin</button>
-                  <button class="btn btn-sm btn-outline-secondary assign-btn" data-account-id="${account.id}" data-role="GroupModerator">Assign Group Moderator</button>
+                  <button class="btn btn-sm btn-outline-danger assign-btn" data-account-id="${account.id}" data-role="GroupAdmin" title="Assign Group Admin">Admin</button>
+                  <button class="btn btn-sm btn-outline-secondary assign-btn" data-account-id="${account.id}" data-role="GroupModerator" title="Assign Group Moderator">Moderator</button>
+                  <button class="btn btn-sm btn-outline-info assign-btn" data-account-id="${account.id}" data-role="GroupMember" title="Assign Group Member">Member</button>
                 `;
               }
 
               const item = $(`
-                <div class="list-group-item align-items-center d-flex justify-content-between my-1">
-                  <div class="d-flex align-items-center">
-                    <img src="${account.avatar_url}" alt="" class="rounded-circle mr-2" style="width: 40px; height: 40px;">
-                    <div>
+                <div class="role-assign-item list-group-item d-flex align-items-center justify-content-between flex-nowrap my-1">
+                  <div class="account-info d-flex align-items-center mr-2" style="flex: 1 1 auto; min-width: 0;">
+                    <img src="${account.avatar_url}" alt="" class="rounded-circle mr-2" style="width: 40px; height: 40px; flex-shrink: 0;">
+                    <div class="account-info" style="min-width: 0;">
                       <p class="mb-0 font-weight-bold">${account.display_name || account.username}</p>
                       <small class="text-muted">@${account.username}@channel.org</small>
                     </div>
                   </div>
-                  <div>
+                  <div class="d-flex align-items-center" style="gap: 0.35rem; flex-shrink: 0;">
                     ${roleButtons}
                   </div>
                 </div>
@@ -371,7 +389,7 @@
                   - if @records.size == 0
                     %tr
                       %td{ colspan: 3, class: "text-center" }
-                        %p.text-muted.small You haven't added any hashtags to this channel yet
+                        %p.text-muted.small You haven’t added any hashtags to this channel yet
                         %a.text-danger.small{ href: '#', title: 'Add new channel hashtag', 'data-toggle': 'modal', 'data-target': '#postHashtagModel' }
                           Click here to add one
 

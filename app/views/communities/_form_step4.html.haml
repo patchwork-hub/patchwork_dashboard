@@ -111,11 +111,8 @@
             = paginate @filter_keywords, theme: 'bootstrap4'
       .row.d-flex.justify-content-between
         .col
-          %a.btn.btn-outline-secondary{ href: step3_community_path(channel_type: @community.channel_type) } Back
-        - if @community.channel_feed?
-          .col-auto
-            = button_tag 'Continue', type: 'submit', form: 'community_post_type_form', class: 'btn btn-danger', onclick: "$('#continue_field').val('true');"
-        - elsif @community.newsmast?
+          %a.btn.btn-outline-secondary{ href: step3_community_path } Back
+        - if @community.newsmast?
           .col-auto
             = button_tag 'Save & Preview', type: 'submit', form: 'community_post_type_form', class: 'btn btn-block btn-danger', data: { toggle: 'modal', target: '#previewCommunityModal' }
         - else

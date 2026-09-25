@@ -127,7 +127,7 @@ class CommunitiesController < BaseController
   def step2
     authorize_step(:step2?)
     @records = load_filtered_records(commu_admin_records_filter)
-               .where("patchwork_communities_admins.role IS NULL OR patchwork_communities_admins.role NOT IN (?)", %w[GroupAdmin GroupModerator])
+               .where("patchwork_communities_admins.role IS NULL OR patchwork_communities_admins.role NOT IN (?)", %w[GroupAdmin GroupModerator GroupMember])
     @community_admin = CommunityAdmin.new(patchwork_community_id: @community.id)
     invoke_bridged unless @community.hub? || Rails.env.development?
   end
@@ -287,7 +287,7 @@ class CommunitiesController < BaseController
       return
     end
 
-    unless role.in?(%w[GroupAdmin GroupModerator])
+    unless role.in?(%w[GroupAdmin GroupModerator GroupMember])
       render json: { success: false, error: "Invalid role." }, status: :unprocessable_entity
       return
     end
@@ -390,14 +390,14 @@ class CommunitiesController < BaseController
   def fetch_community_admins
     @community_admins = CommunityAdmin
                         .where(patchwork_community_id: @community.id, account_status: 0)
-                        .where("patchwork_communities_admins.role IS NULL OR patchwork_communities_admins.role NOT IN (?)", %w[GroupAdmin GroupModerator])
+                        .where("patchwork_communities_admins.role IS NULL OR patchwork_communities_admins.role NOT IN (?)", %w[GroupAdmin GroupModerator GroupMember])
   end
 
   def fetch_group_role_admins
     @group_role_admins = CommunityAdmin.where(
       patchwork_community_id: @community.id,
       account_status: 0,
-      role: %w[GroupAdmin GroupModerator]
+      role: %w[GroupAdmin GroupModerator GroupMember]
     )
   end
 
@@ -449,7 +449,9 @@ class CommunitiesController < BaseController
   end
 
   def update_additional_information
-    @community.assign_attributes(community_params) if params[:community].present?
+    return update_channel_feed_additional_information if @community.channel_feed?
+
+    @community.assign_attributes(community_params)
     @community.registration_mode = params[:registration_mode]
     @community.visibility = params[:visibility] if params[:visibility].present?
 
@@ -497,6 +499,31 @@ class CommunitiesController < BaseController
       end
       return
     end
+  end
+
+  def update_channel_feed_additional_information
+    visibility = params[:visibility].presence
+    if visibility && !Community.visibilities.key?(visibility)
+      return render_step5_with_error('Invalid visibility option.')
+    end
+
+    @community.registration_mode = params[:registration_mode] if params[:registration_mode].present?
+    @community.visibility = visibility if visibility
+
+    if @community.save
+      redirect_to step5_community_path(@community, channel_type: @community.channel_type, show_preview: true)
+    else
+      render_step5_with_error(@community.formatted_error_messages.join(', '))
+    end
+  end
+
+  def render_step5_with_error(message)
+    flash.now[:error] = message
+    @current_step = 5
+    fetch_community_admins
+    fetch_group_role_admins
+    @group_role_admins = @group_role_admins.includes(:account)
+    render :step5, status: :unprocessable_entity
   end
 
   # Filter and load methods
