@@ -304,11 +304,13 @@ class CommunitiesController < BaseController
     community_admin.role = role
     community_admin.account_status = :active
 
-    if community_admin.save
-      render json: { success: true }
-    else
-      render json: { success: false, error: community_admin.errors.full_messages.join(', ') }, status: :unprocessable_entity
+    ActiveRecord::Base.transaction do
+      community_admin.save!
+      JoinedCommunity.find_or_create_by!(account_id: account.id, patchwork_community_id: @community.id)
     end
+    render json: { success: true }
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { success: false, error: e.record.errors.full_messages.join(', ') }, status: :unprocessable_entity
   end
 
   def remove_assigned_role
@@ -319,16 +321,19 @@ class CommunitiesController < BaseController
       return
     end
 
-    community_admin = @community.community_admins.find_by(account_id: account.id)
-    if community_admin
-      if community_admin.destroy
-        render json: { success: true }
-      else
-        render json: { success: false, error: community_admin.errors.full_messages.join(', ') }, status: :unprocessable_entity
-      end
-    else
+    community_admin = @community.community_admins.find_by(account_id: account.id, role: %w[GroupAdmin GroupModerator GroupMember])
+    unless community_admin
       render json: { success: false, error: "Admin not found." }, status: :not_found
+      return
     end
+
+    ActiveRecord::Base.transaction do
+      community_admin.destroy!
+      JoinedCommunity.where(account_id: account.id, patchwork_community_id: @community.id).destroy_all
+    end
+    render json: { success: true }
+  rescue ActiveRecord::RecordNotDestroyed => e
+    render json: { success: false, error: e.record.errors.full_messages.join(', ') }, status: :unprocessable_entity
   end
 
   private
