@@ -58,6 +58,15 @@ module Api
 
       private
 
+      # Allow fetch_channels to work with or without an Authorization header
+      def check_authorization_header
+        if request.headers['Authorization'].present? && params[:instance_domain].present?
+          validate_mastodon_account
+        else
+          authenticate_user_from_header if request.headers['Authorization'].present?
+        end
+      end
+
       def fetch_all_channels_by_type(type:)
         with_read_replica do
           collections = case type
