@@ -37,7 +37,8 @@ class CommunityPostTypesController < ApplicationController
   def handle_success_response
     respond_to do |format|
       if params[:continue] == "true"
-        format.js { render js: "window.location = '#{step6_community_path(@community)}'" }
+        next_step_path = @community.channel_feed? ? step5_community_path(@community, channel_type: @community.channel_type) : step6_community_path(@community)
+        format.js { render js: "window.location = '#{next_step_path}'" }
       else
         format.js
       end
