@@ -4,6 +4,7 @@ module Api
   module V1
     class CollectionsController < ApiController
       skip_before_action :verify_key!
+      before_action :check_authorization_header, only: [:fetch_channels]
       before_action :fetch_channel_details, only: [:fetch_channels]
 
       COLLECTION_TYPES = {
