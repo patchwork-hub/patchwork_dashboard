@@ -48,7 +48,8 @@ class CommunityPolicy < ApplicationPolicy
   end
 
   def step5?
-    # !related_user_admin?
+    return channel_feed_admin_access? if record&.channel_feed?
+
     false
   end
 
@@ -69,6 +70,8 @@ class CommunityPolicy < ApplicationPolicy
   end
 
   def manage_additional_information?
+    return channel_feed_admin_access? if record&.channel_feed?
+
     !related_user_admin?
   end
 
@@ -88,5 +91,9 @@ class CommunityPolicy < ApplicationPolicy
     account_id = record&.community_admins&.first&.account_id
     user = User.find_by(account_id: account_id)
     user&.role&.name.in?(%w[UserAdmin])
+  end
+
+  def channel_feed_admin_access?
+    master_admin? || user_admin? || newsmast_admin? || can?(:manage_channel_feeds, :manage_newsmast_channels)
   end
 end

@@ -5,7 +5,7 @@ class CommunitiesController < BaseController
   before_action :set_current_step
   before_action :set_content_type, only: %i[step3 step4 step5 step6]
   before_action :set_api_credentials, only: %i[search_contributor step3 step4]
-  before_action :fetch_community_admins, only: %i[step4 step6]
+  before_action :fetch_community_admins, only: %i[step4 step5 step6]
   before_action :initial_content_type, only: %i[index step0]
 
   include CommunityHelper
@@ -127,6 +127,7 @@ class CommunitiesController < BaseController
   def step2
     authorize_step(:step2?)
     @records = load_filtered_records(commu_admin_records_filter)
+               .where("patchwork_communities_admins.role IS NULL OR patchwork_communities_admins.role NOT IN (?)", %w[GroupAdmin GroupModerator GroupMember])
     @community_admin = CommunityAdmin.new(patchwork_community_id: @community.id)
     invoke_bridged unless @community.hub? || Rails.env.development?
   end
@@ -152,9 +153,15 @@ class CommunitiesController < BaseController
 
   def step5
     authorize_step(:step5?)
-    @form_post_hashtag = Form::PostHashtag.new
-    @records = load_filtered_records(post_hashtag_records_filter)
-    @search = post_hashtag_records_filter.build_search
+    if @community.channel_feed?
+      @admin = Account.find_by(id: admin_account_id)
+      fetch_group_role_admins
+      @group_role_admins = @group_role_admins.includes(:account) if @group_role_admins
+    else
+      @form_post_hashtag = Form::PostHashtag.new
+      @records = load_filtered_records(post_hashtag_records_filter)
+      @search = post_hashtag_records_filter.build_search
+    end
     respond_to(&:html)
   end
 
@@ -241,6 +248,89 @@ class CommunitiesController < BaseController
     end
   end
 
+  def search_local_accounts
+    query = params[:query]
+    if query.blank?
+      render json: []
+      return
+    end
+
+    accounts = Account.where(domain: nil)
+                      .where("username ILIKE :q OR display_name ILIKE :q", q: "%#{query}%")
+                      .limit(20)
+
+    mapped_accounts = accounts.map do |account|
+      existing_admin = @community.community_admins.find_by(account_id: account.id, account_status: 0)
+      {
+        id: account.id.to_s,
+        username: account.username,
+        display_name: account.display_name,
+        avatar_url: account.avatar_url,
+        current_role: existing_admin&.role
+      }
+    end
+
+    render json: mapped_accounts
+  end
+
+  def assign_role
+    authorize @community, :manage_additional_information?
+    account = Account.find_by(id: params[:account_id])
+    unless account
+      render json: { success: false, error: "Account not found." }, status: :not_found
+      return
+    end
+    role = params[:role]
+
+    unless account.local?
+      render json: { success: false, error: "Only local accounts can be assigned." }, status: :unprocessable_entity
+      return
+    end
+
+    unless role.in?(%w[GroupAdmin GroupModerator GroupMember])
+      render json: { success: false, error: "Invalid role." }, status: :unprocessable_entity
+      return
+    end
+
+    community_admin = @community.community_admins.find_or_initialize_by(account_id: account.id)
+
+    if community_admin.new_record?
+      community_admin.username = account.username
+      community_admin.display_name = account.display_name
+      community_admin.email = account.user&.email || "#{account.username}@localhost.local"
+      community_admin.password = SecureRandom.hex(16)
+    end
+
+    community_admin.role = role
+    community_admin.account_status = :active
+
+    if community_admin.save
+      render json: { success: true }
+    else
+      render json: { success: false, error: community_admin.errors.full_messages.join(', ') }, status: :unprocessable_entity
+    end
+  end
+
+  def remove_assigned_role
+    authorize @community, :manage_additional_information?
+    account = Account.find_by(id: params[:account_id])
+    unless account
+      render json: { success: false, error: "Account not found." }, status: :not_found
+      return
+    end
+
+    community_admin = @community.community_admins.find_by(account_id: account.id)
+    if community_admin
+      if community_admin.destroy
+        render json: { success: true }
+      else
+        render json: { success: false, error: community_admin.errors.full_messages.join(', ') }, status: :unprocessable_entity
+      end
+    else
+      render json: { success: false, error: "Admin not found." }, status: :not_found
+    end
+  end
+
   private
 
   # Before actions
@@ -298,7 +388,17 @@ class CommunitiesController < BaseController
   end
 
   def fetch_community_admins
-    @community_admins = CommunityAdmin.where(patchwork_community_id: @community.id, account_status: 0)
+    @community_admins = CommunityAdmin
+                        .where(patchwork_community_id: @community.id, account_status: 0)
+                        .where("patchwork_communities_admins.role IS NULL OR patchwork_communities_admins.role NOT IN (?)", %w[GroupAdmin GroupModerator GroupMember])
+  end
+
+  def fetch_group_role_admins
+    @group_role_admins = CommunityAdmin.where(
+      patchwork_community_id: @community.id,
+      account_status: 0,
+      role: %w[GroupAdmin GroupModerator GroupMember]
+    )
   end
 
   # Parameter handling
@@ -349,6 +449,8 @@ class CommunitiesController < BaseController
   end
 
   def update_additional_information
+    return update_channel_feed_additional_information if @community.channel_feed?
+
     @community.assign_attributes(community_params)
     @community.registration_mode = params[:registration_mode]
 
@@ -375,6 +477,31 @@ class CommunitiesController < BaseController
       render :step6
       return
     end
+  end
+
+  def update_channel_feed_additional_information
+    visibility = params[:visibility].presence
+    if visibility && !Community.visibilities.key?(visibility)
+      return render_step5_with_error('Invalid visibility option.')
+    end
+
+    @community.registration_mode = params[:registration_mode] if params[:registration_mode].present?
+    @community.visibility = visibility if visibility
+
+    if @community.save
+      redirect_to step5_community_path(@community, channel_type: @community.channel_type, show_preview: true)
+    else
+      render_step5_with_error(@community.formatted_error_messages.join(', '))
+    end
+  end
+
+  def render_step5_with_error(message)
+    flash.now[:error] = message
+    @current_step = 5
+    fetch_community_admins
+    fetch_group_role_admins
+    @group_role_admins = @group_role_admins.includes(:account)
+    render :step5, status: :unprocessable_entity
   end
 
   # Filter and load methods
