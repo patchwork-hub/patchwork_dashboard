@@ -22,6 +22,21 @@ env:
   MOME_DEFINITION: .task/internal-mome.json
   BRISTOLCABLE_DEFINITION: .task/internal-bristolcable.json
 
+  # Democracy Book Club production dashboard. These are non-credential values
+  # (region, cluster, service, container, ECR repository) and live in env rather
+  # than secrets, matching the mastodon deploy pipeline. The single secret this
+  # job needs is DEMOCRACYBOOKCLUB_DASHBOARD_PRODUCTION_ROLE_ARN.
+  #
+  # The task definition is NOT stored in this repository. It is resolved through
+  # the service and re-rendered with the new image, so the terraform stack
+  # (patchwork-hub-iac) stays the only writer of CPU, memory, ports, IAM roles,
+  # log groups and environment files and this workflow cannot drift from it.
+  DEMOCRACYBOOKCLUB_DASHBOARD_REGION: eu-west-2
+  DEMOCRACYBOOKCLUB_DASHBOARD_PRODUCTION_CLUSTER: democracybookclub-production
+  DEMOCRACYBOOKCLUB_DASHBOARD_PRODUCTION_SERVICE_NAME: democracybookclub-dashboard-production
+  DEMOCRACYBOOKCLUB_DASHBOARD_PRODUCTION_CONTAINER_NAME: dashboard
+  DEMOCRACYBOOKCLUB_DASHBOARD_PRODUCTION_REPOSITORY: internal-patchwork-dashboard
+
 jobs:
   Build:
     name: Build and Push
@@ -332,3 +347,67 @@ jobs:
           service: ${{ secrets.FINDOUT_DASHBOARD_SERVICE_NAME }}
           cluster: ${{ secrets.FINDOUT_DASHBOARD_CLUSTER }}
           wait-for-service-stability: false
+
+  Deploy-Democracybookclub-Production-dashboard:
+    name: Deploy to democracybookclub-production-dashboard
+    needs: Build
+    runs-on: ubuntu-latest
+    # Scoped to this job only, so the other deploy jobs keep their current
+    # permissions. id-token: write is what allows the OIDC token to be minted.
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.DEMOCRACYBOOKCLUB_DASHBOARD_PRODUCTION_ROLE_ARN }}
+          role-session-name: democracybookclub-dashboard-production-${{ github.run_id }}
+          aws-region: ${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          mask-password: 'true'
+          aws-region: ${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_REGION }}
+
+      # Resolved through the service, so the service must already exist. It does:
+      # democracybookclub-dashboard-production is ACTIVE with one task running.
+      - name: Download current dashboard task definition
+        run: |
+          TASK_DEF_ARN=$(aws ecs describe-services \
+            --cluster "$DEMOCRACYBOOKCLUB_DASHBOARD_PRODUCTION_CLUSTER" \
+            --services "$DEMOCRACYBOOKCLUB_DASHBOARD_PRODUCTION_SERVICE_NAME" \
+            --query 'services[0].taskDefinition' \
+            --output text)
+          echo "Dashboard service is currently on: $TASK_DEF_ARN"
+          aws ecs describe-task-definition \
+            --task-definition "$TASK_DEF_ARN" \
+            --query 'taskDefinition' \
+            --output json > task-definition-democracybookclub-dashboard.json
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition-democracybookclub-dashboard.json
+          container-name: ${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_PRODUCTION_CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_PRODUCTION_REPOSITORY }}:${{ vars.IMAGE_PROD_TAG }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_PRODUCTION_SERVICE_NAME }}
+          cluster: ${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_PRODUCTION_CLUSTER }}
+          wait-for-service-stability: false
+
+      - name: Deployment complete
+        run: |
+          echo "Deployed ${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_PRODUCTION_REPOSITORY }}:${{ vars.IMAGE_PROD_TAG }}"
+          echo "Service: ${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_PRODUCTION_SERVICE_NAME }}"
+          echo "Cluster: ${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_PRODUCTION_CLUSTER }}"
