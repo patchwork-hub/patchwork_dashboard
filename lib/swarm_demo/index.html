@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patchwork · Swarm Lab</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #0b1220; color: #e8eef8;
+    font: 15px/1.6 system-ui, sans-serif;
+  }
+  main { max-width: 1160px; margin: auto; padding: 36px 24px; }
+  header, .controls { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  header { justify-content: space-between; }
+  h1 { margin: 4px 0; font-size: clamp(28px, 5vw, 44px); line-height: 1.2; }
+  h2 { margin: 0 0 12px; font-size: 18px; }
+  p { color: #a8b8ce; }
+  .eyebrow { color: #57dbb1; letter-spacing: .15em; font-size: 12px; }
+  .badge { padding: 7px 15px; border-radius: 30px; background: #183e35; color: #73f0be; }
+  .badge.blue { background: #203c65; color: #91c7ff; }
+  .badge.red { background: #542b38; color: #ffabb8; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 24px 0; }
+  .card, section { background: #142033; border: 1px solid #253550; border-radius: 14px; padding: 20px; }
+  .label { color: #a8b8ce; font-size: 13px; }
+  .value { font-size: 30px; font-weight: 650; }
+  .details { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; }
+  dd { margin: 0 0 12px; overflow-wrap: anywhere; }
+  dt { color: #a8b8ce; font-size: 12px; }
+  canvas { width: 100%; height: 170px; display: block; }
+  button { background: #243954; color: white; padding: 9px 16px; border: 1px solid #426085; border-radius: 8px; cursor: pointer; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  td, th { text-align: left; padding: 10px 8px; border-bottom: 1px solid #26354b; }
+  th { color: #a8b8ce; font-weight: 500; }
+  .scroll { overflow-x: auto; }
+  .ok { color: #73f0be; } .fail { color: #ff9cab; }
+  .note { font-size: 12px; color: #a8b8ce; }
+  @media(max-width:700px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .details { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <div class="eyebrow">PATCHWORK / INFRASTRUCTURE LAB</div>
+      <h1>Watch your deployment work.</h1>
+      <p>Live HTTP probes through the Docker Swarm routing mesh.</p>
+    </div>
+    <span id="status" class="badge">Connecting</span>
+  </header>
+
+  <div class="controls">
+    <button id="toggle">Pause probes</button>
+    <button id="reset">Reset measurements</button>
+    <span class="note">One probe, then a 1-second wait · 4-second timeout</span>
+  </div>
+
+  <div class="grid">
+    <div class="card"><div class="label">Successful probes</div><div id="success" class="value">0</div></div>
+    <div class="card"><div class="label">Failed probes</div><div id="failures" class="value">0</div></div>
+    <div class="card"><div class="label">Probe success rate</div><div id="rate" class="value">—</div></div>
+    <div class="card"><div class="label">Latest success latency</div><div id="latency" class="value">—</div></div>
+  </div>
+
+  <div class="details">
+    <section>
+      <h2>Latest successful response</h2>
+      <dl>
+        <dt>Release label</dt><dd id="release">—</dd>
+        <dt>Swarm node</dt><dd id="node">—</dd>
+        <dt>Container hostname</dt><dd id="container">—</dd>
+        <dt>Swarm task</dt><dd id="task">—</dd>
+      </dl>
+    </section>
+    <section>
+      <h2>Response latency</h2>
+      <canvas id="chart" role="img" aria-label="Latency of the last 60 probes"></canvas>
+      <div id="scale" class="note"></div>
+      <p class="note">Last 60 probes. Green: successful response latency.
+      Red marks: failed probes; no success latency recorded.</p>
+    </section>
+  </div>
+
+  <section>
+    <h2>Request feed</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Browser time</th><th>Result</th><th>Release</th><th>Node</th><th>Container</th><th>Latency</th></tr></thead>
+        <tbody id="feed"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="note">
+    Measurements belong to this browser session, not the whole cluster.
+    Pausing or closing this tab stops measurement. Background tabs may be throttled.
+    This endpoint does not test PostgreSQL, Redis, authentication, or Mastodon APIs.
+  </p>
+</main>
+
+<script>
+const el = id => document.getElementById(id);
+let success = 0, failures = 0, samples = [], paused = false;
+
+function draw() {
+  const canvas = el('chart');
+  const ratio = window.devicePixelRatio || 1;
+  const width = canvas.clientWidth, height = 170;
+  canvas.width = Math.round(width * ratio);
+  canvas.height = Math.round(height * ratio);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(ratio, ratio);
+  const max = Math.max(100, ...samples.filter(x => x !== null));
+  el('scale').textContent = 'Vertical scale: 0–' + Math.ceil(max) + ' ms';
+  ctx.strokeStyle = '#30435f';
+  ctx.beginPath(); ctx.moveTo(0, height - 10); ctx.lineTo(width, height - 10); ctx.stroke();
+  let connected = false;
+  ctx.strokeStyle = '#57dbb1'; ctx.lineWidth = 2; ctx.beginPath();
+  samples.forEach((value, i) => {
+    const x = 4 + i * (width - 8) / 59;
+    if (value === null) {
+      connected = false;
+      ctx.fillStyle = '#ff748d';
+      ctx.fillRect(x - 2, height - 19, 4, 9);
+    } else {
+      const y = height - 10 - value / max * (height - 25);
+      if (connected) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+      connected = true;
+      ctx.fillStyle = '#57dbb1'; ctx.fillRect(x - 1, y - 1, 3, 3);
+    }
+  });
+  ctx.stroke();
+}
+
+function record(ok, data, ms, message) {
+  ok ? success++ : failures++;
+  el('success').textContent = success;
+  el('failures').textContent = failures;
+  el('rate').textContent = (100 * success / (success + failures)).toFixed(1) + '%';
+
+  if (ok) {
+    el('latency').textContent = Math.round(ms) + ' ms';
+    ['release', 'node', 'container', 'task'].forEach(key => {
+      el(key).textContent = data[key] || 'unknown';
+    });
+  }
+
+  el('status').textContent = ok ? 'Responding · ' + data.release : 'Probe failed';
+  el('status').className = 'badge' + (ok ? (data.release === 'v2' ? ' blue' : '') : ' red');
+
+  const row = document.createElement('tr');
+  const values = [
+    new Date().toLocaleTimeString(),
+    ok ? 'HTTP 200' : message,
+    ok ? data.release : '—',
+    ok ? data.node : '—',
+    ok ? data.container : '—',
+    ok ? Math.round(ms) + ' ms' : '—'
+  ];
+  values.forEach((value, i) => {
+    const cell = document.createElement('td');
+    cell.textContent = value;
+    if (i === 1) cell.className = ok ? 'ok' : 'fail';
+    row.appendChild(cell);
+  });
+  el('feed').prepend(row);
+  while (el('feed').children.length > 25) el('feed').lastChild.remove();
+  samples.push(ok ? ms : null);
+  if (samples.length > 60) samples.shift();
+  draw();
+}
+
+async function probe() {
+  if (!paused) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 4000);
+    const start = performance.now();
+    try {
+      const response = await fetch('/demo/health?t=' + Date.now(), {
+        cache: 'no-store', credentials: 'omit', signal: controller.signal
+      });
+      if (response.status !== 200) throw new Error('HTTP ' + response.status);
+      const data = await response.json();
+      if (data.status !== 'ok' || data.scope !== 'demo-only') throw new Error('Invalid response');
+      record(true, data, performance.now() - start);
+    } catch (error) {
+      record(false, {}, 0, error.name === 'AbortError' ? 'Timeout' : error.message);
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+  setTimeout(probe, 1000);
+}
+
+el('toggle').onclick = () => {
+  paused = !paused;
+  el('toggle').textContent = paused ? 'Resume probes' : 'Pause probes';
+};
+
+el('reset').onclick = () => {
+  success = 0; failures = 0; samples = [];
+  el('success').textContent = '0'; el('failures').textContent = '0';
+  el('rate').textContent = '—'; el('latency').textContent = '—';
+  el('feed').replaceChildren(); draw();
+};
+
+window.addEventListener('resize', draw);
+draw();
+probe();
+</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+version: "3.8"
+
+services:
+  web:
+    image: ${APP_IMAGE}
+
+    entrypoint: ["bundle", "exec", "puma"]
+    command: ["-C", "config/puma.rb", "-b", "tcp://0.0.0.0:3001"]
+
+    env_file:
+      - ./app.env
+
+    environment:
+      RAILS_ENV: production
+      RAILS_LOG_TO_STDOUT: "true"
+      RAILS_SERVE_STATIC_FILES: "true"
+      PORT: "3001"
+      WEB_CONCURRENCY: "1"
+      RAILS_MAX_THREADS: "2"
+      SWARM_DEMO_ENABLED: "true"
+      APP_RELEASE: "v1"
+      SWARM_NODE: "{{.Node.Hostname}}"
+      SWARM_TASK: "{{.Task.Name}}"
+
+    ports:
+      - target: 3001
+        published: 3001
+        protocol: tcp
+        mode: ingress
+
+    networks:
+      - application
+
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - --fail
+        - --silent
+        - --max-time
+        - "3"
+        - http://127.0.0.1:3001/demo/health
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+    stop_grace_period: 30s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    deploy:
+      replicas: 2
+
+      placement:
+        constraints:
+          - node.role == worker
+        preferences:
+          - spread: node.id
+
+      resources:
+        reservations:
+          memory: 256M
+        limits:
+          cpus: "1.0"
+          memory: 768M
+
+      restart_policy:
+        condition: any
+        delay: 5s
+
+      update_config:
+        parallelism: 1
+        delay: 15s
+        order: start-first
+        failure_action: rollback
+        monitor: 90s
+
+      rollback_config:
+        parallelism: 1
+        order: stop-first
+        monitor: 90s
+
+networks:
+  application:
+    driver: overlay

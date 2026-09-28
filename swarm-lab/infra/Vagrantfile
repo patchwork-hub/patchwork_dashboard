@@ -1,0 +1,31 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-24.04"
+  config.vm.boot_timeout = 600
+
+  # This lab does not need a host folder mounted inside the VMs.
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  nodes = {
+    "manager1" => "192.168.56.11",
+    "worker1"  => "192.168.56.12",
+    "worker2"  => "192.168.56.13"
+  }
+
+  nodes.each do |name, address|
+    config.vm.define name do |node|
+      node.vm.hostname = name
+
+      node.vm.network "private_network",
+        ip: address,
+        netmask: "255.255.255.0"
+
+      node.vm.provider :libvirt do |provider|
+        provider.uri = "qemu:///system"
+        provider.cpus = 1
+        provider.memory = 2048
+      end
+
+      node.vm.provision "shell", path: "install-docker.sh"
+    end
+  end
+end

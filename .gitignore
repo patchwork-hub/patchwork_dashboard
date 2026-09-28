@@ -34,3 +34,19 @@
 /config/master.key
 
 .env
+
+# Local Swarm lab state
+.vagrant/
+**/.vagrant/
+
+# Local deployment environment files
+/swarm-lab/deploy/app.env
+/swarm-lab/deploy/.env
+/swarm-lab/deploy/*.env
+
+# Lab keys and generated artifacts
+/swarm-lab/**/*.pem
+/swarm-lab/**/*.key
+/swarm-lab/**/*.tar
+/swarm-lab/**/*.log
+/swarm-lab/**/ssh-config
