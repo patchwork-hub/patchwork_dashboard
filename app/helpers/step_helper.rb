@@ -24,6 +24,7 @@ module StepHelper
       steps << { step: 2, display: 2, title: 'Admin and public feed details', description: 'Create admin accounts for your channel.' }
       steps << { step: 3, display: 3, title: 'Add content', description: 'Populate your channel with content from across the New Social network. Here you can define rules that specify what content is included in your channel.' }
       steps << { step: 4, display: 4, title: 'Filter content', description: 'Filter content from the wider network to ensure your channel stays relevant.' }
+      steps << { step: 5, display: 5, title: 'Additional information', description: 'Manage access, visibility and admin roles for your channel.' }
     elsif newsmast_admin? || is_newsmast
       steps << { step: 1, display: 1, title: 'Newsmat channel information', description: 'Set up the basic details of your newsmast channel.' }
       steps << { step: 2, display: 2, title: 'Admin and public feed details', description: 'Create admin accounts for your newsmast channel.' }
@@ -77,6 +78,8 @@ module StepHelper
 
   def fetch_display_step
     if request.path.include?("manage_additional_information")
+      return 5 if @community.channel_feed?
+
       @community.content_type.custom_channel? ? 6 : 4
     else
       step_data = community_steps.find { |s| s[:step] == @current_step }

@@ -4,6 +4,7 @@ module Api
   module V1
     class CollectionsController < ApiController
       skip_before_action :verify_key!
+      before_action :check_authorization_header, only: [:fetch_channels]
       before_action :fetch_channel_details, only: [:fetch_channels]
 
       COLLECTION_TYPES = {
@@ -61,6 +62,15 @@ module Api
 
       private
 
+      # Allow fetch_channels to work with or without an Authorization header
+      def check_authorization_header
+        if request.headers['Authorization'].present? && params[:instance_domain].present?
+          validate_mastodon_account
+        else
+          authenticate_user_from_header if request.headers['Authorization'].present?
+        end
+      end
+
       def fetch_all_channels_by_type(type:)
         collections = case type
         when COLLECTION_TYPES[:channel]
@@ -103,17 +113,13 @@ module Api
       end
 
       def serialized_channels(type:)
+        account = local_account? ? current_account : current_remote_account
+
         if type == COLLECTION_TYPES[:channel] || type == COLLECTION_TYPES[:channel_feed]
-          Api::V1::ChannelSerializer.new(
-            @channels,
-            pagination_serializer_options(@channels)
-          ).serializable_hash.to_json
+          Api::V1::ChannelSerializer.new(@channels, { params: { current_account: account } }).serializable_hash.to_json
         else
           if Community.has_local_newsmast_channel? && params[:type] == COLLECTION_TYPES[:newsmast]
-            data = Api::V1::ChannelSerializer.new(
-              @channels,
-              pagination_serializer_options(@channels)
-            ).serializable_hash.to_json
+            data = Api::V1::ChannelSerializer.new(@channels, { params: { current_account: account } }).serializable_hash.to_json
             # Need to remove after mobile lunch again
             parsed = JSON.parse(data)
             parsed["data"]
