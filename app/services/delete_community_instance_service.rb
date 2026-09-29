@@ -3,6 +3,8 @@ require 'httparty'
 class DeleteCommunityInstanceService < BaseService
   LAMBDA_URL = ENV.fetch('DELETE_COMMUNITY_LAMBDA_URL', nil)
   LAMBDA_API_KEY = ENV.fetch('DELETE_COMMUNITY_LAMBDA_API_KEY', nil)
+  OPEN_TIMEOUT = ENV.fetch('DELETE_COMMUNITY_OPEN_TIMEOUT', 5).to_i
+  READ_TIMEOUT = ENV.fetch('DELETE_COMMUNITY_READ_TIMEOUT', 15).to_i
 
   def call(community)
     # Skip lambda call for non-channel communities
@@ -44,7 +46,9 @@ class DeleteCommunityInstanceService < BaseService
       headers: {
         'Content-Type' => 'application/json',
         'x-api-key' => LAMBDA_API_KEY,
-      }
+      },
+      open_timeout: OPEN_TIMEOUT,
+      read_timeout: READ_TIMEOUT
     )
   end
 
