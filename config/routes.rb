@@ -1,5 +1,5 @@
 require 'sidekiq/web'
-require 'sidekiq-scheduler'
+require 'sidekiq-scheduler/web'
 
 Rails.application.routes.draw do
   authenticate :user, lambda { |u| u.master_admin? || u.can?(:manage_sidekiq) } do

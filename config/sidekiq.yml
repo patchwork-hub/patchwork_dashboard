@@ -1,6 +1,6 @@
 development:
   :verbose: true
-  :concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY") { 10 } %>
+  :concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY") { 5 } %>
   :queues:
     - dashboard_development_default
     - dashboard_development_ban_status
@@ -30,7 +30,7 @@ development:
 
 staging:
   :verbose: true
-  :concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY") { 10 } %>
+  :concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY") { 5 } %>
   :queues:
     - dashboard_staging_default
     - dashboard_staging_ban_status
@@ -60,7 +60,7 @@ staging:
 
 production:
   :verbose: true
-  :concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY") { 10 } %>
+  :concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY") { 5 } %>
   :queues:
     - dashboard_production_default
     - dashboard_production_ban_status

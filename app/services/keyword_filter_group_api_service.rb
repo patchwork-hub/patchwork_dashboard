@@ -26,7 +26,14 @@ class KeywordFilterGroupApiService
         req.body = {name: @name}.to_json
       end
 
-      JSON.parse(response.body)
+      parsed = JSON.parse(response.body)
+
+      unless response.success? && parsed.is_a?(Array)
+        Rails.logger.error("Failed to get keywords: unexpected response (status=#{response.status}, body=#{response.body})")
+        return []
+      end
+
+      parsed
     rescue => e
       Rails.logger.error("Failed to get keywords: #{e}")
       []

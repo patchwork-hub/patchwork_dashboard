@@ -14,7 +14,7 @@ module Api
                                         date: params[:last_synced_at]
                                       ) if params[:last_synced_at].present?
 
-          @accounts = @accounts.page(params[:page] || 1).per(params[:per_page] || 50)
+        @accounts = @accounts.page(bounded_page).per(bounded_per_page(50))
 
           options = {}
           options[:meta] = get_metadata(@accounts)
