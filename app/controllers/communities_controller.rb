@@ -189,9 +189,15 @@ class CommunitiesController < BaseController
 
   def update_positions
     positions = params[:positions] || []
+    scope = Community.all
+    if current_user.community_admin? && !current_user.master_admin?
+      scope = Community.joins(:community_admins)
+                       .where(community_admins: { account_id: current_user.account_id, account_status: :active })
+    end
+
     ActiveRecord::Base.transaction do
       positions.each do |pos|
-        Community.where(id: pos[:id]).update_all(position: pos[:position])
+        scope.where(id: pos[:id]).update_all(position: pos[:position])
       end
     end
     render json: { success: true }, status: :ok
@@ -550,11 +556,11 @@ class CommunitiesController < BaseController
 
     # For community admins (UserAdmin, OrganisationAdmin, etc.) who have direct community access
     return if required_permission.nil?
-    return if current_user.can?(required_permission)
+    return if current_user.can?(required_permission) && !current_user.community_admin?
 
     # Allow users who are community admins for communities of this type
     has_community_access = CommunityAdmin.joins(:community)
-                                         .where(account_id: current_user.account_id)
+                                         .where(account_id: current_user.account_id, account_status: :active)
                                          .where(patchwork_communities: { channel_type: channel_type })
                                          .exists?
     return if has_community_access

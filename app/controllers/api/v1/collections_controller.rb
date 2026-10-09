@@ -73,6 +73,19 @@ module Api
         end
       end
 
+      # Temporary method to fetch channels for the Demo Book Club collection - Might be removed in the future
+      def fetch_channels_demobookclub
+        if @channels
+          order_direction = %w[asc desc].include?(params[:order_by_position]&.downcase) ? params[:order_by_position].downcase : 'asc'
+          @channels = @channels.respond_to?(:to_a) ? @channels.to_a : @channels
+          @channels = @channels.sort_by { |c| c.try(:position).to_i }
+          @channels.reverse! if order_direction == 'desc'
+          render json: serialized_channels(type: params[:type])
+        else
+          render json: { data: [] }
+        end
+      end
+
       private
 
       # Allow fetch_channels to work with or without an Authorization header
