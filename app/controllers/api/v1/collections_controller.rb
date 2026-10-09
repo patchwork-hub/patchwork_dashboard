@@ -4,7 +4,8 @@ module Api
   module V1
     class CollectionsController < ApiController
       skip_before_action :verify_key!
-      before_action :fetch_channel_details, only: [:fetch_channels]
+      before_action :check_authorization_header, only: [:fetch_channels_demobookclub]
+      before_action :fetch_channel_details, only: [:fetch_channels, :fetch_channels_demobookclub]
 
       COLLECTION_TYPES = {
         channel: 'channel',
@@ -55,7 +56,29 @@ module Api
         end
       end
 
+      # Temporary method to fetch channels for the Demo Book Club collection - Might be removed in the future
+      def fetch_channels_demobookclub
+        if @channels
+          order_direction = %w[asc desc].include?(params[:order_by_position]&.downcase) ? params[:order_by_position].downcase : 'asc'
+          @channels = @channels.respond_to?(:to_a) ? @channels.to_a : @channels
+          @channels = @channels.sort_by { |c| c.try(:position).to_i }
+          @channels.reverse! if order_direction == 'desc'
+          render json: serialized_channels(type: params[:type])
+        else
+          render json: { data: [] }
+        end
+      end
+
       private
+
+      # Allow fetch_channels to work with or without an Authorization header
+      def check_authorization_header
+        if request.headers['Authorization'].present? && params[:instance_domain].present?
+          validate_mastodon_account
+        else
+          authenticate_user_from_header if request.headers['Authorization'].present?
+        end
+      end
 
       def fetch_all_channels_by_type(type:)
         collections = case type
@@ -95,11 +118,13 @@ module Api
       end
 
       def serialized_channels(type:)
+        account = local_account? ? current_account : current_remote_account
+
         if type == COLLECTION_TYPES[:channel] || type == COLLECTION_TYPES[:channel_feed]
-          Api::V1::ChannelSerializer.new(@channels).serializable_hash.to_json
+          Api::V1::ChannelSerializer.new(@channels, { params: { current_account: account } }).serializable_hash.to_json
         else
           if Community.has_local_newsmast_channel? && params[:type] == COLLECTION_TYPES[:newsmast]
-            data = Api::V1::ChannelSerializer.new(@channels).serializable_hash.to_json
+            data = Api::V1::ChannelSerializer.new(@channels, { params: { current_account: account } }).serializable_hash.to_json
             # Need to remove after mobile lunch again
             parsed = JSON.parse(data)
             parsed["data"]
