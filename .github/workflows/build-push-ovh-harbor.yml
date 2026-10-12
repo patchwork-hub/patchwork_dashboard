@@ -1,0 +1,138 @@
+run-name: Build and push OVH Harbor dashboard image by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - internal/prod
+
+# THE VALUES BELOW ARE NOT CONFIDENTIAL: registry host, project and image names.
+# The only secret is HARBOR_PASSWORD (and GITHUB_TOKEN for committing the
+# updated compose file).
+#
+# IMAGE TAGS ARE PER COMMIT: dashboard-<sha>. The mutable
+# `dashboard:latest` alias is also pushed for convenience,
+# but the compose file is pinned to the immutable commit tag so every checkout
+# identifies exactly one image digest.
+env:
+  HARBOR_REGISTRY: d3r5hv0f.eu-west-par.container-registry.ovh.net
+  HARBOR_PROJECT: pouetsocialmastodon
+  HARBOR_USERNAME: robot$pouetsocialmastodon+pouetsocial
+  COMPOSE_FILE: docker-compose.ovh.yml
+  DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-dashboard:
+    name: Build and push dashboard image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to OVH Harbor
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.HARBOR_REGISTRY }}
+          username: ${{ env.HARBOR_USERNAME }}
+          password: ${{ secrets.POUETSOCIAL_HARBOR_PASSWORD }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache-dashboard
+          key: ${{ runner.os }}-buildx-dashboard-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-dashboard-
+            ${{ runner.os }}-buildx-
+
+      - name: Build and push dashboard image
+        env:
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          IMAGE=${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_PROJECT }}/dashboard
+          docker buildx build \
+            --platform linux/amd64 \
+            --cache-from type=local,src=/tmp/.buildx-cache-dashboard \
+            --cache-to type=local,dest=/tmp/.buildx-cache-dashboard-new,mode=max \
+            --build-arg SOURCE_COMMIT="${SOURCE_COMMIT}" \
+            --tag $IMAGE:${{ env.DASHBOARD_IMAGE_TAG }} \
+            --tag $IMAGE:latest \
+            --push \
+            .
+          rm -rf /tmp/.buildx-cache-dashboard
+          mv /tmp/.buildx-cache-dashboard-new /tmp/.buildx-cache-dashboard
+
+  update-compose:
+    name: Update compose file image tag
+    runs-on: ubuntu-latest
+    needs: build-dashboard
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update image tag in docker-compose.ovh.yml
+        run: |
+          DASHBOARD_IMAGE="${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_PROJECT }}/dashboard:${{ env.DASHBOARD_IMAGE_TAG }}"
+
+          # Replace any existing dashboard image line, not just the initial placeholder
+          sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
+
+          echo "Updated compose file:"
+          grep -E "image:" ${{ env.COMPOSE_FILE }}
+
+      - name: Commit and push updated compose file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ${{ env.COMPOSE_FILE }}
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "chore(ovh): update dashboard image tag to ${{ github.sha }}"
+          git push
+
+  deploy:
+    name: Deploy dashboard on OVH instance
+    runs-on: pouetsocial
+    needs: update-compose
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: internal/prod
+
+      - name: Pull latest compose file
+        run: |
+          git config pull.rebase false
+          git pull origin internal/prod
+
+      - name: Copy compose file to persistent deployment directory
+        run: |
+          mkdir -p /home/ubuntu/deployment/dashboard
+          cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
+
+      - name: Login to OVH Harbor
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.HARBOR_REGISTRY }}
+          username: ${{ env.HARBOR_USERNAME }}
+          password: ${{ secrets.POUETSOCIAL_HARBOR_PASSWORD }}
+
+      - name: Deploy with docker compose from persistent directory
+        working-directory: /home/ubuntu/deployment/dashboard
+        run: |
+          docker compose -f ${{ env.COMPOSE_FILE }} pull
+          docker compose -f ${{ env.COMPOSE_FILE }} up -d
