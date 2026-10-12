@@ -106,7 +106,7 @@ jobs:
 
   deploy:
     name: Deploy dashboard on OVH instance
-    runs-on: pouetsocial
+    runs-on: pouetsocial-runner
     needs: update-compose
     steps:
       - name: Checkout code
