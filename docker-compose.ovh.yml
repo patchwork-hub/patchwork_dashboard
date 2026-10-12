@@ -5,7 +5,7 @@
 services:
   dashboard:
     # TAGS ARE UPDATED BY CI — do not edit manually
-    image: d3r5hv0f.eu-west-par.container-registry.ovh.net/pouetsocialmastodon/dashboard:latest
+    image: d3r5hv0f.eu-west-par.container-registry.ovh.net/pouetsocialmastodon/dashboard:dashboard-a7c6468c750737a9f4bfa6271d7fb1468a45c832
     restart: unless-stopped
     # Matches AWS ECS dashboard task definition: 512 CPU units / 1024 MB memory
     deploy:
