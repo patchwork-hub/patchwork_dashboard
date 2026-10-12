@@ -54,7 +54,7 @@ class NonChannelBlueskyBridgeService
     end
 
     if use_local_domain
-      process_did_value(user, token, account) if account_relationship_array.present? && account_relationship_array&.last && account_relationship_array&.last['following']
+      process_did_value(user, account) if account_relationship_array.present? && account_relationship_array&.last && account_relationship_array&.last['following']
     else
       Rails.logger.info("Skipping DNS record creation for user #{user.account&.username} - using Bridgy Fed default handle")
     end
@@ -85,15 +85,13 @@ class NonChannelBlueskyBridgeService
     GenerateAdminAccessTokenService.new(user&.id).call
   end
 
-  def process_did_value(user, token, account)
+  def process_did_value(user, account)
     did_value = FetchDidValueService.new.call(account, nil)
 
     if did_value
       begin
         create_dns_record(did_value, account)
-        sleep 1.minutes
-        create_direct_message(token, account)
-        user.update_column(:did_value, did_value)
+        BlueskyBridgePropagationJob.set(wait: 1.minute).perform_later('user', user.id, did_value)
       rescue StandardError => e
         Rails.logger.error("Error processing did_value for user #{account.username}: #{e.message}")
       end
@@ -121,24 +119,6 @@ class NonChannelBlueskyBridgeService
   rescue StandardError => e
     Rails.logger.error("Failed to create DNS record for #{account&.username}: #{e.message}")
     raise e
-  end
-
-  def create_direct_message(token, account)
-    base_domain = ENV['LOCAL_DOMAIN'].split('.').last(2).join('.')
-    name = "#{account&.username}.#{base_domain}"
-
-    status_params = {
-      "in_reply_to_id": nil,
-      "language": "en",
-      "media_ids": [],
-      "poll": nil,
-      "sensitive": false,
-      "spoiler_text": "",
-      "status": "@bsky.brid.gy@bsky.brid.gy username #{name}",
-      "visibility": "direct"
-    }
-
-    PostStatusService.new.call(token: token, options: status_params)
   end
 
   def handle_relationship(account, target_account_id)

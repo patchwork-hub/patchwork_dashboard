@@ -107,6 +107,10 @@ class User < ApplicationRecord
     role.name == "NewsmastAdmin"
   end
 
+  def community_admin?
+    CommunityAdmin.exists?(account_id: account_id, account_status: :active)
+  end
+
   def primary_community
     if community_users.any?
       cu = community_users.find_by(is_primary: true)

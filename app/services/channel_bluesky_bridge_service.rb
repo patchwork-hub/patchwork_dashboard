@@ -50,7 +50,7 @@ class ChannelBlueskyBridgeService
     end
 
     if use_local_domain
-      process_did_value(community, token, account) if account_relationship_array.present? && account_relationship_array&.last && account_relationship_array&.last['following']
+      process_did_value(community, account) if account_relationship_array.present? && account_relationship_array&.last && account_relationship_array&.last['following']
     else
       Rails.logger.info("Skipping DNS record creation for community #{community.name} - using Bridgy Fed default handle")
     end
@@ -81,15 +81,13 @@ class ChannelBlueskyBridgeService
     GenerateAdminAccessTokenService.new(user&.id).call
   end
 
-  def process_did_value(community, token, account)
+  def process_did_value(community, account)
     did_value = FetchDidValueService.new.call(account, community)
 
     if did_value
       begin
         create_dns_record(did_value, community)
-        sleep 1.minutes
-        create_direct_message(token, community)
-        community.update!(did_value: did_value)
+        BlueskyBridgePropagationJob.set(wait: 1.minute).perform_later('community', community.id, did_value)
       rescue StandardError => e
         Rails.logger.error("Error processing did_value for community #{community.id}: #{e.message}")
       end
@@ -114,23 +112,6 @@ class ChannelBlueskyBridgeService
   rescue StandardError => e
     Rails.logger.error("Failed to create DNS record for #{domain_name}: #{e.message}")
     raise e
-  end
-
-  def create_direct_message(token, community)
-    domain_name = determine_domain_name(community)
-
-    status_params = {
-      "in_reply_to_id": nil,
-      "language": "en",
-      "media_ids": [],
-      "poll": nil,
-      "sensitive": false,
-      "spoiler_text": "",
-      "status": "@bsky.brid.gy@bsky.brid.gy username #{domain_name}",
-      "visibility": "direct"
-    }
-
-    PostStatusService.new.call(token: token, options: status_params)
   end
 
   def handle_relationship(account, target_account_id)

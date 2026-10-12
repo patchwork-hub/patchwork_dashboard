@@ -16,31 +16,30 @@ module Scheduler
 
       communities.find_each do |community|
         begin
-          ActiveRecord::Base.transaction do
-            account_ids = community&.community_admins&.pluck(:account_id)
+          account_ids = community.community_admins.pluck(:account_id).compact.uniq
 
-            Rails.logger.info "[CommunityCleanupScheduler] Deleting community ##{community.id}..."
+          Rails.logger.info "[CommunityCleanupScheduler] Deleting community ##{community.id}..."
 
-            response = DeleteCommunityInstanceService.new.call(community)
+          response = DeleteCommunityInstanceService.new.call(community)
 
-            if response
-              Rails.logger.info "[CommunityCleanupScheduler] Successfully called DeleteCommunityInstanceService for community ##{community.id}."
-              community.destroy
+          if response
+            Rails.logger.info "[CommunityCleanupScheduler] Successfully called DeleteCommunityInstanceService for community ##{community.id}."
+            ActiveRecord::Base.transaction { community.destroy! }
 
-              account_ids.compact.uniq.each do |account_id|
-                if Account.exists?(account_id)
-                  AccountDeletionService.new.call(Account.find(account_id))
-                  Rails.logger.info "[CommunityCleanupScheduler] Enqueued deletion for account ##{account_id}."
-                else
-                  Rails.logger.warn "[CommunityCleanupScheduler] Account ##{account_id} not found. Skipping deletion."
-                end
+            accounts_by_id = Account.where(id: account_ids).index_by(&:id)
+            account_ids.each do |account_id|
+              account = accounts_by_id[account_id]
+              if account
+                AccountDeletionService.new.call(account)
+                Rails.logger.info "[CommunityCleanupScheduler] Enqueued deletion for account ##{account_id}."
+              else
+                Rails.logger.warn "[CommunityCleanupScheduler] Account ##{account_id} not found. Skipping deletion."
               end
-            else
-              Rails.logger.warn "[CommunityCleanupScheduler] Skipping destroy for community ##{community.id} due to service call failure."
             end
-            sleep(0.05)
+          else
+            Rails.logger.warn "[CommunityCleanupScheduler] Skipping destroy for community ##{community.id} due to service call failure."
           end
-        rescue => e
+        rescue StandardError => e
           Rails.logger.error "[CommunityCleanupScheduler] Error deleting community #{community.id}: #{e.message}"
         end
       end

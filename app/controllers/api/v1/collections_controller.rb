@@ -4,8 +4,8 @@ module Api
   module V1
     class CollectionsController < ApiController
       skip_before_action :verify_key!
-      before_action :check_authorization_header, only: [:fetch_channels]
-      before_action :fetch_channel_details, only: [:fetch_channels]
+      before_action :check_authorization_header, only: [:fetch_channels_demobookclub]
+      before_action :fetch_channel_details, only: [:fetch_channels, :fetch_channels_demobookclub]
 
       COLLECTION_TYPES = {
         channel: 'channel',
@@ -31,20 +31,37 @@ module Api
 
       def index
         @all_collections = fetch_all_channels_by_type(type: COLLECTION_TYPES[:channel])
+        @all_collections = paginate_if_requested(@all_collections)
         render_collections(@all_collections, type: COLLECTION_TYPES[:channel])
       end
 
       def channel_feed_collections
         @all_collections = fetch_all_channels_by_type(type: COLLECTION_TYPES[:channel_feed])
+        @all_collections = paginate_if_requested(@all_collections)
         render_collections(@all_collections, type: COLLECTION_TYPES[:channel_feed])
       end
 
       def newsmast_collections
         @all_collections = fetch_all_channels_by_type(type: COLLECTION_TYPES[:newsmast])
+        @all_collections = paginate_if_requested(@all_collections)
         render_collections(@all_collections, type: COLLECTION_TYPES[:newsmast])
       end
 
       def fetch_channels
+        if @channels
+          order_direction = %w[asc desc].include?(params[:order_by_position]&.downcase) ? params[:order_by_position].downcase : 'asc'
+          @channels = @channels.respond_to?(:to_a) ? @channels.to_a : @channels
+          @channels = @channels.sort_by { |c| c.try(:position).to_i }
+          @channels.reverse! if order_direction == 'desc'
+          @channels = paginate_if_requested(@channels)
+          render json: serialized_channels(type: params[:type])
+        else
+          render json: { data: [] }
+        end
+      end
+
+      # Temporary method to fetch channels for the Demo Book Club collection - Might be removed in the future
+      def fetch_channels_demobookclub
         if @channels
           order_direction = %w[asc desc].include?(params[:order_by_position]&.downcase) ? params[:order_by_position].downcase : 'asc'
           @channels = @channels.respond_to?(:to_a) ? @channels.to_a : @channels
@@ -102,7 +119,11 @@ module Api
 
       def render_collections(collections, type:)
         render json: Api::V1::CollectionSerializer.new(
-          collections, params: { recommended: false, type: type }
+          collections,
+          pagination_serializer_options(
+            collections,
+            params: { recommended: false, type: type }
+          )
         ).serializable_hash.to_json
       end
 

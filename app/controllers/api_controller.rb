@@ -36,8 +36,37 @@ class ApiController < ApplicationController
       next_page: collection.next_page,
       prev_page: collection.prev_page,
       total_pages: collection.total_pages,
-      total_count: collection.total_count
+      total_count: collection.total_count,
+      per_page: collection.limit_value
     }
+  end
+
+  def paginate_if_requested(collection, default_per_page: Kaminari.config.default_per_page)
+    return collection unless pagination_requested?
+
+    paginatable = collection.respond_to?(:page) ? collection : Kaminari.paginate_array(collection)
+    paginatable.page(bounded_page).per(bounded_per_page(default_per_page))
+  end
+
+  def pagination_requested?
+    params[:page].present? || params[:per_page].present?
+  end
+
+  def pagination_serializer_options(collection, options = {})
+    return options unless pagination_requested?
+
+    options.merge(meta: get_metadata(collection))
+  end
+
+  def bounded_page
+    page = Integer(params[:page], exception: false)
+    page&.positive? ? page : 1
+  end
+
+  def bounded_per_page(default_per_page)
+    per_page = Integer(params[:per_page], exception: false)
+    per_page = default_per_page unless per_page&.positive?
+    [per_page, Kaminari.config.max_per_page].min
   end
 
   def check_authorization_header
@@ -114,11 +143,14 @@ class ApiController < ApplicationController
         when 'production'
           'https://channel.org/oauth/token/info'
         else
-          'http://localhost:3001/oauth/token/info'
+          'http://localhost:3000/oauth/token/info'
         end
       response = HTTParty.get(url, headers: { 'Authorization' => "Bearer #{token}" })
+      unless response.success?
+        raise "Token validation failed with HTTP #{response.code}"
+      end
       JSON.parse(response.body)
-    rescue HTTParty::Error => e
+    rescue HTTParty::Error, StandardError, JSON::ParserError => e
       Rails.logger.error "Error fetching user info: #{e.message}"
       nil
     end

@@ -60,10 +60,11 @@
             = f.label :email, class: "form-label"
             = f.email_field :email, class: "form-control", id: "community_admin_email"
 
-          .mb-3.form-group.position-relative.password
+          .mb-3.form-group.password
             = f.label :password, class: "form-label"
-            = f.password_field :password, class: "form-control", id: "community_admin_password"
-            %i.fa-solid.fa-eye-slash.red{onclick: 'togglePassword(this)'}
+            .password-input-wrapper
+              = f.password_field :password, class: "form-control", id: "community_admin_password"
+              %i.fa-solid.fa-eye-slash.red{onclick: 'togglePassword(this)'}
             %small.form-text.text-muted Minimum 8 characters
 
           - if current_user.master_admin?

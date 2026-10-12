@@ -132,28 +132,17 @@ class KeywordFilterGroupsController < ApplicationController
   end
 
   def update_redis_filters
-    redis = RedisService.client(namespace: 'channel')
     redis_key = KeywordFilterGroup.get_redis_key_name(@keyword_filter_group&.server_setting&.name)
-    parsed_entries = redis.hgetall(redis_key).values.map { |entry| JSON.parse(entry) }
-    filtered_entries = parsed_entries.select { |entry| entry['group_id'] == @keyword_filter_group.id }
-
-    filtered_entries.each do |filter|
-      filter['is_active'] = params[:keyword_filter_group][:is_active]
-      redis.hset(redis_key, "#{filter['keyword'].downcase}:#{filter['filter_type']}", filter.to_json)
-    end
+    KeywordFilterGroup.update_redis_group(
+      redis_key,
+      @keyword_filter_group.id,
+      params[:keyword_filter_group][:is_active]
+    )
   end
 
   def delete_redis_hashtags_by_group_id
-    redis = RedisService.client(namespace: 'channel')
     redis_key = KeywordFilterGroup.get_redis_key_name(@keyword_filter_group&.server_setting&.name)
-    redis_hash = redis.hgetall(redis_key)
-    
-    redis_hash.each do |composite_key, json_entry|
-      entry = JSON.parse(json_entry)
-      if entry['group_id'] == @keyword_filter_group.id
-        redis.hdel(redis_key, composite_key)
-      end
-    end
+    KeywordFilterGroup.delete_redis_group(redis_key, @keyword_filter_group.id)
   end
 
   def save_to_redis
