@@ -1,5 +1,7 @@
 class CommunityPolicy < ApplicationPolicy
   def initialize_form?
+    return user_has_access_to_community? if user&.community_admin? && !master_admin?
+
     master_admin? || user_has_access_to_community? || user_admin? || newsmast_admin? || can?(:manage_channels, :manage_channel_feeds, :manage_hubs, :manage_newsmast_channels)
   end
 
@@ -84,7 +86,7 @@ class CommunityPolicy < ApplicationPolicy
   def user_has_access_to_community?
     return false unless user.present? && record.present?
 
-    CommunityAdmin.exists?(patchwork_community_id: record.id, account_id: user.account_id)
+    CommunityAdmin.exists?(patchwork_community_id: record.id, account_id: user.account_id, account_status: :active)
   end
 
   def related_user_admin?

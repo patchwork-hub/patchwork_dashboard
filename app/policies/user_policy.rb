@@ -1,6 +1,6 @@
 class UserPolicy < ApplicationPolicy
   def login?
-    master_admin? || can?(:view_newsmast_dashboard)
+    master_admin? || can?(:view_newsmast_dashboard) || CommunityAdmin.exists?(account_id: user&.account_id, account_status: :active)
   end
 
   def master_admin?

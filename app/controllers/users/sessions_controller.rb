@@ -17,15 +17,6 @@ class Users::SessionsController < Devise::SessionsController
       return
     end
 
-    unless resource.master_admin? || resource.can?(:view_newsmast_dashboard)
-      community_admin = find_active_community_admin(resource)
-
-      if community_admin.nil?
-        handle_unauthorized_login
-        return
-      end
-    end
-
     super do |resource|
       if resource.persisted?
         sign_in(resource)
@@ -93,21 +84,6 @@ class Users::SessionsController < Devise::SessionsController
       )
     rescue HTTParty::Error => e
       Rails.logger.error "Failed to revoke access token: #{e.message}"
-    end
-  end
-
-  def find_active_community_admin(user)
-    if user.organisation_admin?
-      CommunityAdmin.find_by(
-        account_id: user.account_id,
-        account_status: CommunityAdmin.account_statuses[:active]
-      )
-    else
-      CommunityAdmin.find_by(
-        account_id: user.account_id,
-        is_boost_bot: true,
-        account_status: CommunityAdmin.account_statuses[:active]
-      )
     end
   end
 
