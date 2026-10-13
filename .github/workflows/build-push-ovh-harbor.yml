@@ -72,9 +72,9 @@ jobs:
           rm -rf /tmp/.buildx-cache-dashboard
           mv /tmp/.buildx-cache-dashboard-new /tmp/.buildx-cache-dashboard
 
-  update-compose:
-    name: Update compose file image tag
-    runs-on: ubuntu-latest
+  deploy-compose:
+    name: Update compose file image tag and deploy
+    runs-on: dashboard-pouetsocial-runner
     needs: build-dashboard
     steps:
       - name: Checkout code
@@ -91,33 +91,6 @@ jobs:
 
           echo "Updated compose file:"
           grep -E "image:" ${{ env.COMPOSE_FILE }}
-
-      - name: Commit and push updated compose file
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add ${{ env.COMPOSE_FILE }}
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-            exit 0
-          fi
-          git commit -m "chore(ovh): update dashboard image tag to ${{ github.sha }}"
-          git push
-
-  deploy:
-    name: Deploy dashboard on OVH instance
-    runs-on: pouetsocial-runner
-    needs: update-compose
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: internal/prod
-
-      - name: Pull latest compose file
-        run: |
-          git config pull.rebase false
-          git pull origin internal/prod
 
       - name: Copy compose file to persistent deployment directory
         run: |
