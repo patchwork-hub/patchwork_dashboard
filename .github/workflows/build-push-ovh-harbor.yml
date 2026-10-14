@@ -74,7 +74,7 @@ jobs:
 
   deploy-compose:
     name: Update compose file image tag and deploy
-    runs-on: dashboard-pouetsocial-runner
+    runs-on: dashboard-ps-runner
     needs: build-dashboard
     steps:
       - name: Checkout code
