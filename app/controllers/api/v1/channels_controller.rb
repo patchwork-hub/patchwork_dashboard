@@ -230,27 +230,24 @@ module Api
       end
 
       def starter_packs_channels
-        starter_packs_channels = load_json_data(starter_pack_data_path('starter_pack_list.json'))
-
-        render json: { data: starter_packs_channels }
+        presenters = starter_pack_scope.ordered.map { |pack| StarterPackPresenter.new(pack) }
+        data = Rails.cache.fetch(['starter_packs', starter_pack_source, presenters.map(&:cache_key)], expires_in: 1.hour) do
+          presenters.map(&:channel)
+        end
+        render json: { data: data }
       end
 
       def starter_packs_detail
-        channel_id = params[:id]
-        starter_packs_channels = load_json_data(starter_pack_data_path('starter_pack_list.json'))
-        channel = starter_packs_channels.find { |ch| ch["id"] == channel_id }
-
-        unless channel
+        pack = starter_pack_scope.find_by(id: params[:id])
+        unless pack
           render json: { error: "Channel not found" }, status: :not_found and return
         end
 
-        followers_file = starter_pack_data_path("starter_pack_#{channel_id}.json")
-        followers = load_json_data(followers_file)
-
-        render json: {
-          channel: channel,
-          followers: followers
-        }
+        presenter = StarterPackPresenter.new(pack)
+        data = Rails.cache.fetch(['starter_pack_detail', presenter.cache_key], expires_in: 1.hour) do
+          { channel: presenter.channel, followers: presenter.followers }
+        end
+        render json: data
       end
 
       def change_boost_bot_profile
@@ -324,38 +321,14 @@ module Api
         end
       end
 
-      def load_json_data(filename)
-        file_path = Rails.root.join('config', 'data', filename)
-        return [] unless File.exist?(file_path)
-
-        # Derive cache key from filename (remove extension)
-        cache_key = filename.gsub('/', '_').gsub('.json', '')
-        modified_at = File.mtime(file_path).to_i
-        full_cache_key = "starter_pack_#{cache_key}_#{modified_at}"
-
-        Rails.cache.fetch(full_cache_key, expires_in: 1.hour) do
-          JSON.parse(File.read(file_path))
-        end
+      def starter_pack_scope
+        StarterPack.for_instance(starter_pack_source).includes(
+          { created_by: :account_stat }, { starter_pack_accounts: { account: :account_stat } }
+        )
       end
 
-      def starter_pack_data_path(filename)
-        File.join(starter_pack_namespace, filename)
-      end
-
-      def starter_pack_namespace
-        source = params[:starter_pack_source]
-        normalized_source = source.present? ? source.to_s.parameterize(separator: '') : nil
-
-        case normalized_source
-        when 'thebristolcable'
-          'thebristolcable'
-        when 'twt'
-          'twt'
-        when 'findout'
-          'findout'
-        else
-          'twt'
-        end
+      def starter_pack_source
+        params[:starter_pack_source].presence || 'twt'
       end
 
       def boost_bot_profile_channel_id

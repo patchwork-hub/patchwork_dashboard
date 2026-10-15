@@ -99,6 +99,19 @@ Rails.application.routes.draw do
 
   resources :collections
 
+  resources :starter_packs do
+    collection do
+      get :search_accounts
+      get :next_position
+      patch :reorder
+    end
+    member do
+      post :add_account
+      delete :remove_account
+      patch :reorder_accounts
+    end
+  end
+
   resources :content_types, only: [:create]
 
   resources :community_admins, except: [:show, :index]

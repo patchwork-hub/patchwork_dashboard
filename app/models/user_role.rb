@@ -3,14 +3,16 @@
 #
 # Table name: user_roles
 #
-#  id          :bigint           not null, primary key
-#  color       :string           default(""), not null
-#  highlighted :boolean          default(FALSE), not null
-#  name        :string           default(""), not null
-#  permissions :bigint           default(0), not null
-#  position    :integer          default(0), not null
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id               :bigint           not null, primary key
+#  collection_limit :integer          default(10), not null
+#  color            :string           default(""), not null
+#  highlighted      :boolean          default(FALSE), not null
+#  name             :string           default(""), not null
+#  permissions      :bigint           default(0), not null
+#  position         :integer          default(0), not null
+#  require_2fa      :boolean          default(FALSE), not null
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
 #
 class UserRole < ApplicationRecord
   # ---------------------------------------------------------------------------
@@ -59,6 +61,7 @@ class UserRole < ApplicationRecord
     manage_app_versions:      (1 << 35),
     manage_global_filters:    (1 << 36),
     view_newsmast_dashboard:  (1 << 37),
+    manage_starter_packs:     (1 << 38),
   }.freeze
 
   EVERYONE_ROLE_ID = -99
@@ -125,6 +128,7 @@ class UserRole < ApplicationRecord
 
       dashboard_management: %i[
         manage_collections
+        manage_starter_packs
         manage_community_admins
         manage_server_settings
         manage_api_keys
