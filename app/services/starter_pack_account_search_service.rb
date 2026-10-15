@@ -14,7 +14,7 @@ class StarterPackAccountSearchService
 
     response = HTTParty.get("#{ENV.fetch('MASTODON_INSTANCE_URL').chomp('/')}/api/v2/search",
       query: { q: @query, type: 'accounts', resolve: true, limit: 20 },
-      headers: { 'Authorization' => "Bearer #{token}" }, timeout: 10)
+      headers: { 'Authorization' => "Bearer #{token}" }, timeout: 60)
     raise SearchError unless response.success?
 
     rows = response.parsed_response.fetch('accounts')
