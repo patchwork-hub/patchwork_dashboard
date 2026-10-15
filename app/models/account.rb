@@ -7,20 +7,24 @@
 #  also_known_as                 :string           is an Array
 #  attribution_domains           :string           default([]), is an Array
 #  avatar_content_type           :string
+#  avatar_description            :string           default(""), not null
 #  avatar_file_name              :string
 #  avatar_file_size              :integer
 #  avatar_remote_url             :string
 #  avatar_storage_schema_version :integer
 #  avatar_updated_at             :datetime
+#  collections_url               :string
 #  devices_url                   :string
 #  discoverable                  :boolean
 #  display_name                  :string           default(""), not null
 #  domain                        :string
+#  feature_approval_policy       :integer          default(0), not null
 #  featured_collection_url       :string
 #  fields                        :jsonb
 #  followers_url                 :string           default(""), not null
 #  following_url                 :string           default(""), not null
 #  header_content_type           :string
+#  header_description            :string           default(""), not null
 #  header_file_name              :string
 #  header_file_size              :integer
 #  header_remote_url             :string           default(""), not null
@@ -43,6 +47,9 @@
 #  reviewed_at                   :datetime
 #  sensitized_at                 :datetime
 #  shared_inbox_url              :string           default(""), not null
+#  show_featured                 :boolean          default(TRUE), not null
+#  show_media                    :boolean          default(TRUE), not null
+#  show_media_replies            :boolean          default(TRUE), not null
 #  silenced_at                   :datetime
 #  suspended_at                  :datetime
 #  suspension_origin             :integer
@@ -74,6 +81,7 @@ class Account < ApplicationRecord
   NAME_LENGTH_LIMIT = 30
 
   has_one :user, inverse_of: :account
+  has_one :account_stat
 
   before_create :generate_keys
 

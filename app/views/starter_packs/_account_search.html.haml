@@ -1,0 +1,16 @@
+.modal.fade#starter-pack-account-search{ tabindex: '-1', role: 'dialog', 'aria-labelledby': 'starter-pack-search-title', data: { mode: mode, search_url: search_accounts_starter_packs_path, add_url: @starter_pack.persisted? ? add_account_starter_pack_path(@starter_pack) : nil } }
+  .modal-dialog.modal-lg{ role: 'document' }
+    .modal-content
+      .modal-header
+        %h5.modal-title#starter-pack-search-title= mode == 'creator' ? 'Assign creator' : 'Add account'
+        %button.close{ type: 'button', data: { dismiss: 'modal' }, 'aria-label': 'Close' }
+          %i.fa-solid.fa-xmark
+      .modal-body
+        %form#starter-pack-search-form
+          .input-group
+            %input.form-control#starter-pack-search-query{ type: 'search', required: true, 'aria-label': 'Account name or handle', placeholder: 'Account name or @user@domain' }
+            .input-group-append
+              %button.btn.btn-secondary{ type: 'submit', title: 'Search accounts' }
+                %i.fa-solid.fa-magnifying-glass
+        %p.text-danger.mt-2#starter-pack-search-error{ role: 'alert' }
+        %div#starter-pack-search-results{ 'aria-live': 'polite' }
