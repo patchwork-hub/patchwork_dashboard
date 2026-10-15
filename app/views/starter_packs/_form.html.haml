@@ -1,0 +1,43 @@
+.row
+  .col-12
+    .card
+      .card-header
+        %h3.card-title= @starter_pack.new_record? ? 'New starter pack' : 'Edit starter pack'
+      .card-body.w-250
+        = simple_form_for @starter_pack, local: true do |form|
+          = form.error_notification
+          .row
+            .col-md-6
+              = form.input :title, label: 'Title', input_html: { class: 'form-control' }
+          .row
+            .col-md-6
+              = form.input :description, as: :text, label: 'Description', input_html: { class: 'form-control', rows: 4 }
+          .row
+            .col-md-6
+              = form.input :instance_name, label: 'Instance name', input_html: { class: 'form-control', list: 'starter-pack-instances' }
+              %datalist#starter-pack-instances
+                - %w[twt findout thebristolcable leicestergazette].each do |instance|
+                  %option{ value: instance }
+          .row
+            .col-md-6
+              = form.input :position, label: 'Display order', input_html: { class: 'form-control', min: 0, data: { preview_url: @starter_pack.new_record? ? next_position_starter_packs_path : nil } }
+          .row
+            .col-md-6
+              = form.input :created_by_id, as: :hidden
+              .mb-3
+                %label.form-label Created by
+                %p.text-break#starter-pack-creator= @starter_pack.created_by&.display_name.presence || @starter_pack.created_by&.username || 'Not assigned'
+                .d-flex.align-items-center
+                  %button.btn.btn-outline-secondary.mr-2{ type: 'button', data: { toggle: 'modal', target: '#starter-pack-account-search' } }
+                    %i.fa-solid.fa-magnifying-glass
+                    Assign account
+                  %button.btn.btn-outline-secondary{ type: 'button', id: 'starter-pack-clear-creator', title: 'Clear creator', aria: { label: 'Clear creator' } }
+                    %i.fa-solid.fa-xmark
+          .row.mt-2
+            .col-md-6.d-flex.justify-content-center
+              = link_to 'Cancel', starter_packs_path, class: 'btn btn-secondary mx-2 btn-custom'
+              = form.submit 'Save', class: 'btn btn-danger mx-2 btn-custom'
+    .row.d-flex.justify-content-between.mt-4
+      .col-auto
+        = link_to 'Back', starter_packs_path, class: 'btn btn-outline-secondary'
+= render 'account_search', mode: 'creator'
