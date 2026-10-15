@@ -4,6 +4,88 @@ require 'stringio'
 require 'minitest/mock'
 
 class StarterPackImportServiceTest < ActiveSupport::TestCase
+  test 'dry run summary groups missing accts by pack name and removes duplicate entries' do
+    Dir.mktmpdir do |root|
+      directory = Pathname.new(root).join('missingreport')
+      directory.mkpath
+      directory.join('starter_pack_list.json').write([{ id: '1', title: 'Missing account report' }].to_json)
+      row = { acct: '@missingreport@remote.example' }
+      directory.join('starter_pack_1.json').write([row, row].to_json)
+      output = StringIO.new
+      importer = StarterPackImportService.new(data_dir: root, dry_run: true, output: output)
+      2.times { importer.call }
+      summary = output.string.split('DRY RUN summary (no starter pack changes saved)').last
+      assert_includes summary, 'Accounts not found: 1'
+      assert_includes summary, 'Not found in instance="missingreport" pack 1 title="Missing account report"'
+      assert_equal 1, summary.scan('member: { "acct": "missingreport@remote.example" }').size
+    end
+  end
+
+  test 'final summary reports created and updated packs and each membership count' do
+    first = Account.create!(username: 'summaryfirst', display_name: 'First', domain: 'remote.example')
+    second = Account.create!(username: 'summarysecond', display_name: 'Second', domain: 'remote.example')
+    StarterPack.create!(title: 'Existing summary pack', instance_name: 'summary')
+    Dir.mktmpdir do |root|
+      directory = Pathname.new(root).join('summary')
+      directory.mkpath
+      directory.join('starter_pack_list.json').write([
+        { id: '1', title: 'Existing summary pack' },
+        { id: '2', title: 'New summary pack' }
+      ].to_json)
+      first_row = { acct: "#{first.username}@#{first.domain}" }
+      second_row = { acct: "#{second.username}@#{second.domain}" }
+      directory.join('starter_pack_1.json').write([first_row, first_row].to_json)
+      directory.join('starter_pack_2.json').write([first_row, second_row].to_json)
+      preview = StringIO.new
+      assert_no_difference(['StarterPack.count', 'StarterPackAccount.count']) do
+        StarterPackImportService.new(data_dir: root, dry_run: true, resolve_missing: false, output: preview).call
+      end
+      assert_includes preview.string, 'DRY RUN summary (no starter pack changes saved)'
+      assert_includes preview.string, 'Starter packs to create: 1'
+      assert_includes preview.string, 'Starter packs to update: 1'
+      assert_includes preview.string, 'Total account memberships to import: 3'
+      assert_not_includes preview.string, 'Starter pack import completed'
+      output = StringIO.new
+      StarterPackImportService.new(data_dir: root, resolve_missing: false, output: output).call
+      summary = output.string.split('Starter pack import completed').last
+      assert output.string.index('Starter pack import completed') > output.string.rindex('accounts matched')
+      assert_includes summary, 'Starter packs created: 1'
+      assert_includes summary, 'Starter packs updated: 1'
+      assert_includes summary, 'Total account memberships imported: 3'
+      assert_includes summary, 'instance="summary" pack 1 title="Existing summary pack": 1 accounts imported'
+      assert_includes summary, 'instance="summary" pack 2 title="New summary pack": 2 accounts imported'
+      repeated = StringIO.new
+      StarterPackImportService.new(data_dir: root, resolve_missing: false, output: repeated).call
+      assert_includes repeated.string, 'Starter packs created: 0'
+      assert_includes repeated.string, 'Starter packs updated: 2'
+    end
+  end
+
+  test 'unresolved account diagnostics include username and domain in skip and strict modes' do
+    row = { 'acct' => '@missinglog@remote.example' }
+    service = Object.new
+    service.define_singleton_method(:call) { [] }
+    output = StringIO.new
+    StarterPackAccountSearchService.stub(:new, ->(*) { service }) do
+      importer = StarterPackImportService.new(data_dir: Rails.root, user: User.new, skip_unresolved: true, output: output)
+      assert_nil importer.send(:find_account, row, context: 'pack 1 member 2')
+      assert_includes output.string, 'username="missinglog" domain="remote.example"'
+      assert_includes output.string, 'pack 1 member 2'
+      strict = StarterPackImportService.new(data_dir: Rails.root, user: User.new, output: StringIO.new)
+      error = assert_raises(StarterPackImportService::ImportError) { strict.send(:find_account, row) }
+      assert_includes error.message, 'username="missinglog" domain="remote.example"'
+    end
+  end
+
+  test 'dry run diagnostics derive profile domains and escape account text' do
+    output = StringIO.new
+    importer = StarterPackImportService.new(data_dir: Rails.root, dry_run: true, output: output)
+    row = { 'username' => "synthetic\nname", 'url' => 'https://remote.example/@synthetic' }
+    assert_nil importer.send(:find_account, row, context: 'pack 1 creator')
+    assert_includes output.string, 'username="synthetic\nname" domain="remote.example"'
+    assert_equal 1, output.string.lines.size
+  end
+
   test 'profile URL is tried when a remote handle returns no results' do
     Dir.mktmpdir do |root|
       directory = Pathname.new(root).join('fallback')
@@ -58,6 +140,11 @@ class StarterPackImportServiceTest < ActiveSupport::TestCase
       assert_includes output.string, 'Skipping unresolved pack 1 creator'
       assert_includes output.string, 'Skipping unresolved pack 1 member 2'
       assert_includes output.string, '1/2 accounts matched'
+      summary = output.string.split('Starter pack import completed').last
+      assert_includes summary, 'Accounts not found: 2'
+      assert_includes summary, 'title="Best effort"'
+      assert_includes summary, 'creator: { "acct": "unavailablecreator@remote.example" }'
+      assert_includes summary, 'member: { "acct": "unavailable@remote.example" }'
     end
   end
 
@@ -69,13 +156,15 @@ class StarterPackImportServiceTest < ActiveSupport::TestCase
       directory.join('starter_pack_1.json').write([{ acct: 'unavailable@remote.example' }].to_json)
       service = Object.new
       service.define_singleton_method(:call) { raise StarterPackAccountSearchService::SearchError }
+      output = StringIO.new
       StarterPackAccountSearchService.stub(:new, ->(*) { service }) do
         assert_no_difference('StarterPack.count') do
           assert_raises(StarterPackImportService::ImportError) do
-            StarterPackImportService.new(data_dir: root, user: User.new, skip_unresolved: true, output: StringIO.new).call
+            StarterPackImportService.new(data_dir: root, user: User.new, skip_unresolved: true, output: output).call
           end
         end
       end
+      assert_not_includes output.string, 'Starter pack import completed'
     end
   end
 
@@ -224,6 +313,10 @@ class StarterPackImportServiceTest < ActiveSupport::TestCase
       assert_equal [account], pack.accounts.reload.to_a
       assert_equal 7, pack.reload.position
       assert_includes output.string, 'existing pack unchanged'
+      summary = output.string.split('Starter pack import completed').last
+      assert_includes summary, 'Starter packs created: 0'
+      assert_includes summary, 'Not found in instance="preserved" pack 1 title="Preserved"'
+      assert_includes summary, 'member: { "acct": "missing@example.org" }'
     end
   end
 
