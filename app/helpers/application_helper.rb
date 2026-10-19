@@ -13,7 +13,7 @@ module ApplicationHelper
     hub_active = params[:channel_type] == 'hub' || @community&.hub? ? 'communities' : nil
     newsmast_active = params[:channel_type] == 'newsmast' || @community&.newsmast? ? 'communities' : nil
 
-    if master_admin? || dashboard_admin? || current_user.can?(:view_newsmast_dashboard)
+    if master_admin? || dashboard_admin? || current_user.can?(:view_newsmast_dashboard) || current_user.can?(:manage_starter_packs)
       # --- Community set-up ---
       setup_items = []
       if master_admin? || current_user.can?(:manage_server_settings)
@@ -47,6 +47,10 @@ module ApplicationHelper
         if master_admin? || current_user.can?(:manage_global_filters)
           setup_items << { path: community_filter_keywords_path(community_id: nil), id: 'global_filters-link', header: 'Global filters', icon: 'globe-white.svg', text: 'Global filters', active_if: 'community_filter_keywords' }
         end
+      end
+
+      if master_admin? || current_user.can?(:manage_starter_packs)
+        setup_items << { path: starter_packs_path, id: 'starter-packs-link', header: 'Starter packs', icon: 'collection.svg', text: 'Starter packs', active_if: 'starter_packs' }
       end
 
       # --- Community management ---
