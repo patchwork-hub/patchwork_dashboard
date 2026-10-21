@@ -1,11 +1,15 @@
 # OVH Public Cloud deployment compose file for Patchwork Dashboard
 # Images are built and pushed by .github/workflows/build-push-ovh-harbor.yml
 # which updates the image line below on every push.
+#
+# Environment variables used by this file:
+#   DASHBOARD_ENV_FILE - path to the dashboard .env file (required)
+#   DASHBOARD_PORT     - host port mapped to container port 3000 (default: 3001)
 
 services:
   dashboard:
     # TAGS ARE UPDATED BY CI — do not edit manually
-    image: d3r5hv0f.eu-west-par.container-registry.ovh.net/pouetsocialmastodon/dashboard:dashboard-9dafdc54e43b19096acd1db4512bd2c0fe9f7a2f
+    image: d3r5hv0f.eu-west-par.container-registry.ovh.net/pouetsocialmastodon/dashboard:dashboard-latest
     restart: unless-stopped
     # Matches AWS ECS dashboard task definition: 512 CPU units / 1024 MB memory
     deploy:
@@ -17,16 +21,13 @@ services:
           cpus: "0.5"
           memory: 1G
     env_file:
-      - /home/ubuntu/deployment/credential/.env.dashboard
+      - ${DASHBOARD_ENV_FILE}
     environment:
       - RAILS_ENV=production
       - RAILS_SERVE_STATIC_FILES=true
       - RAILS_LOG_TO_STDOUT=true
     ports:
-      - "127.0.0.1:3001:3000"
-    networks:
-      - external_network
-      - internal_network
+      - "127.0.0.1:${DASHBOARD_PORT:-3001}:3000"
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3000/health_check || exit 1"]
       interval: 30s
@@ -42,9 +43,3 @@ volumes:
   dashboard_storage:
   dashboard_public:
   dashboard_logs:
-
-networks:
-  external_network:
-  internal_network:
-    external: true
-    name: pouetsocial_internal
