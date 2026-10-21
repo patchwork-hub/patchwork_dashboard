@@ -7,8 +7,9 @@ on:
       - internal/prod
 
 # THE VALUES BELOW ARE NOT CONFIDENTIAL: registry host, project and image names.
-# The only secrets are POUETSOCIAL_HARBOR_PASSWORD and LHUMANITE_SOCIAL_HARBOR_PASSWORD
-# (and GITHUB_TOKEN for committing the updated compose files).
+# The only secrets are POUETSOCIAL_HARBOR_PASSWORD, LHUMANITE_SOCIAL_HARBOR_PASSWORD
+# and OUEST_FRANCE_SOCIAL_HARBOR_PASSWORD (and GITHUB_TOKEN for committing the
+# updated compose files).
 #
 # IMAGE TAGS ARE PER COMMIT: dashboard-<sha>. The mutable
 # `dashboard:latest` alias is also pushed for convenience,
@@ -26,6 +27,11 @@ env:
   LHUMANITE_HARBOR_PROJECT: lhumanite.fr
   LHUMANITE_HARBOR_USERNAME: robot$lhumanite.fr+lhumanite.fr
   LHUMANITE_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
+  # Ouest-France Social
+  OUEST_FRANCE_HARBOR_REGISTRY: d3r5hv0f.eu-west-par.container-registry.ovh.net
+  OUEST_FRANCE_HARBOR_PROJECT: ouest-france.fr
+  OUEST_FRANCE_HARBOR_USERNAME: robot$ouest-france.fr+ouest-france.fr
+  OUEST_FRANCE_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
 
 permissions:
   contents: write
@@ -36,7 +42,7 @@ concurrency:
 
 jobs:
   build-dashboard:
-    name: Build once and push to both Harbor projects
+    name: Build once and push to all Harbor projects
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -60,6 +66,7 @@ jobs:
         run: |
           IMAGE_PO=${{ env.POUETSOCIAL_HARBOR_REGISTRY }}/${{ env.POUETSOCIAL_HARBOR_PROJECT }}/dashboard
           IMAGE_LH=${{ env.LHUMANITE_HARBOR_REGISTRY }}/${{ env.LHUMANITE_HARBOR_PROJECT }}/dashboard
+          IMAGE_OF=${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}/${{ env.OUEST_FRANCE_HARBOR_PROJECT }}/dashboard
           docker buildx build \
             --platform linux/amd64 \
             --cache-from type=local,src=/tmp/.buildx-cache-dashboard \
@@ -69,6 +76,8 @@ jobs:
             --tag $IMAGE_PO:latest \
             --tag $IMAGE_LH:${{ env.LHUMANITE_DASHBOARD_IMAGE_TAG }} \
             --tag $IMAGE_LH:latest \
+            --tag $IMAGE_OF:${{ env.OUEST_FRANCE_DASHBOARD_IMAGE_TAG }} \
+            --tag $IMAGE_OF:latest \
             --load \
             .
           rm -rf /tmp/.buildx-cache-dashboard
@@ -98,6 +107,19 @@ jobs:
         run: |
           IMAGE=${{ env.LHUMANITE_HARBOR_REGISTRY }}/${{ env.LHUMANITE_HARBOR_PROJECT }}/dashboard
           docker push $IMAGE:${{ env.LHUMANITE_DASHBOARD_IMAGE_TAG }}
+          docker push $IMAGE:latest
+
+      - name: Push to Ouest-France Social Harbor project
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}
+          username: ${{ env.OUEST_FRANCE_HARBOR_USERNAME }}
+          password: ${{ secrets.OUEST_FRANCE_SOCIAL_HARBOR_PASSWORD }}
+
+      - name: Push Ouest-France Social tags
+        run: |
+          IMAGE=${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}/${{ env.OUEST_FRANCE_HARBOR_PROJECT }}/dashboard
+          docker push $IMAGE:${{ env.OUEST_FRANCE_DASHBOARD_IMAGE_TAG }}
           docker push $IMAGE:latest
 
   deploy-pouetsocial:
@@ -181,6 +203,49 @@ jobs:
 
       - name: Deploy L'Humanité Social dashboard with docker compose
         working-directory: /home/ubuntu/deployment/lhumanite-social
+        run: |
+          docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} down
+          docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} pull
+          docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} up -d
+
+  deploy-ouest-france:
+    name: Update Ouest-France Social compose file and deploy
+    runs-on: dashboard-ouest-france-social-runner
+    needs: build-dashboard
+    env:
+      COMPOSE_PROJECT_NAME: ouest-france-social-dashboard
+      DASHBOARD_ENV_FILE: /home/ubuntu/deployment/credential/ouest-france-social/.env.dashboard
+      DASHBOARD_PORT: 3001
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update image tag in docker-compose.ovh.yml
+        run: |
+          DASHBOARD_IMAGE="${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}/${{ env.OUEST_FRANCE_HARBOR_PROJECT }}/dashboard:${{ env.OUEST_FRANCE_DASHBOARD_IMAGE_TAG }}"
+
+          # Replace any existing dashboard image line, not just the initial placeholder
+          sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
+
+          echo "Updated compose file:"
+          grep -E "image:" ${{ env.COMPOSE_FILE }}
+
+      - name: Copy compose file to persistent deployment directory
+        run: |
+          mkdir -p /home/ubuntu/deployment/ouest-france-social
+          cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/ouest-france-social/
+
+      - name: Login to OVH Harbor
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}
+          username: ${{ env.OUEST_FRANCE_HARBOR_USERNAME }}
+          password: ${{ secrets.OUEST_FRANCE_SOCIAL_HARBOR_PASSWORD }}
+
+      - name: Deploy Ouest-France Social dashboard with docker compose
+        working-directory: /home/ubuntu/deployment/ouest-france-social
         run: |
           docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} down
           docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} pull
