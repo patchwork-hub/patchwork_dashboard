@@ -105,6 +105,7 @@ jobs:
     runs-on: dashboard-ps-runner
     needs: build-dashboard
     env:
+      COMPOSE_PROJECT_NAME: dashboard
       DASHBOARD_ENV_FILE: /home/ubuntu/deployment/credential/.env.dashboard
       DASHBOARD_PORT: 3001
     steps:
@@ -138,15 +139,16 @@ jobs:
       - name: Deploy PouetSocial dashboard with docker compose
         working-directory: /home/ubuntu/deployment/dashboard
         run: |
-          docker compose -f ${{ env.COMPOSE_FILE }} down
-          docker compose -f ${{ env.COMPOSE_FILE }} pull
-          docker compose -f ${{ env.COMPOSE_FILE }} up -d
+          docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} down
+          docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} pull
+          docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} up -d
 
   deploy-lhumanite:
     name: Update L'Humanité Social compose file and deploy
     runs-on: dashboard-lhumanite-social-runner
     needs: build-dashboard
     env:
+      COMPOSE_PROJECT_NAME: lhumanite-social-dashboard
       DASHBOARD_ENV_FILE: /home/ubuntu/deployment/credential/lhumanite-social/.env.dashboard
       DASHBOARD_PORT: 3001
     steps:
@@ -180,6 +182,6 @@ jobs:
       - name: Deploy L'Humanité Social dashboard with docker compose
         working-directory: /home/ubuntu/deployment/lhumanite-social
         run: |
-          docker compose -f ${{ env.COMPOSE_FILE }} down
-          docker compose -f ${{ env.COMPOSE_FILE }} pull
-          docker compose -f ${{ env.COMPOSE_FILE }} up -d
+          docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} down
+          docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} pull
+          docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} up -d

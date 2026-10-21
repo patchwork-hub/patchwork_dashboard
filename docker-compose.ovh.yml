@@ -3,8 +3,11 @@
 # which updates the image line below on every push.
 #
 # Environment variables used by this file:
-#   DASHBOARD_ENV_FILE - path to the dashboard .env file (required)
-#   DASHBOARD_PORT     - host port mapped to container port 3000 (default: 3001)
+#   COMPOSE_PROJECT_NAME - Docker Compose project name (required)
+#   DASHBOARD_ENV_FILE   - path to the dashboard .env file (required)
+#   DASHBOARD_PORT       - host port mapped to container port 3000 (default: 3001)
+
+name: ${COMPOSE_PROJECT_NAME}
 
 services:
   dashboard:
