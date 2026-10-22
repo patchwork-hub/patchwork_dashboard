@@ -1,0 +1,62 @@
+.row
+  .col-12
+    .card
+      .card-header
+        %h3.card-title= @auto_follow.new_record? ? 'New auto-follow list' : 'Edit auto-follow list'
+      .card-body.w-250
+        = simple_form_for @auto_follow, local: true do |form|
+          = form.error_notification
+          .row
+            .col-md-6
+              = form.input :title, label: 'Title', input_html: { class: 'form-control' }
+          .row
+            .col-md-6
+              = form.input :instance_name, label: 'Instance name', hint: 'Enter the instance name.', input_html: { class: 'form-control' }
+          .row
+            .col-md-6
+              .form-group
+                %label.form-label Enabled
+                %label.switch.d-block
+                  = form.check_box :enabled, class: 'switch-input'
+                  %span.switch-slider
+                = form.error :enabled
+          .row
+            .col-12
+              .d-flex.flex-wrap.justify-content-between.align-items-center.mb-3
+                %h4.mb-2 Accounts
+                %button.btn.btn-sm.btn-danger.mb-2{ type: 'button', data: { toggle: 'modal', target: '#auto-follow-account-search' } }
+                  Add account
+                  = image_tag 'icons/circle-plus.svg', class: 'ml-2', width: 16, height: 16, alt: ''
+              .table-responsive
+                %table.table.no-side-borders.top-bottom-border
+                  %thead
+                    %tr
+                      %th Account
+                      %th Handle
+                      %th Type
+                      %th Actions
+                  %tbody#auto-follow-selected-accounts
+                    - @members.each do |member|
+                      %tr{ data: { account_id: member.account_id } }
+                        %td
+                          = member.account.display_name.presence || member.account.username
+                          = hidden_field_tag 'auto_follow[account_ids][]', member.account_id
+                        %td= [member.account.username, member.account.domain].compact.join('@')
+                        %td= member.account.local? ? 'Local' : 'Remote'
+                        %td
+                          - if member.persisted?
+                            %button.btn.btn-sm.btn-outline-danger{ type: 'submit', name: 'auto_follow[remove_account_id]', value: member.account_id, title: 'Remove account', aria: { label: 'Remove account' } }
+                              %i.fa-solid.fa-trash
+                          - else
+                            %button.btn.btn-sm.btn-outline-danger{ type: 'button', data: { remove_staged_account: true }, title: 'Remove account', aria: { label: 'Remove account' } }
+                              %i.fa-solid.fa-trash
+                    - if @members.empty?
+                      %tr#auto-follow-no-accounts
+                        %td.text-center.info-box-content{ colspan: 4 }
+                          %p.text-muted.small No accounts added.
+                = hidden_field_tag 'auto_follow[account_ids][]', ''
+          .row.mt-2
+            .col-md-6.d-flex.justify-content-center
+              = link_to 'Cancel', auto_follows_path, class: 'btn btn-secondary mx-2 btn-custom'
+              = form.submit 'Save', class: 'btn btn-danger mx-2 btn-custom'
+= render 'account_search', mode: 'form'

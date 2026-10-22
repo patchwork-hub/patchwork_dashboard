@@ -1,0 +1,56 @@
+- content_for :title, @auto_follow.title
+.row
+  .col-12
+    .card
+      .card-header
+        %h3.card-title.text-break= @auto_follow.title
+        .card-tools
+          = link_to edit_auto_follow_path(@auto_follow), class: 'btn btn-sm btn-outline-secondary ml-3 no-hover' do
+            %i.fa-solid.fa-pen
+            Edit
+      .card-body
+        %dl.row
+          %dt.col-sm-3 Instance
+          %dd.col-sm-9.text-break= @auto_follow.instance_name
+          %dt.col-sm-3 Enabled
+          %dd.col-sm-9= @auto_follow.enabled? ? 'Yes' : 'No'
+          %dt.col-sm-3 Total accounts
+          %dd.col-sm-9= @members.size
+        .d-flex.flex-wrap.justify-content-between.align-items-center.mb-3
+          %h4.mb-2 Accounts
+          %button.btn.btn-sm.btn-danger.mb-2{ type: 'button', data: { toggle: 'modal', target: '#auto-follow-account-search' } }
+            Add account
+            = image_tag 'icons/circle-plus.svg', class: 'ml-2', width: 16, height: 16, alt: ''
+        %p.text-danger#auto-follow-member-error{ role: 'alert' }
+        .table-responsive
+          %table.table.no-side-borders.top-bottom-border
+            %thead
+              %tr
+                %th Account
+                %th Handle
+                %th Type
+                %th Actions
+            %tbody#auto-follow-members{ data: { reorder_url: reorder_accounts_auto_follow_path(@auto_follow), remove_url: remove_account_auto_follow_path(@auto_follow) } }
+              - @members.each_with_index do |member, index|
+                %tr{ data: { membership_id: member.id, account_id: member.account_id } }
+                  %td
+                    = image_tag member.account.avatar_url, width: 32, height: 32, alt: '', loading: 'lazy'
+                    = member.account.display_name.presence || member.account.username
+                  %td= [member.account.username, member.account.domain].compact.join('@')
+                  %td= member.account.local? ? 'Local' : 'Remote'
+                  %td.text-nowrap
+                    .d-inline-flex.flex-nowrap.align-items-center
+                      %button.btn.btn-sm.btn-outline-secondary.mr-2{ type: 'button', data: { move: 'up' }, title: 'Move up', disabled: index.zero? }
+                        %i.fa-solid.fa-arrow-up
+                      %button.btn.btn-sm.btn-outline-secondary.mr-2{ type: 'button', data: { move: 'down' }, title: 'Move down', disabled: index == @members.size - 1 }
+                        %i.fa-solid.fa-arrow-down
+                      %button.btn.btn-sm.btn-outline-danger{ type: 'button', data: { remove: true }, title: 'Remove account' }
+                        %i.fa-solid.fa-trash
+              - if @members.empty?
+                %tr
+                  %td.text-center.info-box-content{ colspan: 4 }
+                    %p.text-muted.small No accounts added.
+    .row.d-flex.justify-content-between.mt-4
+      .col-auto
+        = link_to 'Back', auto_follows_path, class: 'btn btn-outline-secondary'
+= render 'account_search', mode: 'member'

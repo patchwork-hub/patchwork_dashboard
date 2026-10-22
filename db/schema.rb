@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_10_15_120000) do
+ActiveRecord::Schema[7.1].define(version: 2026_10_21_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -964,6 +964,25 @@ ActiveRecord::Schema[7.1].define(version: 2026_10_15_120000) do
     t.index ["version_name", "app_name"], name: "index_patchwork_app_versions_on_version_name_and_app_name", unique: true
   end
 
+  create_table "patchwork_auto_follow_accounts", force: :cascade do |t|
+    t.bigint "patchwork_auto_follow_id", null: false
+    t.bigint "account_id", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_patchwork_auto_follow_accounts_on_account_id"
+    t.index ["patchwork_auto_follow_id", "account_id"], name: "index_auto_follow_accounts_unique", unique: true
+  end
+
+  create_table "patchwork_auto_follows", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "instance_name", null: false
+    t.boolean "enabled", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["instance_name"], name: "index_patchwork_auto_follows_on_instance_name", unique: true
+  end
+
   create_table "patchwork_collections", force: :cascade do |t|
     t.string "name", null: false
     t.string "slug", null: false
@@ -1908,6 +1927,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_10_15_120000) do
   add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id", name: "fk_e84df68546", on_delete: :cascade
   add_foreign_key "oauth_applications", "users", column: "owner_id", name: "fk_b0988c7c0a", on_delete: :cascade
   add_foreign_key "patchwork_app_version_histories", "patchwork_app_versions", column: "app_version_id"
+  add_foreign_key "patchwork_auto_follow_accounts", "accounts", on_delete: :cascade
+  add_foreign_key "patchwork_auto_follow_accounts", "patchwork_auto_follows", on_delete: :cascade
   add_foreign_key "patchwork_communities", "patchwork_collections"
   add_foreign_key "patchwork_communities_admins", "accounts", on_delete: :cascade
   add_foreign_key "patchwork_communities_admins", "patchwork_communities"
