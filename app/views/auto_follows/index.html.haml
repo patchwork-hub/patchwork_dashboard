@@ -1,0 +1,57 @@
+- content_for :title, 'Auto-follow'
+.row
+  .col-12
+    .card
+      .card-header
+        %h3.card-title Auto-follow lists
+        .card-tools
+          = link_to new_auto_follow_path, class: 'btn btn-sm btn-danger ml-3 no-hover' do
+            Create an auto-follow list
+            = image_tag 'icons/circle-plus.svg', class: 'ml-2', width: 16, height: 16, alt: ''
+      .card-body
+        = search_form_for @search, url: auto_follows_path do |form|
+          .row.mb-3
+            .col-md-5
+              = form.label :title_cont, 'Title'
+              = form.search_field :title_cont, class: 'form-control'
+            .col-md-5
+              = form.label :instance_name_eq, 'Instance'
+              = form.search_field :instance_name_eq, class: 'form-control'
+            .col-md-2.align-self-end
+              = form.submit 'Filter', class: 'btn btn-secondary'
+        .table-responsive
+          %table.table.no-side-borders.top-bottom-border
+            %thead
+              %tr
+                %th Title
+                %th Instance
+                %th Enabled
+                %th Total accounts
+                %th Updated
+                %th Actions
+            %tbody
+              - @records.each do |auto_follow|
+                %tr
+                  %td= link_to auto_follow.title, auto_follow_path(auto_follow)
+                  %td= auto_follow.instance_name
+                  %td
+                    %span.badge{ class: auto_follow.enabled? ? 'badge-success' : 'badge-secondary' }= auto_follow.enabled? ? 'Enabled' : 'Disabled'
+                  %td= @total_accounts.fetch(auto_follow.id, 0)
+                  %td= l(auto_follow.updated_at, format: :short)
+                  %td.text-nowrap
+                    .d-inline-flex.flex-nowrap.align-items-center
+                      = link_to auto_follow_path(auto_follow), class: 'btn btn-sm btn-outline-secondary mr-2', title: 'Manage accounts', aria: { label: 'Manage accounts' } do
+                        %i.fa-solid.fa-user-plus
+                      = link_to edit_auto_follow_path(auto_follow), class: 'btn btn-sm btn-outline-secondary mr-2', title: 'Edit' do
+                        %i.fa-solid.fa-pen
+                      = link_to auto_follow_path(auto_follow), method: :delete, data: { confirm: 'Delete this auto-follow list?' }, class: 'btn btn-sm btn-outline-danger', title: 'Delete' do
+                        %i.fa-solid.fa-trash
+              - if @records.empty?
+                %tr
+                  %td.text-center.info-box-content{ colspan: 6 }
+                    %p.text-muted.small No auto-follow lists found.
+                    = link_to 'Create an auto-follow list', new_auto_follow_path, class: 'text-danger small'
+        .row.mt-2
+          .col
+            .pagination.pagination-sm.m-0.float-right
+              = paginate @records, theme: 'bootstrap4'
