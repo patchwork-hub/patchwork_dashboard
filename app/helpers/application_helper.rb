@@ -13,7 +13,7 @@ module ApplicationHelper
     hub_active = params[:channel_type] == 'hub' || @community&.hub? ? 'communities' : nil
     newsmast_active = params[:channel_type] == 'newsmast' || @community&.newsmast? ? 'communities' : nil
 
-    if master_admin? || dashboard_admin? || current_user.can?(:view_newsmast_dashboard) || current_user.can?(:manage_starter_packs)
+    if master_admin? || dashboard_admin? || current_user.can?(:view_newsmast_dashboard) || current_user.can?(:manage_starter_packs) || current_user.can?(:manage_auto_follows)
       # --- Community set-up ---
       setup_items = []
       if master_admin? || current_user.can?(:manage_server_settings)
@@ -51,6 +51,9 @@ module ApplicationHelper
 
       if master_admin? || current_user.can?(:manage_starter_packs)
         setup_items << { path: starter_packs_path, id: 'starter-packs-link', header: 'Starter packs', icon: 'collection.svg', text: 'Starter packs', active_if: 'starter_packs' }
+      end
+      if master_admin? || current_user.can?(:manage_auto_follows)
+        setup_items << { path: auto_follows_path, id: 'auto-follows-link', header: 'Auto-follow', icon: 'users.svg', text: 'Auto-follow', active_if: 'auto_follows' }
       end
 
       # --- Community management ---

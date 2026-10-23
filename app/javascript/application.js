@@ -15,6 +15,7 @@ import 'custom_js/content_type'
 import 'custom_js/admin'
 import 'custom_js/sidebar_toggle'
 import 'custom_js/starter_pack_accounts'
+import 'custom_js/auto_follow_accounts'
 
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
