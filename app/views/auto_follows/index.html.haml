@@ -9,16 +9,6 @@
             Create an auto-follow list
             = image_tag 'icons/circle-plus.svg', class: 'ml-2', width: 16, height: 16, alt: ''
       .card-body
-        = search_form_for @search, url: auto_follows_path do |form|
-          .row.mb-3
-            .col-md-5
-              = form.label :title_cont, 'Title'
-              = form.search_field :title_cont, class: 'form-control'
-            .col-md-5
-              = form.label :instance_name_eq, 'Instance'
-              = form.search_field :instance_name_eq, class: 'form-control'
-            .col-md-2.align-self-end
-              = form.submit 'Filter', class: 'btn btn-secondary'
         .table-responsive
           %table.table.no-side-borders.top-bottom-border
             %thead

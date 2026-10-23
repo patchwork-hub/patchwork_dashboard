@@ -27,11 +27,11 @@ class AutoFollowsController < ApplicationController
   end
 
   def show
-    @members = @auto_follow.auto_follow_accounts.includes(:account).load
+    @members = @auto_follow.auto_follow_accounts.reorder(created_at: :desc, id: :desc).includes(:account).load
   end
 
   def edit
-    @members = @auto_follow.auto_follow_accounts.includes(:account).load
+    @members = @auto_follow.auto_follow_accounts.reorder(created_at: :desc, id: :desc).includes(:account).load
   end
 
   def update
