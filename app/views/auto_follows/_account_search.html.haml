@@ -1,0 +1,16 @@
+.modal.fade#auto-follow-account-search{ tabindex: '-1', role: 'dialog', 'aria-labelledby': 'auto-follow-search-title', data: { mode: mode, search_url: search_accounts_auto_follows_path, add_url: @auto_follow.persisted? ? add_account_auto_follow_path(@auto_follow) : nil } }
+  .modal-dialog.modal-lg{ role: 'document' }
+    .modal-content
+      .modal-header
+        %h5.modal-title#auto-follow-search-title Add account
+        %button.close{ type: 'button', data: { dismiss: 'modal' }, 'aria-label': 'Close' }
+          %i.fa-solid.fa-xmark
+      .modal-body
+        %form#auto-follow-search-form
+          .input-group
+            %input.form-control#auto-follow-search-query{ type: 'search', required: true, 'aria-label': 'Account name or handle', placeholder: 'Account name or @user@domain' }
+            .input-group-append
+              %button.btn.btn-secondary{ type: 'submit', title: 'Search accounts' }
+                %i.fa-solid.fa-magnifying-glass
+        %p.text-danger.mt-2#auto-follow-search-error{ role: 'alert' }
+        %div#auto-follow-search-results{ 'aria-live': 'polite' }
