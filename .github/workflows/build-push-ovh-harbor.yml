@@ -212,10 +212,6 @@ jobs:
     name: Update Ouest-France Social compose file and deploy
     runs-on: dashboard-ouest-france-social-runner
     needs: build-dashboard
-    env:
-      COMPOSE_PROJECT_NAME: ouest-france-social-dashboard
-      DASHBOARD_ENV_FILE: /home/ubuntu/deployment/credential/ouest-france-social/.env.dashboard
-      DASHBOARD_PORT: 3001
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -234,8 +230,8 @@ jobs:
 
       - name: Copy compose file to persistent deployment directory
         run: |
-          mkdir -p /home/ubuntu/deployment/ouest-france-social
-          cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/ouest-france-social/
+          mkdir -p /home/ubuntu/deployment/dashboard
+          cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
 
       - name: Login to OVH Harbor
         uses: docker/login-action@v3
@@ -245,8 +241,7 @@ jobs:
           password: ${{ secrets.OUEST_FRANCE_SOCIAL_HARBOR_PASSWORD }}
 
       - name: Deploy Ouest-France Social dashboard with docker compose
-        working-directory: /home/ubuntu/deployment/ouest-france-social
+        working-directory: /home/ubuntu/deployment/dashboard
         run: |
-          docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} down
-          docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} pull
-          docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} up -d
+          docker compose -f ${{ env.COMPOSE_FILE }} pull
+          docker compose -f ${{ env.COMPOSE_FILE }} up -d

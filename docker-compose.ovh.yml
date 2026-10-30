@@ -3,11 +3,16 @@
 # which updates the image line below on every push.
 #
 # Environment variables used by this file:
-#   COMPOSE_PROJECT_NAME - Docker Compose project name (required)
-#   DASHBOARD_ENV_FILE   - path to the dashboard .env file (required)
+#   COMPOSE_PROJECT_NAME - Docker Compose project name (default: dashboard)
+#   DASHBOARD_ENV_FILE   - path to the dashboard .env file
+#                          (default: /home/ubuntu/deployment/credential/.env.dashboard)
 #   DASHBOARD_PORT       - host port mapped to container port 3000 (default: 3001)
+#
+# With the defaults, run it by hand from its deployment directory with no variables:
+#   cd /home/ubuntu/deployment/dashboard
+#   docker compose -f docker-compose.ovh.yml down && docker compose -f docker-compose.ovh.yml up -d
 
-name: ${COMPOSE_PROJECT_NAME}
+name: ${COMPOSE_PROJECT_NAME:-dashboard}
 
 services:
   dashboard:
@@ -24,7 +29,7 @@ services:
           cpus: "0.5"
           memory: 1G
     env_file:
-      - ${DASHBOARD_ENV_FILE}
+      - ${DASHBOARD_ENV_FILE:-/home/ubuntu/deployment/credential/.env.dashboard}
     environment:
       - RAILS_ENV=production
       - RAILS_SERVE_STATIC_FILES=true
