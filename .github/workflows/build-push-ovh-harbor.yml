@@ -8,9 +8,9 @@ on:
 
 # THE VALUES BELOW ARE NOT CONFIDENTIAL: registry host, project and image names.
 # The only secrets are POUETSOCIAL_HARBOR_PASSWORD, LHUMANITE_SOCIAL_HARBOR_PASSWORD,
-# OUEST_FRANCE_SOCIAL_HARBOR_PASSWORD and DEMOCRACYBOOKCLUB_HARBOR_PASSWORD (and
-# GITHUB_TOKEN for committing the updated compose files).
-# DEMOCRACYBOOKCLUB_HARBOR_PASSWORD is an ORGANIZATION secret and must be shared with this repo.
+# OUEST_FRANCE_SOCIAL_HARBOR_PASSWORD, DEMOCRACYBOOKCLUB_HARBOR_PASSWORD and
+# NITHECS_HARBOR_PASSWORD (and GITHUB_TOKEN for committing the updated compose files).
+# DEMOCRACYBOOKCLUB_HARBOR_PASSWORD and NITHECS_HARBOR_PASSWORD are ORGANIZATION secrets and must be shared with this repo.
 #
 # IMAGE TAGS ARE PER COMMIT: dashboard-<sha>. The mutable
 # `dashboard:latest` alias is also pushed for convenience,
@@ -38,6 +38,11 @@ env:
   DEMOCRACYBOOKCLUB_HARBOR_PROJECT: democracybookclub
   DEMOCRACYBOOKCLUB_HARBOR_USERNAME: robot$democracybookclub+democracybookclub
   DEMOCRACYBOOKCLUB_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
+  # Nithecs
+  NITHECS_HARBOR_REGISTRY: 44eda7q3.gra7.container-registry.ovh.net
+  NITHECS_HARBOR_PROJECT: nithecs
+  NITHECS_HARBOR_USERNAME: robot$nithecs+nithecs
+  NITHECS_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
 
 permissions:
   contents: write
@@ -74,6 +79,7 @@ jobs:
           IMAGE_LH=${{ env.LHUMANITE_HARBOR_REGISTRY }}/${{ env.LHUMANITE_HARBOR_PROJECT }}/dashboard
           IMAGE_OF=${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}/${{ env.OUEST_FRANCE_HARBOR_PROJECT }}/dashboard
           IMAGE_DB=${{ env.DEMOCRACYBOOKCLUB_HARBOR_REGISTRY }}/${{ env.DEMOCRACYBOOKCLUB_HARBOR_PROJECT }}/dashboard
+          IMAGE_NI=${{ env.NITHECS_HARBOR_REGISTRY }}/${{ env.NITHECS_HARBOR_PROJECT }}/dashboard
           docker buildx build \
             --platform linux/amd64 \
             --cache-from type=local,src=/tmp/.buildx-cache-dashboard \
@@ -87,6 +93,8 @@ jobs:
             --tag $IMAGE_OF:latest \
             --tag $IMAGE_DB:${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_IMAGE_TAG }} \
             --tag $IMAGE_DB:latest \
+            --tag $IMAGE_NI:${{ env.NITHECS_DASHBOARD_IMAGE_TAG }} \
+            --tag $IMAGE_NI:latest \
             --load \
             .
           rm -rf /tmp/.buildx-cache-dashboard
@@ -147,6 +155,22 @@ jobs:
         run: |
           IMAGE=${{ env.DEMOCRACYBOOKCLUB_HARBOR_REGISTRY }}/${{ env.DEMOCRACYBOOKCLUB_HARBOR_PROJECT }}/dashboard
           docker push $IMAGE:${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_IMAGE_TAG }}
+          docker push $IMAGE:latest
+
+      # continue-on-error for the same reason as Democracy Book Club above.
+      - name: Push to Nithecs Harbor project
+        continue-on-error: true
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.NITHECS_HARBOR_REGISTRY }}
+          username: ${{ env.NITHECS_HARBOR_USERNAME }}
+          password: ${{ secrets.NITHECS_HARBOR_PASSWORD }}
+
+      - name: Push Nithecs tags
+        continue-on-error: true
+        run: |
+          IMAGE=${{ env.NITHECS_HARBOR_REGISTRY }}/${{ env.NITHECS_HARBOR_PROJECT }}/dashboard
+          docker push $IMAGE:${{ env.NITHECS_DASHBOARD_IMAGE_TAG }}
           docker push $IMAGE:latest
 
   deploy-pouetsocial:
@@ -301,6 +325,44 @@ jobs:
           password: ${{ secrets.DEMOCRACYBOOKCLUB_HARBOR_PASSWORD }}
 
       - name: Deploy Democracy Book Club dashboard with docker compose
+        working-directory: /home/ubuntu/deployment/dashboard
+        run: |
+          docker compose -f ${{ env.COMPOSE_FILE }} pull
+          docker compose -f ${{ env.COMPOSE_FILE }} up -d
+
+  deploy-nithecs:
+    name: Update Nithecs compose file and deploy
+    runs-on: nithecs-d-runner
+    needs: build-dashboard
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update image tag in docker-compose.ovh.yml
+        run: |
+          DASHBOARD_IMAGE="${{ env.NITHECS_HARBOR_REGISTRY }}/${{ env.NITHECS_HARBOR_PROJECT }}/dashboard:${{ env.NITHECS_DASHBOARD_IMAGE_TAG }}"
+
+          # Replace any existing dashboard image line, not just the initial placeholder
+          sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
+
+          echo "Updated compose file:"
+          grep -E "image:" ${{ env.COMPOSE_FILE }}
+
+      - name: Copy compose file to persistent deployment directory
+        run: |
+          mkdir -p /home/ubuntu/deployment/dashboard
+          cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
+
+      - name: Login to OVH Harbor
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.NITHECS_HARBOR_REGISTRY }}
+          username: ${{ env.NITHECS_HARBOR_USERNAME }}
+          password: ${{ secrets.NITHECS_HARBOR_PASSWORD }}
+
+      - name: Deploy Nithecs dashboard with docker compose
         working-directory: /home/ubuntu/deployment/dashboard
         run: |
           docker compose -f ${{ env.COMPOSE_FILE }} pull
