@@ -85,6 +85,7 @@ jobs:
           IMAGE_OF=${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}/${{ env.OUEST_FRANCE_HARBOR_PROJECT }}/dashboard
           IMAGE_DB=${{ env.DEMOCRACYBOOKCLUB_HARBOR_REGISTRY }}/${{ env.DEMOCRACYBOOKCLUB_HARBOR_PROJECT }}/dashboard
           IMAGE_NI=${{ env.NITHECS_HARBOR_REGISTRY }}/${{ env.NITHECS_HARBOR_PROJECT }}/dashboard
+          IMAGE_CS=${{ env.CSIDNET_HARBOR_REGISTRY }}/${{ env.CSIDNET_HARBOR_PROJECT }}/dashboard
           docker buildx build \
             --platform linux/amd64 \
             --cache-from type=local,src=/tmp/.buildx-cache-dashboard \
@@ -176,6 +177,21 @@ jobs:
         run: |
           IMAGE=${{ env.NITHECS_HARBOR_REGISTRY }}/${{ env.NITHECS_HARBOR_PROJECT }}/dashboard
           docker push $IMAGE:${{ env.NITHECS_DASHBOARD_IMAGE_TAG }}
+          docker push $IMAGE:latest
+
+      - name: Push to Csidnet Harbor project
+        continue-on-error: true
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.CSIDNET_HARBOR_REGISTRY }}
+          username: ${{ env.CSIDNET_HARBOR_USERNAME }}
+          password: ${{ secrets.CSIDNET_HARBOR_PASSWORD }}
+
+      - name: Push Csidnet tags
+        continue-on-error: true
+        run: |
+          IMAGE=${{ env.CSIDNET_HARBOR_REGISTRY }}/${{ env.CSIDNET_HARBOR_PROJECT }}/dashboard
+          docker push $IMAGE:${{ env.CSIDNET_DASHBOARD_IMAGE_TAG }}
           docker push $IMAGE:latest
 
   deploy-pouetsocial:
