@@ -101,6 +101,8 @@ jobs:
             --tag $IMAGE_DB:latest \
             --tag $IMAGE_NI:${{ env.NITHECS_DASHBOARD_IMAGE_TAG }} \
             --tag $IMAGE_NI:latest \
+            --tag $IMAGE_CS:${{ env.CSIDNET_DASHBOARD_IMAGE_TAG }} \
+            --tag $IMAGE_CS:latest \
             --load \
             .
           rm -rf /tmp/.buildx-cache-dashboard
