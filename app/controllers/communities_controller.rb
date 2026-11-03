@@ -261,16 +261,14 @@ class CommunitiesController < BaseController
       return
     end
 
-    accounts = Account.where(domain: nil)
-                      .where("username ILIKE :q OR display_name ILIKE :q", q: "%#{query}%")
-                      .limit(20)
-
-    mapped_accounts = accounts.map do |account|
+    local_domain = local_instance_domain
+    mapped_accounts = LocalAccountSearchService.new(query).call.map do |account|
       existing_admin = @community.community_admins.find_by(account_id: account.id, account_status: 0)
       {
         id: account.id.to_s,
         username: account.username,
         display_name: account.display_name,
+        acct: [account.username, local_domain].compact.join('@'),
         avatar_url: account.avatar_url,
         current_role: existing_admin&.role
       }
