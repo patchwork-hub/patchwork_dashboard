@@ -317,8 +317,7 @@ module Api
             communities.find { |community| community.slug == entry[:slug] && community.channel_type == entry[:channel_type] }
           end.compact
 
-          render json: Api::V1::ChannelSerializer.new(sorted_communities, { params: { current_account: account } }).serializable_hash.to_json
-        end
+        render json: Api::V1::ChannelSerializer.new(sorted_communities, { params: { current_account: account } }).serializable_hash.to_json
       end
 
       def starter_pack_scope

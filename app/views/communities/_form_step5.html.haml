@@ -146,7 +146,7 @@
                           %td
                             = admin.account&.display_name.presence || admin.display_name
                             %br
-                            %span.text-muted.small= "@#{admin.account&.username || admin.username}@channel.org"
+                            %span.text-muted.small= "@#{username(admin.account) || admin.username}@#{domain(admin.account) || local_instance_domain}"
                           %td
                             %span.badge{ class: (admin.role == 'GroupAdmin' ? 'badge-danger' : (admin.role == 'GroupModerator' ? 'badge-secondary' : 'badge-info')) }
                               = { 'GroupAdmin' => 'Group Admin', 'GroupModerator' => 'Group Moderator', 'GroupMember' => 'Group Member' }[admin.role]
@@ -174,7 +174,7 @@
             %div.input-group-prepend
               %span.input-group-text
                 = image_tag("icons/search.svg", width: "16", height: "16")
-            %input.form-control#local-search-input{ "aria-label": "Search local accounts", placeholder: "Search by name or username", type: "text", data: { communityId: @community.id } }
+            %input.form-control#local-search-input{ "aria-label": "Search local accounts", placeholder: "Search by name, username, or @user@domain", type: "text", data: { communityId: @community.id } }
           %div#local-search-results.list-group
             %p.text-muted.small No results yet...
         .modal-footer
@@ -241,7 +241,7 @@
                     <img src="${account.avatar_url}" alt="" class="rounded-circle mr-2" style="width: 40px; height: 40px; flex-shrink: 0;">
                     <div class="account-info" style="min-width: 0;">
                       <p class="mb-0 font-weight-bold">${account.display_name || account.username}</p>
-                      <small class="text-muted">@${account.username}@channel.org</small>
+                      <small class="text-muted">@${account.acct || account.username}</small>
                     </div>
                   </div>
                   <div class="d-flex align-items-center" style="gap: 0.35rem; flex-shrink: 0;">
