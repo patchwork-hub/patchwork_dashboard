@@ -4,14 +4,19 @@ class Rack::Attack
 
   db = (ENV['REDIS_DB'].presence || ENV['SIDEKIQ_REDIS_DB'].presence || '0').to_i
 
-  redis_url = if ENV['REDIS_PASSWORD'].present?
+ redis_url = if ENV['REDIS_URL'].present?
+    ENV['REDIS_URL']
+  elsif ENV['REDIS_PASSWORD'].present?
     "redis://:#{ENV['REDIS_PASSWORD']}@#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT']}/#{db}"
   else
     "redis://#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT']}/#{db}"
   end
 
   if redis_url.present?
-    Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(url: redis_url)
+    Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
+      url: redis_url,
+      driver: (ENV['REDIS_DRIVER'].presence || 'hiredis').to_sym
+    )
   else
     Rack::Attack.cache.store = Rails.cache
     if Rack::Attack.cache.store.is_a?(ActiveSupport::Cache::NullStore)
