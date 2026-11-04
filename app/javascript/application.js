@@ -255,7 +255,8 @@ $(document).ready(function () {
 
 
 const togglePassword = (e) => {
-  let input = e.closest('div').querySelector("input[type='password'], input[type='text']");
+  let wrapper = e.closest('.password-input-wrapper') || e.closest('div');
+  let input = wrapper.querySelector("input[type='password'], input[type='text']");
   if (input) {
     if (input.type === "password") {
       e.setAttribute("class", "svg-inline--fa fa-eye red");
