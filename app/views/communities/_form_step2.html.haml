@@ -44,8 +44,8 @@
                   %td= community_admin.username
                   %td= community_admin.email
                   %td= community_admin.role.present? ? "#{community_admin.role.titleize.gsub('Admin', 'admin')}#{' | Public feed' if community_admin.is_boost_bot?}" : community_admin.is_boost_bot? ? 'Public feed' : ''
-                  %td
-                    %a{
+                  %td.text-center.align-middle
+                    %a.d-flex.justify-content-center.align-items-center{
                       href: "#",
                       "data-target" => "#communityAdminModal",
                       "data-toggle" => "modal",
@@ -58,7 +58,7 @@
                       "data-is-boost-bot": community_admin.is_boost_bot.to_s,
                       "data-hide-boost-bot": (@community.channel? && index > 0).to_s
                     }
-                      = image_tag("icons/eye.svg", class: "ml-2", width: "16", height: "16", style: "filter: invert(21%) sepia(82%) saturate(7471%) hue-rotate(356deg) brightness(99%) contrast(112%);")
+                      = image_tag("icons/eye.svg", width: "16", height: "16", style: "filter: invert(21%) sepia(82%) saturate(7471%) hue-rotate(356deg) brightness(99%) contrast(112%);")
           .pagination.pagination-sm.m-0.float-right.mt-1
             = paginate @records, theme: 'bootstrap4'
           - unless @community.hub?

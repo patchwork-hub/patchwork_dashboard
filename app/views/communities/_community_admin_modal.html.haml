@@ -62,9 +62,11 @@
 
           .mb-3.form-group.password
             = f.label :password, class: "form-label"
-            .password-input-wrapper
+            .input-group.password-input-wrapper
               = f.password_field :password, class: "form-control", id: "community_admin_password"
-              %i.fa-solid.fa-eye-slash.red{onclick: 'togglePassword(this)'}
+              .input-group-append
+                %span.input-group-text
+                  %i.fa-solid.fa-eye-slash.red{onclick: 'togglePassword(this)'}
             %small.form-text.text-muted Minimum 8 characters
 
           - if current_user.master_admin?
