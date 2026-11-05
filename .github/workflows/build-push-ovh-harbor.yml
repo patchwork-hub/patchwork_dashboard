@@ -48,7 +48,6 @@ env:
   CSIDNET_HARBOR_PROJECT: csidnet
   CSIDNET_HARBOR_USERNAME: robot$csidnet
   CSIDNET_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
-  Bristolcable
   BRISTOLCABLE_HARBOR_REGISTRY: 44eda7q3.gra7.container-registry.ovh.net
   BRISTOLCABLE_HARBOR_PROJECT: bristolcable
   BRISTOLCABLE_HARBOR_USERNAME: robot$robotbristolcable
