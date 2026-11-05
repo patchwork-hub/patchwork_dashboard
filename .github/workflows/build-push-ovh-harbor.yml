@@ -97,20 +97,12 @@ jobs:
             --cache-from type=local,src=/tmp/.buildx-cache-dashboard \
             --cache-to type=local,dest=/tmp/.buildx-cache-dashboard-new,mode=max \
             --build-arg SOURCE_COMMIT="${SOURCE_COMMIT}" \
-            # --tag $IMAGE_PO:${{ env.POUETSOCIAL_DASHBOARD_IMAGE_TAG }} \
-            # --tag $IMAGE_PO:latest \
-            # --tag $IMAGE_LH:${{ env.LHUMANITE_DASHBOARD_IMAGE_TAG }} \
-            # --tag $IMAGE_LH:latest \
-            # --tag $IMAGE_OF:${{ env.OUEST_FRANCE_DASHBOARD_IMAGE_TAG }} \
-            # --tag $IMAGE_OF:latest \
             --tag $IMAGE_DB:${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_IMAGE_TAG }} \
             --tag $IMAGE_DB:latest \
             --tag $IMAGE_NI:${{ env.NITHECS_DASHBOARD_IMAGE_TAG }} \
             --tag $IMAGE_NI:latest \
             --tag $IMAGE_CS:${{ env.CSIDNET_DASHBOARD_IMAGE_TAG }} \
             --tag $IMAGE_CS:latest \
-            # --tag $IMAGE_BC:${{ env.BRISTOLCABLE_DASHBOARD_IMAGE_TAG }} \
-            # --tag $IMAGE_BC:latest \
             --load \
             .
           rm -rf /tmp/.buildx-cache-dashboard
