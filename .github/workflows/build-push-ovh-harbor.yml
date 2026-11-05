@@ -1,494 +1,494 @@
-# run-name: Build and push OVH Harbor dashboard images by @${{ github.actor }}
-#
-# on:
-#   workflow_dispatch:
-#   push:
-#     branches:
-#       - internal/prod
-#
-# # THE VALUES BELOW ARE NOT CONFIDENTIAL: registry host, project and image names.
-# # The only secrets are POUETSOCIAL_HARBOR_PASSWORD, LHUMANITE_SOCIAL_HARBOR_PASSWORD,
-# # OUEST_FRANCE_SOCIAL_HARBOR_PASSWORD, DEMOCRACYBOOKCLUB_HARBOR_PASSWORD and
-# # NITHECS_HARBOR_PASSWORD (and GITHUB_TOKEN for committing the updated compose files).
-# # DEMOCRACYBOOKCLUB_HARBOR_PASSWORD and NITHECS_HARBOR_PASSWORD are ORGANIZATION secrets and must be shared with this repo.
-# #
-# # IMAGE TAGS ARE PER COMMIT: dashboard-<sha>. The mutable
-# # `dashboard:latest` alias is also pushed for convenience,
-# # but the compose file is pinned to the immutable commit tag so every checkout
-# # identifies exactly one image digest.
-# env:
-#   COMPOSE_FILE: docker-compose.ovh.yml
-#   # PouetSocial
-#   POUETSOCIAL_HARBOR_REGISTRY: d3r5hv0f.eu-west-par.container-registry.ovh.net
-#   POUETSOCIAL_HARBOR_PROJECT: pouetsocialmastodon
-#   POUETSOCIAL_HARBOR_USERNAME: robot$pouetsocialmastodon+pouetsocial
-#   POUETSOCIAL_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
-#   # L'Humanité Social
-#   LHUMANITE_HARBOR_REGISTRY: d3r5hv0f.eu-west-par.container-registry.ovh.net
-#   LHUMANITE_HARBOR_PROJECT: lhumanite.fr
-#   LHUMANITE_HARBOR_USERNAME: robot$lhumanite.fr+lhumanite.fr
-#   LHUMANITE_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
-#   # Ouest-France Social
-#   OUEST_FRANCE_HARBOR_REGISTRY: d3r5hv0f.eu-west-par.container-registry.ovh.net
-#   OUEST_FRANCE_HARBOR_PROJECT: ouest-france.fr
-#   OUEST_FRANCE_HARBOR_USERNAME: robot$ouest-france.fr+ouest-france.fr
-#   OUEST_FRANCE_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
-#   # Democracy Book Club
-#   DEMOCRACYBOOKCLUB_HARBOR_REGISTRY: 44eda7q3.gra7.container-registry.ovh.net
-#   DEMOCRACYBOOKCLUB_HARBOR_PROJECT: democracybookclub
-#   DEMOCRACYBOOKCLUB_HARBOR_USERNAME: robot$democracybookclub+democracybookclub
-#   DEMOCRACYBOOKCLUB_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
-#   # Nithecs
-#   NITHECS_HARBOR_REGISTRY: 44eda7q3.gra7.container-registry.ovh.net
-#   NITHECS_HARBOR_PROJECT: nithecs
-#   NITHECS_HARBOR_USERNAME: robot$nithecs+nithecs
-#   NITHECS_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
-#   # Csidnet
-#   CSIDNET_HARBOR_REGISTRY: 44eda7q3.gra7.container-registry.ovh.net
-#   CSIDNET_HARBOR_PROJECT: csidnet
-#   CSIDNET_HARBOR_USERNAME: robot$csidnet
-#   CSIDNET_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
-#   # Bristolcable
-#   BRISTOLCABLE_HARBOR_REGISTRY: 44eda7q3.gra7.container-registry.ovh.net
-#   BRISTOLCABLE_HARBOR_PROJECT: bristolcable
-#   BRISTOLCABLE_HARBOR_USERNAME: robot$robotbristolcable
-#   BRISTOLCABLE_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
-#
-# permissions:
-#   contents: write
-#
-# concurrency:
-#   group: ${{ github.workflow }}-${{ github.ref }}
-#   cancel-in-progress: true
-#
-# jobs:
-#   build-dashboard:
-#     name: Build once and push to all Harbor projects
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-#
-#       - name: Setup Docker Buildx
-#         uses: docker/setup-buildx-action@v3
-#
-#       - name: Cache Docker layers
-#         uses: actions/cache@v4
-#         with:
-#           path: /tmp/.buildx-cache-dashboard
-#           key: ${{ runner.os }}-buildx-dashboard-${{ github.sha }}
-#           restore-keys: |
-#             ${{ runner.os }}-buildx-dashboard-
-#             ${{ runner.os }}-buildx-
-#
-#       - name: Build dashboard image
-#         env:
-#           SOURCE_COMMIT: ${{ github.sha }}
-#         run: |
-#           IMAGE_PO=${{ env.POUETSOCIAL_HARBOR_REGISTRY }}/${{ env.POUETSOCIAL_HARBOR_PROJECT }}/dashboard
-#           IMAGE_LH=${{ env.LHUMANITE_HARBOR_REGISTRY }}/${{ env.LHUMANITE_HARBOR_PROJECT }}/dashboard
-#           IMAGE_OF=${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}/${{ env.OUEST_FRANCE_HARBOR_PROJECT }}/dashboard
-#           IMAGE_DB=${{ env.DEMOCRACYBOOKCLUB_HARBOR_REGISTRY }}/${{ env.DEMOCRACYBOOKCLUB_HARBOR_PROJECT }}/dashboard
-#           IMAGE_NI=${{ env.NITHECS_HARBOR_REGISTRY }}/${{ env.NITHECS_HARBOR_PROJECT }}/dashboard
-#           IMAGE_CS=${{ env.CSIDNET_HARBOR_REGISTRY }}/${{ env.CSIDNET_HARBOR_PROJECT }}/dashboard
-#           IMAGE_BC=${{ env.BRISTOLCABLE_HARBOR_REGISTRY }}/${{ env.BRISTOLCABLE_HARBOR_PROJECT }}/dashboard
-#           docker buildx build \
-#             --platform linux/amd64 \
-#             --cache-from type=local,src=/tmp/.buildx-cache-dashboard \
-#             --cache-to type=local,dest=/tmp/.buildx-cache-dashboard-new,mode=max \
-#             --build-arg SOURCE_COMMIT="${SOURCE_COMMIT}" \
-#             --tag $IMAGE_PO:${{ env.POUETSOCIAL_DASHBOARD_IMAGE_TAG }} \
-#             --tag $IMAGE_PO:latest \
-#             --tag $IMAGE_LH:${{ env.LHUMANITE_DASHBOARD_IMAGE_TAG }} \
-#             --tag $IMAGE_LH:latest \
-#             --tag $IMAGE_OF:${{ env.OUEST_FRANCE_DASHBOARD_IMAGE_TAG }} \
-#             --tag $IMAGE_OF:latest \
-#             --tag $IMAGE_DB:${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_IMAGE_TAG }} \
-#             --tag $IMAGE_DB:latest \
-#             --tag $IMAGE_NI:${{ env.NITHECS_DASHBOARD_IMAGE_TAG }} \
-#             --tag $IMAGE_NI:latest \
-#             --tag $IMAGE_CS:${{ env.CSIDNET_DASHBOARD_IMAGE_TAG }} \
-#             --tag $IMAGE_CS:latest \
-#             --tag $IMAGE_BC:${{ env.BRISTOLCABLE_DASHBOARD_IMAGE_TAG }} \
-#             --tag $IMAGE_BC:latest \
-#             --load \
-#             .
-#           rm -rf /tmp/.buildx-cache-dashboard
-#           mv /tmp/.buildx-cache-dashboard-new /tmp/.buildx-cache-dashboard
-#
-#       - name: Push to PouetSocial Harbor project
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ${{ env.POUETSOCIAL_HARBOR_REGISTRY }}
-#           username: ${{ env.POUETSOCIAL_HARBOR_USERNAME }}
-#           password: ${{ secrets.POUETSOCIAL_HARBOR_PASSWORD }}
-#
-#       - name: Push PouetSocial tags
-#         run: |
-#           IMAGE=${{ env.POUETSOCIAL_HARBOR_REGISTRY }}/${{ env.POUETSOCIAL_HARBOR_PROJECT }}/dashboard
-#           docker push $IMAGE:${{ env.POUETSOCIAL_DASHBOARD_IMAGE_TAG }}
-#           docker push $IMAGE:latest
-#
-#       - name: Push to L'Humanité Social Harbor project
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ${{ env.LHUMANITE_HARBOR_REGISTRY }}
-#           username: ${{ env.LHUMANITE_HARBOR_USERNAME }}
-#           password: ${{ secrets.LHUMANITE_SOCIAL_HARBOR_PASSWORD }}
-#
-#       - name: Push L'Humanité Social tags
-#         run: |
-#           IMAGE=${{ env.LHUMANITE_HARBOR_REGISTRY }}/${{ env.LHUMANITE_HARBOR_PROJECT }}/dashboard
-#           docker push $IMAGE:${{ env.LHUMANITE_DASHBOARD_IMAGE_TAG }}
-#           docker push $IMAGE:latest
-#
-#       - name: Push to Ouest-France Social Harbor project
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}
-#           username: ${{ env.OUEST_FRANCE_HARBOR_USERNAME }}
-#           password: ${{ secrets.OUEST_FRANCE_SOCIAL_HARBOR_PASSWORD }}
-#
-#       - name: Push Ouest-France Social tags
-#         run: |
-#           IMAGE=${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}/${{ env.OUEST_FRANCE_HARBOR_PROJECT }}/dashboard
-#           docker push $IMAGE:${{ env.OUEST_FRANCE_DASHBOARD_IMAGE_TAG }}
-#           docker push $IMAGE:latest
-#
-#       # continue-on-error: a Democracy Book Club registry/secret problem must not block the other
-#       # tenants' deploy jobs (they all need this job). deploy-democracybookclub fails on its own
-#       # if its image was not pushed.
-#       - name: Push to Democracy Book Club Harbor project
-#         continue-on-error: true
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ${{ env.DEMOCRACYBOOKCLUB_HARBOR_REGISTRY }}
-#           username: ${{ env.DEMOCRACYBOOKCLUB_HARBOR_USERNAME }}
-#           password: ${{ secrets.DEMOCRACYBOOKCLUB_HARBOR_PASSWORD }}
-#
-#       - name: Push Democracy Book Club tags
-#         continue-on-error: true
-#         run: |
-#           IMAGE=${{ env.DEMOCRACYBOOKCLUB_HARBOR_REGISTRY }}/${{ env.DEMOCRACYBOOKCLUB_HARBOR_PROJECT }}/dashboard
-#           docker push $IMAGE:${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_IMAGE_TAG }}
-#           docker push $IMAGE:latest
-#
-#       # continue-on-error for the same reason as Democracy Book Club above.
-#       - name: Push to Nithecs Harbor project
-#         continue-on-error: true
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ${{ env.NITHECS_HARBOR_REGISTRY }}
-#           username: ${{ env.NITHECS_HARBOR_USERNAME }}
-#           password: ${{ secrets.NITHECS_HARBOR_PASSWORD }}
-#
-#       - name: Push Nithecs tags
-#         continue-on-error: true
-#         run: |
-#           IMAGE=${{ env.NITHECS_HARBOR_REGISTRY }}/${{ env.NITHECS_HARBOR_PROJECT }}/dashboard
-#           docker push $IMAGE:${{ env.NITHECS_DASHBOARD_IMAGE_TAG }}
-#           docker push $IMAGE:latest
-#
-#       - name: Push to Csidnet Harbor project
-#         continue-on-error: true
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ${{ env.CSIDNET_HARBOR_REGISTRY }}
-#           username: ${{ env.CSIDNET_HARBOR_USERNAME }}
-#           password: ${{ secrets.CSIDNET_HARBOR_PASSWORD }}
-#
-#       - name: Push Csidnet tags
-#         continue-on-error: true
-#         run: |
-#           IMAGE=${{ env.CSIDNET_HARBOR_REGISTRY }}/${{ env.CSIDNET_HARBOR_PROJECT }}/dashboard
-#           docker push $IMAGE:${{ env.CSIDNET_DASHBOARD_IMAGE_TAG }}
-#           docker push $IMAGE:latest
-#
-#       - name: Push to Bristolcable Harbor project
-#         continue-on-error: true
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ${{ env.BRISTOLCABLE_HARBOR_REGISTRY }}
-#           username: ${{ env.BRISTOLCABLE_HARBOR_USERNAME }}
-#           password: ${{ secrets.BRISTOLCABLE_HARBOR_PASSWORD }}
-#
-#       - name: Push Bristolcable tags
-#         continue-on-error: true
-#         run: |
-#           IMAGE=${{ env.BRISTOLCABLE_HARBOR_REGISTRY }}/${{ env.BRISTOLCABLE_HARBOR_PROJECT }}/dashboard
-#           docker push $IMAGE:${{ env.BRISTOLCABLE_DASHBOARD_IMAGE_TAG }}
-#           docker push $IMAGE:latest
-#
-#   deploy-pouetsocial:
-#     name: Update PouetSocial compose file and deploy
-#     runs-on: dashboard-ps-runner
-#     needs: build-dashboard
-#     env:
-#       COMPOSE_PROJECT_NAME: dashboard
-#       DASHBOARD_ENV_FILE: /home/ubuntu/deployment/credential/.env.dashboard
-#       DASHBOARD_PORT: 3001
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-#         with:
-#           token: ${{ secrets.GITHUB_TOKEN }}
-#
-#       - name: Update image tag in docker-compose.ovh.yml
-#         run: |
-#           DASHBOARD_IMAGE="${{ env.POUETSOCIAL_HARBOR_REGISTRY }}/${{ env.POUETSOCIAL_HARBOR_PROJECT }}/dashboard:${{ env.POUETSOCIAL_DASHBOARD_IMAGE_TAG }}"
-#
-#           # Replace any existing dashboard image line, not just the initial placeholder
-#           sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
-#
-#           echo "Updated compose file:"
-#           grep -E "image:" ${{ env.COMPOSE_FILE }}
-#
-#       - name: Copy compose file to persistent deployment directory
-#         run: |
-#           mkdir -p /home/ubuntu/deployment/dashboard
-#           cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
-#
-#       - name: Login to OVH Harbor
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ${{ env.POUETSOCIAL_HARBOR_REGISTRY }}
-#           username: ${{ env.POUETSOCIAL_HARBOR_USERNAME }}
-#           password: ${{ secrets.POUETSOCIAL_HARBOR_PASSWORD }}
-#
-#       - name: Deploy PouetSocial dashboard with docker compose
-#         working-directory: /home/ubuntu/deployment/dashboard
-#         run: |
-#           docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} down
-#           docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} pull
-#           docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} up -d
-#
-#   deploy-lhumanite:
-#     name: Update L'Humanité Social compose file and deploy
-#     runs-on: dashboard-lhumanite-social-runner
-#     needs: build-dashboard
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-#         with:
-#           token: ${{ secrets.GITHUB_TOKEN }}
-#
-#       - name: Update image tag in docker-compose.ovh.yml
-#         run: |
-#           DASHBOARD_IMAGE="${{ env.LHUMANITE_HARBOR_REGISTRY }}/${{ env.LHUMANITE_HARBOR_PROJECT }}/dashboard:${{ env.LHUMANITE_DASHBOARD_IMAGE_TAG }}"
-#
-#           # Replace any existing dashboard image line, not just the initial placeholder
-#           sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
-#
-#           echo "Updated compose file:"
-#           grep -E "image:" ${{ env.COMPOSE_FILE }}
-#
-#       - name: Copy compose file to persistent deployment directory
-#         run: |
-#           mkdir -p /home/ubuntu/deployment/dashboard
-#           cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
-#
-#       - name: Login to OVH Harbor
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ${{ env.LHUMANITE_HARBOR_REGISTRY }}
-#           username: ${{ env.LHUMANITE_HARBOR_USERNAME }}
-#           password: ${{ secrets.LHUMANITE_SOCIAL_HARBOR_PASSWORD }}
-#
-#       - name: Deploy L'Humanité Social dashboard with docker compose
-#         working-directory: /home/ubuntu/deployment/dashboard
-#         run: |
-#           docker compose -f ${{ env.COMPOSE_FILE }} pull
-#           docker compose -f ${{ env.COMPOSE_FILE }} up -d
-#
-#   deploy-ouest-france:
-#     name: Update Ouest-France Social compose file and deploy
-#     runs-on: dashboard-ouest-france-social-runner
-#     needs: build-dashboard
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-#         with:
-#           token: ${{ secrets.GITHUB_TOKEN }}
-#
-#       - name: Update image tag in docker-compose.ovh.yml
-#         run: |
-#           DASHBOARD_IMAGE="${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}/${{ env.OUEST_FRANCE_HARBOR_PROJECT }}/dashboard:${{ env.OUEST_FRANCE_DASHBOARD_IMAGE_TAG }}"
-#
-#           # Replace any existing dashboard image line, not just the initial placeholder
-#           sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
-#
-#           echo "Updated compose file:"
-#           grep -E "image:" ${{ env.COMPOSE_FILE }}
-#
-#       - name: Copy compose file to persistent deployment directory
-#         run: |
-#           mkdir -p /home/ubuntu/deployment/dashboard
-#           cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
-#
-#       - name: Login to OVH Harbor
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}
-#           username: ${{ env.OUEST_FRANCE_HARBOR_USERNAME }}
-#           password: ${{ secrets.OUEST_FRANCE_SOCIAL_HARBOR_PASSWORD }}
-#
-#       - name: Deploy Ouest-France Social dashboard with docker compose
-#         working-directory: /home/ubuntu/deployment/dashboard
-#         run: |
-#           docker compose -f ${{ env.COMPOSE_FILE }} pull
-#           docker compose -f ${{ env.COMPOSE_FILE }} up -d
-#
-#   deploy-democracybookclub:
-#     name: Update Democracy Book Club compose file and deploy
-#     runs-on: democracybookclub-d-runner
-#     needs: build-dashboard
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-#         with:
-#           token: ${{ secrets.GITHUB_TOKEN }}
-#
-#       - name: Update image tag in docker-compose.ovh.yml
-#         run: |
-#           DASHBOARD_IMAGE="${{ env.DEMOCRACYBOOKCLUB_HARBOR_REGISTRY }}/${{ env.DEMOCRACYBOOKCLUB_HARBOR_PROJECT }}/dashboard:${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_IMAGE_TAG }}"
-#
-#           # Replace any existing dashboard image line, not just the initial placeholder
-#           sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
-#
-#           echo "Updated compose file:"
-#           grep -E "image:" ${{ env.COMPOSE_FILE }}
-#
-#       - name: Copy compose file to persistent deployment directory
-#         run: |
-#           mkdir -p /home/ubuntu/deployment/dashboard
-#           cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
-#
-#       - name: Login to OVH Harbor
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ${{ env.DEMOCRACYBOOKCLUB_HARBOR_REGISTRY }}
-#           username: ${{ env.DEMOCRACYBOOKCLUB_HARBOR_USERNAME }}
-#           password: ${{ secrets.DEMOCRACYBOOKCLUB_HARBOR_PASSWORD }}
-#
-#       - name: Deploy Democracy Book Club dashboard with docker compose
-#         working-directory: /home/ubuntu/deployment/dashboard
-#         run: |
-#           docker compose -f ${{ env.COMPOSE_FILE }} pull
-#           docker compose -f ${{ env.COMPOSE_FILE }} up -d
-#
-#   deploy-nithecs:
-#     name: Update Nithecs compose file and deploy
-#     runs-on: nithecs-d-runner
-#     needs: build-dashboard
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-#         with:
-#           token: ${{ secrets.GITHUB_TOKEN }}
-#
-#       - name: Update image tag in docker-compose.ovh.yml
-#         run: |
-#           DASHBOARD_IMAGE="${{ env.NITHECS_HARBOR_REGISTRY }}/${{ env.NITHECS_HARBOR_PROJECT }}/dashboard:${{ env.NITHECS_DASHBOARD_IMAGE_TAG }}"
-#
-#           # Replace any existing dashboard image line, not just the initial placeholder
-#           sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
-#
-#           echo "Updated compose file:"
-#           grep -E "image:" ${{ env.COMPOSE_FILE }}
-#
-#       - name: Copy compose file to persistent deployment directory
-#         run: |
-#           mkdir -p /home/ubuntu/deployment/dashboard
-#           cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
-#
-#       - name: Login to OVH Harbor
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ${{ env.NITHECS_HARBOR_REGISTRY }}
-#           username: ${{ env.NITHECS_HARBOR_USERNAME }}
-#           password: ${{ secrets.NITHECS_HARBOR_PASSWORD }}
-#
-#       - name: Deploy Nithecs dashboard with docker compose
-#         working-directory: /home/ubuntu/deployment/dashboard
-#         run: |
-#           docker compose -f ${{ env.COMPOSE_FILE }} pull
-#           docker compose -f ${{ env.COMPOSE_FILE }} up -d
-#
-#   deploy-csidnet:
-#     name: Update Csidnet compose file and deploy
-#     runs-on: csidnet-d-runner
-#     needs: build-dashboard
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-#         with:
-#           token: ${{ secrets.GITHUB_TOKEN }}
-#
-#       - name: Update image tag in docker-compose.ovh.yml
-#         run: |
-#           DASHBOARD_IMAGE="${{ env.CSIDNET_HARBOR_REGISTRY }}/${{ env.CSIDNET_HARBOR_PROJECT }}/dashboard:${{ env.CSIDNET_DASHBOARD_IMAGE_TAG }}"
-#
-#           # Replace any existing dashboard image line, not just the initial placeholder
-#           sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
-#
-#           echo "Updated compose file:"
-#           grep -E "image:" ${{ env.COMPOSE_FILE }}
-#
-#       - name: Copy compose file to persistent deployment directory
-#         run: |
-#           mkdir -p /home/ubuntu/deployment/dashboard
-#           cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
-#
-#       - name: Login to OVH Harbor
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ${{ env.CSIDNET_HARBOR_REGISTRY }}
-#           username: ${{ env.CSIDNET_HARBOR_USERNAME }}
-#           password: ${{ secrets.CSIDNET_HARBOR_PASSWORD }}
-#
-#       - name: Deploy Csidnet dashboard with docker compose
-#         working-directory: /home/ubuntu/deployment/dashboard
-#         run: |
-#           docker compose -f ${{ env.COMPOSE_FILE }} pull
-#           docker compose -f ${{ env.COMPOSE_FILE }} up -d
-#
-#
-#   deploy-bristolcable:
-#     name: Update bristolcable compose file and deploy
-#     runs-on: bristolcable-d-runner
-#     needs: build-dashboard
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-#         with:
-#           token: ${{ secrets.GITHUB_TOKEN }}
-#
-#       - name: Update image tag in docker-compose.ovh.yml
-#         run: |
-#           DASHBOARD_IMAGE="${{ env.BRISTOLCABLE_HARBOR_REGISTRY }}/${{ env.BRISTOLCABLE_HARBOR_PROJECT }}/dashboard:${{ env.BRISTOLCABLE_DASHBOARD_IMAGE_TAG }}"
-#
-#           # Replace any existing dashboard image line, not just the initial placeholder
-#           sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
-#
-#           echo "Updated compose file:"
-#           grep -E "image:" ${{ env.COMPOSE_FILE }}
-#
-#       - name: Copy compose file to persistent deployment directory
-#         run: |
-#           mkdir -p /home/ubuntu/deployment/dashboard
-#           cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
-#
-#       - name: Login to OVH Harbor
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ${{ env.BRISTOLCABLE_HARBOR_REGISTRY }}
-#           username: ${{ env.BRISTOLCABLE_HARBOR_USERNAME }}
-#           password: ${{ secrets.BRISTOLCABLE_HARBOR_PASSWORD }}
-#
-#       - name: Deploy Bristolcable dashboard with docker compose
-#         working-directory: /home/ubuntu/deployment/dashboard
-#         run: |
-#           docker compose -f ${{ env.COMPOSE_FILE }} pull
-#           docker compose -f ${{ env.COMPOSE_FILE }} up -d
-#
-#
+run-name: Build and push OVH Harbor dashboard images by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - internal/prod
+
+# THE VALUES BELOW ARE NOT CONFIDENTIAL: registry host, project and image names.
+# The only secrets are POUETSOCIAL_HARBOR_PASSWORD, LHUMANITE_SOCIAL_HARBOR_PASSWORD,
+# OUEST_FRANCE_SOCIAL_HARBOR_PASSWORD, DEMOCRACYBOOKCLUB_HARBOR_PASSWORD and
+# NITHECS_HARBOR_PASSWORD (and GITHUB_TOKEN for committing the updated compose files).
+# DEMOCRACYBOOKCLUB_HARBOR_PASSWORD and NITHECS_HARBOR_PASSWORD are ORGANIZATION secrets and must be shared with this repo.
+#
+# IMAGE TAGS ARE PER COMMIT: dashboard-<sha>. The mutable
+# `dashboard:latest` alias is also pushed for convenience,
+# but the compose file is pinned to the immutable commit tag so every checkout
+# identifies exactly one image digest.
+env:
+  COMPOSE_FILE: docker-compose.ovh.yml
+  # PouetSocial
+  # POUETSOCIAL_HARBOR_REGISTRY: d3r5hv0f.eu-west-par.container-registry.ovh.net
+  # POUETSOCIAL_HARBOR_PROJECT: pouetsocialmastodon
+  # POUETSOCIAL_HARBOR_USERNAME: robot$pouetsocialmastodon+pouetsocial
+  # POUETSOCIAL_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
+  # # L'Humanité Social
+  # LHUMANITE_HARBOR_REGISTRY: d3r5hv0f.eu-west-par.container-registry.ovh.net
+  # LHUMANITE_HARBOR_PROJECT: lhumanite.fr
+  # LHUMANITE_HARBOR_USERNAME: robot$lhumanite.fr+lhumanite.fr
+  # LHUMANITE_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
+  # # Ouest-France Social
+  # OUEST_FRANCE_HARBOR_REGISTRY: d3r5hv0f.eu-west-par.container-registry.ovh.net
+  # OUEST_FRANCE_HARBOR_PROJECT: ouest-france.fr
+  # OUEST_FRANCE_HARBOR_USERNAME: robot$ouest-france.fr+ouest-france.fr
+  # OUEST_FRANCE_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
+  # Democracy Book Club
+  DEMOCRACYBOOKCLUB_HARBOR_REGISTRY: 44eda7q3.gra7.container-registry.ovh.net
+  DEMOCRACYBOOKCLUB_HARBOR_PROJECT: democracybookclub
+  DEMOCRACYBOOKCLUB_HARBOR_USERNAME: robot$democracybookclub+democracybookclub
+  DEMOCRACYBOOKCLUB_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
+  # Nithecs
+  NITHECS_HARBOR_REGISTRY: 44eda7q3.gra7.container-registry.ovh.net
+  NITHECS_HARBOR_PROJECT: nithecs
+  NITHECS_HARBOR_USERNAME: robot$nithecs+nithecs
+  NITHECS_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
+  # Csidnet
+  CSIDNET_HARBOR_REGISTRY: 44eda7q3.gra7.container-registry.ovh.net
+  CSIDNET_HARBOR_PROJECT: csidnet
+  CSIDNET_HARBOR_USERNAME: robot$csidnet
+  CSIDNET_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
+  # Bristolcable
+  # BRISTOLCABLE_HARBOR_REGISTRY: 44eda7q3.gra7.container-registry.ovh.net
+  # BRISTOLCABLE_HARBOR_PROJECT: bristolcable
+  # BRISTOLCABLE_HARBOR_USERNAME: robot$robotbristolcable
+  # BRISTOLCABLE_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-dashboard:
+    name: Build once and push to all Harbor projects
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache-dashboard
+          key: ${{ runner.os }}-buildx-dashboard-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-dashboard-
+            ${{ runner.os }}-buildx-
+
+      - name: Build dashboard image
+        env:
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          # IMAGE_PO=${{ env.POUETSOCIAL_HARBOR_REGISTRY }}/${{ env.POUETSOCIAL_HARBOR_PROJECT }}/dashboard
+          # IMAGE_LH=${{ env.LHUMANITE_HARBOR_REGISTRY }}/${{ env.LHUMANITE_HARBOR_PROJECT }}/dashboard
+          # IMAGE_OF=${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}/${{ env.OUEST_FRANCE_HARBOR_PROJECT }}/dashboard
+          IMAGE_DB=${{ env.DEMOCRACYBOOKCLUB_HARBOR_REGISTRY }}/${{ env.DEMOCRACYBOOKCLUB_HARBOR_PROJECT }}/dashboard
+          IMAGE_NI=${{ env.NITHECS_HARBOR_REGISTRY }}/${{ env.NITHECS_HARBOR_PROJECT }}/dashboard
+          IMAGE_CS=${{ env.CSIDNET_HARBOR_REGISTRY }}/${{ env.CSIDNET_HARBOR_PROJECT }}/dashboard
+          # IMAGE_BC=${{ env.BRISTOLCABLE_HARBOR_REGISTRY }}/${{ env.BRISTOLCABLE_HARBOR_PROJECT }}/dashboard
+          docker buildx build \
+            --platform linux/amd64 \
+            --cache-from type=local,src=/tmp/.buildx-cache-dashboard \
+            --cache-to type=local,dest=/tmp/.buildx-cache-dashboard-new,mode=max \
+            --build-arg SOURCE_COMMIT="${SOURCE_COMMIT}" \
+            # --tag $IMAGE_PO:${{ env.POUETSOCIAL_DASHBOARD_IMAGE_TAG }} \
+            # --tag $IMAGE_PO:latest \
+            # --tag $IMAGE_LH:${{ env.LHUMANITE_DASHBOARD_IMAGE_TAG }} \
+            # --tag $IMAGE_LH:latest \
+            # --tag $IMAGE_OF:${{ env.OUEST_FRANCE_DASHBOARD_IMAGE_TAG }} \
+            # --tag $IMAGE_OF:latest \
+            --tag $IMAGE_DB:${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_IMAGE_TAG }} \
+            --tag $IMAGE_DB:latest \
+            --tag $IMAGE_NI:${{ env.NITHECS_DASHBOARD_IMAGE_TAG }} \
+            --tag $IMAGE_NI:latest \
+            --tag $IMAGE_CS:${{ env.CSIDNET_DASHBOARD_IMAGE_TAG }} \
+            --tag $IMAGE_CS:latest \
+            # --tag $IMAGE_BC:${{ env.BRISTOLCABLE_DASHBOARD_IMAGE_TAG }} \
+            # --tag $IMAGE_BC:latest \
+            --load \
+            .
+          rm -rf /tmp/.buildx-cache-dashboard
+          mv /tmp/.buildx-cache-dashboard-new /tmp/.buildx-cache-dashboard
+
+      # - name: Push to PouetSocial Harbor project
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ${{ env.POUETSOCIAL_HARBOR_REGISTRY }}
+      #     username: ${{ env.POUETSOCIAL_HARBOR_USERNAME }}
+      #     password: ${{ secrets.POUETSOCIAL_HARBOR_PASSWORD }}
+
+      # - name: Push PouetSocial tags
+      #   run: |
+      #     IMAGE=${{ env.POUETSOCIAL_HARBOR_REGISTRY }}/${{ env.POUETSOCIAL_HARBOR_PROJECT }}/dashboard
+      #     docker push $IMAGE:${{ env.POUETSOCIAL_DASHBOARD_IMAGE_TAG }}
+      #     docker push $IMAGE:latest
+
+      # - name: Push to L'Humanité Social Harbor project
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ${{ env.LHUMANITE_HARBOR_REGISTRY }}
+      #     username: ${{ env.LHUMANITE_HARBOR_USERNAME }}
+      #     password: ${{ secrets.LHUMANITE_SOCIAL_HARBOR_PASSWORD }}
+
+      # - name: Push L'Humanité Social tags
+      #   run: |
+      #     IMAGE=${{ env.LHUMANITE_HARBOR_REGISTRY }}/${{ env.LHUMANITE_HARBOR_PROJECT }}/dashboard
+      #     docker push $IMAGE:${{ env.LHUMANITE_DASHBOARD_IMAGE_TAG }}
+      #     docker push $IMAGE:latest
+
+      # - name: Push to Ouest-France Social Harbor project
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}
+      #     username: ${{ env.OUEST_FRANCE_HARBOR_USERNAME }}
+      #     password: ${{ secrets.OUEST_FRANCE_SOCIAL_HARBOR_PASSWORD }}
+
+      # - name: Push Ouest-France Social tags
+      #   run: |
+      #     IMAGE=${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}/${{ env.OUEST_FRANCE_HARBOR_PROJECT }}/dashboard
+      #     docker push $IMAGE:${{ env.OUEST_FRANCE_DASHBOARD_IMAGE_TAG }}
+      #     docker push $IMAGE:latest
+
+      # continue-on-error: a Democracy Book Club registry/secret problem must not block the other
+      # tenants' deploy jobs (they all need this job). deploy-democracybookclub fails on its own
+      # if its image was not pushed.
+      - name: Push to Democracy Book Club Harbor project
+        continue-on-error: true
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DEMOCRACYBOOKCLUB_HARBOR_REGISTRY }}
+          username: ${{ env.DEMOCRACYBOOKCLUB_HARBOR_USERNAME }}
+          password: ${{ secrets.DEMOCRACYBOOKCLUB_HARBOR_PASSWORD }}
+
+      - name: Push Democracy Book Club tags
+        continue-on-error: true
+        run: |
+          IMAGE=${{ env.DEMOCRACYBOOKCLUB_HARBOR_REGISTRY }}/${{ env.DEMOCRACYBOOKCLUB_HARBOR_PROJECT }}/dashboard
+          docker push $IMAGE:${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_IMAGE_TAG }}
+          docker push $IMAGE:latest
+
+      # continue-on-error for the same reason as Democracy Book Club above.
+      - name: Push to Nithecs Harbor project
+        continue-on-error: true
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.NITHECS_HARBOR_REGISTRY }}
+          username: ${{ env.NITHECS_HARBOR_USERNAME }}
+          password: ${{ secrets.NITHECS_HARBOR_PASSWORD }}
+
+      - name: Push Nithecs tags
+        continue-on-error: true
+        run: |
+          IMAGE=${{ env.NITHECS_HARBOR_REGISTRY }}/${{ env.NITHECS_HARBOR_PROJECT }}/dashboard
+          docker push $IMAGE:${{ env.NITHECS_DASHBOARD_IMAGE_TAG }}
+          docker push $IMAGE:latest
+
+      - name: Push to Csidnet Harbor project
+        continue-on-error: true
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.CSIDNET_HARBOR_REGISTRY }}
+          username: ${{ env.CSIDNET_HARBOR_USERNAME }}
+          password: ${{ secrets.CSIDNET_HARBOR_PASSWORD }}
+
+      - name: Push Csidnet tags
+        continue-on-error: true
+        run: |
+          IMAGE=${{ env.CSIDNET_HARBOR_REGISTRY }}/${{ env.CSIDNET_HARBOR_PROJECT }}/dashboard
+          docker push $IMAGE:${{ env.CSIDNET_DASHBOARD_IMAGE_TAG }}
+          docker push $IMAGE:latest
+
+      # - name: Push to Bristolcable Harbor project
+      #   continue-on-error: true
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ${{ env.BRISTOLCABLE_HARBOR_REGISTRY }}
+      #     username: ${{ env.BRISTOLCABLE_HARBOR_USERNAME }}
+      #     password: ${{ secrets.BRISTOLCABLE_HARBOR_PASSWORD }}
+
+      # - name: Push Bristolcable tags
+      #   continue-on-error: true
+      #   run: |
+      #     IMAGE=${{ env.BRISTOLCABLE_HARBOR_REGISTRY }}/${{ env.BRISTOLCABLE_HARBOR_PROJECT }}/dashboard
+      #     docker push $IMAGE:${{ env.BRISTOLCABLE_DASHBOARD_IMAGE_TAG }}
+      #     docker push $IMAGE:latest
+
+  # deploy-pouetsocial:
+  #   name: Update PouetSocial compose file and deploy
+  #   runs-on: dashboard-ps-runner
+  #   needs: build-dashboard
+  #   env:
+  #     COMPOSE_PROJECT_NAME: dashboard
+  #     DASHBOARD_ENV_FILE: /home/ubuntu/deployment/credential/.env.dashboard
+  #     DASHBOARD_PORT: 3001
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+
+  #     - name: Update image tag in docker-compose.ovh.yml
+  #       run: |
+  #         DASHBOARD_IMAGE="${{ env.POUETSOCIAL_HARBOR_REGISTRY }}/${{ env.POUETSOCIAL_HARBOR_PROJECT }}/dashboard:${{ env.POUETSOCIAL_DASHBOARD_IMAGE_TAG }}"
+
+  #         # Replace any existing dashboard image line, not just the initial placeholder
+  #         sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
+
+  #         echo "Updated compose file:"
+  #         grep -E "image:" ${{ env.COMPOSE_FILE }}
+
+  #     - name: Copy compose file to persistent deployment directory
+  #       run: |
+  #         mkdir -p /home/ubuntu/deployment/dashboard
+  #         cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
+
+  #     - name: Login to OVH Harbor
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ${{ env.POUETSOCIAL_HARBOR_REGISTRY }}
+  #         username: ${{ env.POUETSOCIAL_HARBOR_USERNAME }}
+  #         password: ${{ secrets.POUETSOCIAL_HARBOR_PASSWORD }}
+
+  #     - name: Deploy PouetSocial dashboard with docker compose
+  #       working-directory: /home/ubuntu/deployment/dashboard
+  #       run: |
+  #         docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} down
+  #         docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} pull
+  #         docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.COMPOSE_PROJECT_NAME }} up -d
+
+  # deploy-lhumanite:
+  #   name: Update L'Humanité Social compose file and deploy
+  #   runs-on: dashboard-lhumanite-social-runner
+  #   needs: build-dashboard
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+
+  #     - name: Update image tag in docker-compose.ovh.yml
+  #       run: |
+  #         DASHBOARD_IMAGE="${{ env.LHUMANITE_HARBOR_REGISTRY }}/${{ env.LHUMANITE_HARBOR_PROJECT }}/dashboard:${{ env.LHUMANITE_DASHBOARD_IMAGE_TAG }}"
+
+  #         # Replace any existing dashboard image line, not just the initial placeholder
+  #         sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
+
+  #         echo "Updated compose file:"
+  #         grep -E "image:" ${{ env.COMPOSE_FILE }}
+
+  #     - name: Copy compose file to persistent deployment directory
+  #       run: |
+  #         mkdir -p /home/ubuntu/deployment/dashboard
+  #         cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
+
+  #     - name: Login to OVH Harbor
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ${{ env.LHUMANITE_HARBOR_REGISTRY }}
+  #         username: ${{ env.LHUMANITE_HARBOR_USERNAME }}
+  #         password: ${{ secrets.LHUMANITE_SOCIAL_HARBOR_PASSWORD }}
+
+  #     - name: Deploy L'Humanité Social dashboard with docker compose
+  #       working-directory: /home/ubuntu/deployment/dashboard
+  #       run: |
+  #         docker compose -f ${{ env.COMPOSE_FILE }} pull
+  #         docker compose -f ${{ env.COMPOSE_FILE }} up -d
+
+  # deploy-ouest-france:
+  #   name: Update Ouest-France Social compose file and deploy
+  #   runs-on: dashboard-ouest-france-social-runner
+  #   needs: build-dashboard
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+
+  #     - name: Update image tag in docker-compose.ovh.yml
+  #       run: |
+  #         DASHBOARD_IMAGE="${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}/${{ env.OUEST_FRANCE_HARBOR_PROJECT }}/dashboard:${{ env.OUEST_FRANCE_DASHBOARD_IMAGE_TAG }}"
+
+  #         # Replace any existing dashboard image line, not just the initial placeholder
+  #         sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
+
+  #         echo "Updated compose file:"
+  #         grep -E "image:" ${{ env.COMPOSE_FILE }}
+
+  #     - name: Copy compose file to persistent deployment directory
+  #       run: |
+  #         mkdir -p /home/ubuntu/deployment/dashboard
+  #         cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
+
+  #     - name: Login to OVH Harbor
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ${{ env.OUEST_FRANCE_HARBOR_REGISTRY }}
+  #         username: ${{ env.OUEST_FRANCE_HARBOR_USERNAME }}
+  #         password: ${{ secrets.OUEST_FRANCE_SOCIAL_HARBOR_PASSWORD }}
+
+  #     - name: Deploy Ouest-France Social dashboard with docker compose
+  #       working-directory: /home/ubuntu/deployment/dashboard
+  #       run: |
+  #         docker compose -f ${{ env.COMPOSE_FILE }} pull
+  #         docker compose -f ${{ env.COMPOSE_FILE }} up -d
+
+  deploy-democracybookclub:
+    name: Update Democracy Book Club compose file and deploy
+    runs-on: democracybookclub-d-runner
+    needs: build-dashboard
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update image tag in docker-compose.ovh.yml
+        run: |
+          DASHBOARD_IMAGE="${{ env.DEMOCRACYBOOKCLUB_HARBOR_REGISTRY }}/${{ env.DEMOCRACYBOOKCLUB_HARBOR_PROJECT }}/dashboard:${{ env.DEMOCRACYBOOKCLUB_DASHBOARD_IMAGE_TAG }}"
+
+          # Replace any existing dashboard image line, not just the initial placeholder
+          sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
+
+          echo "Updated compose file:"
+          grep -E "image:" ${{ env.COMPOSE_FILE }}
+
+      - name: Copy compose file to persistent deployment directory
+        run: |
+          mkdir -p /home/ubuntu/deployment/dashboard
+          cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
+
+      - name: Login to OVH Harbor
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DEMOCRACYBOOKCLUB_HARBOR_REGISTRY }}
+          username: ${{ env.DEMOCRACYBOOKCLUB_HARBOR_USERNAME }}
+          password: ${{ secrets.DEMOCRACYBOOKCLUB_HARBOR_PASSWORD }}
+
+      - name: Deploy Democracy Book Club dashboard with docker compose
+        working-directory: /home/ubuntu/deployment/dashboard
+        run: |
+          docker compose -f ${{ env.COMPOSE_FILE }} pull
+          docker compose -f ${{ env.COMPOSE_FILE }} up -d
+
+  deploy-nithecs:
+    name: Update Nithecs compose file and deploy
+    runs-on: nithecs-d-runner
+    needs: build-dashboard
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update image tag in docker-compose.ovh.yml
+        run: |
+          DASHBOARD_IMAGE="${{ env.NITHECS_HARBOR_REGISTRY }}/${{ env.NITHECS_HARBOR_PROJECT }}/dashboard:${{ env.NITHECS_DASHBOARD_IMAGE_TAG }}"
+
+          # Replace any existing dashboard image line, not just the initial placeholder
+          sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
+
+          echo "Updated compose file:"
+          grep -E "image:" ${{ env.COMPOSE_FILE }}
+
+      - name: Copy compose file to persistent deployment directory
+        run: |
+          mkdir -p /home/ubuntu/deployment/dashboard
+          cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
+
+      - name: Login to OVH Harbor
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.NITHECS_HARBOR_REGISTRY }}
+          username: ${{ env.NITHECS_HARBOR_USERNAME }}
+          password: ${{ secrets.NITHECS_HARBOR_PASSWORD }}
+
+      - name: Deploy Nithecs dashboard with docker compose
+        working-directory: /home/ubuntu/deployment/dashboard
+        run: |
+          docker compose -f ${{ env.COMPOSE_FILE }} pull
+          docker compose -f ${{ env.COMPOSE_FILE }} up -d
+
+  deploy-csidnet:
+    name: Update Csidnet compose file and deploy
+    runs-on: csidnet-d-runner
+    needs: build-dashboard
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update image tag in docker-compose.ovh.yml
+        run: |
+          DASHBOARD_IMAGE="${{ env.CSIDNET_HARBOR_REGISTRY }}/${{ env.CSIDNET_HARBOR_PROJECT }}/dashboard:${{ env.CSIDNET_DASHBOARD_IMAGE_TAG }}"
+
+          # Replace any existing dashboard image line, not just the initial placeholder
+          sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
+
+          echo "Updated compose file:"
+          grep -E "image:" ${{ env.COMPOSE_FILE }}
+
+      - name: Copy compose file to persistent deployment directory
+        run: |
+          mkdir -p /home/ubuntu/deployment/dashboard
+          cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
+
+      - name: Login to OVH Harbor
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.CSIDNET_HARBOR_REGISTRY }}
+          username: ${{ env.CSIDNET_HARBOR_USERNAME }}
+          password: ${{ secrets.CSIDNET_HARBOR_PASSWORD }}
+
+      - name: Deploy Csidnet dashboard with docker compose
+        working-directory: /home/ubuntu/deployment/dashboard
+        run: |
+          docker compose -f ${{ env.COMPOSE_FILE }} pull
+          docker compose -f ${{ env.COMPOSE_FILE }} up -d
+
+
+  # deploy-bristolcable:
+  #   name: Update bristolcable compose file and deploy
+  #   runs-on: bristolcable-d-runner
+  #   needs: build-dashboard
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+
+  #     - name: Update image tag in docker-compose.ovh.yml
+  #       run: |
+  #         DASHBOARD_IMAGE="${{ env.BRISTOLCABLE_HARBOR_REGISTRY }}/${{ env.BRISTOLCABLE_HARBOR_PROJECT }}/dashboard:${{ env.BRISTOLCABLE_DASHBOARD_IMAGE_TAG }}"
+
+  #         # Replace any existing dashboard image line, not just the initial placeholder
+  #         sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
+
+  #         echo "Updated compose file:"
+  #         grep -E "image:" ${{ env.COMPOSE_FILE }}
+
+  #     - name: Copy compose file to persistent deployment directory
+  #       run: |
+  #         mkdir -p /home/ubuntu/deployment/dashboard
+  #         cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
+
+  #     - name: Login to OVH Harbor
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ${{ env.BRISTOLCABLE_HARBOR_REGISTRY }}
+  #         username: ${{ env.BRISTOLCABLE_HARBOR_USERNAME }}
+  #         password: ${{ secrets.BRISTOLCABLE_HARBOR_PASSWORD }}
+
+  #     - name: Deploy Bristolcable dashboard with docker compose
+  #       working-directory: /home/ubuntu/deployment/dashboard
+  #       run: |
+  #         docker compose -f ${{ env.COMPOSE_FILE }} pull
+  #         docker compose -f ${{ env.COMPOSE_FILE }} up -d
+
+
