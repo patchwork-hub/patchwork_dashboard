@@ -11,6 +11,9 @@ on:
 # OUEST_FRANCE_SOCIAL_HARBOR_PASSWORD, DEMOCRACYBOOKCLUB_HARBOR_PASSWORD and
 # NITHECS_HARBOR_PASSWORD (and GITHUB_TOKEN for committing the updated compose files).
 # DEMOCRACYBOOKCLUB_HARBOR_PASSWORD and NITHECS_HARBOR_PASSWORD are ORGANIZATION secrets and must be shared with this repo.
+# Newsmast also uses the ORGANIZATION secrets NEWSMAST_HARBOR_PASSWORD and OVH_SSH_PRIVATE_KEY and the
+# organization variable NEWSMAST_SERVER_IP (its deploy job connects over SSH from a GitHub-hosted runner,
+# like the patchwork-mastodon Newsmast workflow). All three must be shared with this repo.
 #
 # IMAGE TAGS ARE PER COMMIT: dashboard-<sha>. The mutable
 # `dashboard:latest` alias is also pushed for convenience,
@@ -58,6 +61,11 @@ env:
   FINDOUT_HARBOR_PROJECT: findout
   FINDOUT_HARBOR_USERNAME: robot$findout
   FINDOUT_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
+  # Newsmast
+  NEWSMAST_HARBOR_REGISTRY: 44eda7q3.gra7.container-registry.ovh.net
+  NEWSMAST_HARBOR_PROJECT: newsmast-social
+  NEWSMAST_HARBOR_USERNAME: robot$newsmast-social+newsmast-social
+  NEWSMAST_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
 
 permissions:
   contents: write
@@ -98,6 +106,7 @@ jobs:
           IMAGE_CS=${{ env.CSIDNET_HARBOR_REGISTRY }}/${{ env.CSIDNET_HARBOR_PROJECT }}/dashboard
           IMAGE_BC=${{ env.BRISTOLCABLE_HARBOR_REGISTRY }}/${{ env.BRISTOLCABLE_HARBOR_PROJECT }}/dashboard
           IMAGE_FO=${{ env.FINDOUT_HARBOR_REGISTRY }}/${{ env.FINDOUT_HARBOR_PROJECT }}/dashboard
+          IMAGE_NM=${{ env.NEWSMAST_HARBOR_REGISTRY }}/${{ env.NEWSMAST_HARBOR_PROJECT }}/dashboard
           docker buildx build \
             --platform linux/amd64 \
             --cache-from type=local,src=/tmp/.buildx-cache-dashboard \
@@ -113,6 +122,8 @@ jobs:
             --tag $IMAGE_BC:latest \
             --tag $IMAGE_FO:${{ env.FINDOUT_DASHBOARD_IMAGE_TAG }} \
             --tag $IMAGE_FO:latest \
+            --tag $IMAGE_NM:${{ env.NEWSMAST_DASHBOARD_IMAGE_TAG }} \
+            --tag $IMAGE_NM:latest \
             --load \
             .
           rm -rf /tmp/.buildx-cache-dashboard
@@ -234,6 +245,21 @@ jobs:
         run: |
           IMAGE=${{ env.FINDOUT_HARBOR_REGISTRY }}/${{ env.FINDOUT_HARBOR_PROJECT }}/dashboard
           docker push $IMAGE:${{ env.FINDOUT_DASHBOARD_IMAGE_TAG }}
+          docker push $IMAGE:latest
+
+      - name: Push to Newsmast Harbor project
+        continue-on-error: true
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.NEWSMAST_HARBOR_REGISTRY }}
+          username: ${{ env.NEWSMAST_HARBOR_USERNAME }}
+          password: ${{ secrets.NEWSMAST_HARBOR_PASSWORD }}
+
+      - name: Push Newsmast tags
+        continue-on-error: true
+        run: |
+          IMAGE=${{ env.NEWSMAST_HARBOR_REGISTRY }}/${{ env.NEWSMAST_HARBOR_PROJECT }}/dashboard
+          docker push $IMAGE:${{ env.NEWSMAST_DASHBOARD_IMAGE_TAG }}
           docker push $IMAGE:latest
 
   # deploy-pouetsocial:
@@ -547,5 +573,52 @@ jobs:
           docker compose -f ${{ env.COMPOSE_FILE }} pull
           docker compose -f ${{ env.COMPOSE_FILE }} up -d
 
+  deploy-newsmast:
+    name: Update Newsmast compose file and deploy
+    runs-on: ubuntu-latest
+    needs: build-dashboard
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Update image tag in docker-compose.ovh.yml
+        run: |
+          DASHBOARD_IMAGE="${{ env.NEWSMAST_HARBOR_REGISTRY }}/${{ env.NEWSMAST_HARBOR_PROJECT }}/dashboard:${{ env.NEWSMAST_DASHBOARD_IMAGE_TAG }}"
 
+          # Replace any existing dashboard image line, not just the initial placeholder
+          sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
+
+          echo "Updated compose file:"
+          grep -E "image:" ${{ env.COMPOSE_FILE }}
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' '${{ secrets.OVH_SSH_PRIVATE_KEY }}' > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      # Credentials (.env.dashboard) live in /home/ubuntu/deployment/credential/ and are placed
+      # manually; CI never writes them.
+      - name: Login to OVH Harbor
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.NEWSMAST_HARBOR_REGISTRY }}
+          username: ${{ env.NEWSMAST_HARBOR_USERNAME }}
+          password: ${{ secrets.NEWSMAST_HARBOR_PASSWORD }}
+
+      - name: Deploy Newsmast dashboard to OVH server
+        env:
+          DEPLOY_HOST: ${{ vars.NEWSMAST_SERVER_IP }}
+        run: |
+          # Trim any accidental whitespace/newlines from the org variable
+          HOST=$(printf '%s' "$DEPLOY_HOST" | tr -d '[:space:]')
+          SSH_OPTS="-i ~/.ssh/id_rsa -o BatchMode=yes -o StrictHostKeyChecking=accept-new"
+
+          ssh $SSH_OPTS ubuntu@$HOST "mkdir -p /home/ubuntu/deployment/dashboard ~/.docker"
+          scp $SSH_OPTS ${{ env.COMPOSE_FILE }} ubuntu@$HOST:/home/ubuntu/deployment/dashboard/${{ env.COMPOSE_FILE }}
+          scp $SSH_OPTS ~/.docker/config.json ubuntu@$HOST:~/.docker/config.json
+          ssh $SSH_OPTS ubuntu@$HOST \
+            "set -e; cd /home/ubuntu/deployment/dashboard; docker compose -f ${{ env.COMPOSE_FILE }} pull; docker compose -f ${{ env.COMPOSE_FILE }} up -d"
