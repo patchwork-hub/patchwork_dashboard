@@ -53,6 +53,11 @@ env:
   BRISTOLCABLE_HARBOR_PROJECT: bristolcable
   BRISTOLCABLE_HARBOR_USERNAME: robot$robotbristolcable
   BRISTOLCABLE_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
+  # Findout
+  FINDOUT_HARBOR_REGISTRY: q3fu810o.gra7.container-registry.ovh.net
+  FINDOUT_HARBOR_PROJECT: findout
+  FINDOUT_HARBOR_USERNAME: robot$findout
+  FINDOUT_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
 
 permissions:
   contents: write
@@ -92,6 +97,7 @@ jobs:
           IMAGE_NI=${{ env.NITHECS_HARBOR_REGISTRY }}/${{ env.NITHECS_HARBOR_PROJECT }}/dashboard
           IMAGE_CS=${{ env.CSIDNET_HARBOR_REGISTRY }}/${{ env.CSIDNET_HARBOR_PROJECT }}/dashboard
           IMAGE_BC=${{ env.BRISTOLCABLE_HARBOR_REGISTRY }}/${{ env.BRISTOLCABLE_HARBOR_PROJECT }}/dashboard
+          IMAGE_FO=${{ env.FINDOUT_HARBOR_REGISTRY }}/${{ env.FINDOUT_HARBOR_PROJECT }}/dashboard
           docker buildx build \
             --platform linux/amd64 \
             --cache-from type=local,src=/tmp/.buildx-cache-dashboard \
@@ -105,6 +111,8 @@ jobs:
             --tag $IMAGE_CS:latest \
             --tag $IMAGE_BC:${{ env.BRISTOLCABLE_DASHBOARD_IMAGE_TAG }} \
             --tag $IMAGE_BC:latest \
+            --tag $IMAGE_FO:${{ env.FINDOUT_DASHBOARD_IMAGE_TAG }} \
+            --tag $IMAGE_FO:latest \
             --load \
             .
           rm -rf /tmp/.buildx-cache-dashboard
@@ -211,6 +219,21 @@ jobs:
         run: |
           IMAGE=${{ env.BRISTOLCABLE_HARBOR_REGISTRY }}/${{ env.BRISTOLCABLE_HARBOR_PROJECT }}/dashboard
           docker push $IMAGE:${{ env.BRISTOLCABLE_DASHBOARD_IMAGE_TAG }}
+          docker push $IMAGE:latest
+
+      - name: Push to Findout Harbor project
+        continue-on-error: true
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.FINDOUT_HARBOR_REGISTRY }}
+          username: ${{ env.FINDOUT_HARBOR_USERNAME }}
+          password: ${{ secrets.FINDOUT_HARBOR_PASSWORD }}
+
+      - name: Push Findout tags
+        continue-on-error: true
+        run: |
+          IMAGE=${{ env.FINDOUT_HARBOR_REGISTRY }}/${{ env.FINDOUT_HARBOR_PROJECT }}/dashboard
+          docker push $IMAGE:${{ env.FINDOUT_DASHBOARD_IMAGE_TAG }}
           docker push $IMAGE:latest
 
   # deploy-pouetsocial:
@@ -484,5 +507,45 @@ jobs:
         run: |
           docker compose -f ${{ env.COMPOSE_FILE }} pull
           docker compose -f ${{ env.COMPOSE_FILE }} up -d
+
+
+  deploy-findout:
+    name: Update findout compose file and deploy
+    runs-on: findout-d-runner
+    needs: build-dashboard
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update image tag in docker-compose.ovh.yml
+        run: |
+          DASHBOARD_IMAGE="${{ env.FINDOUT_HARBOR_REGISTRY }}/${{ env.FINDOUT_HARBOR_PROJECT }}/dashboard:${{ env.FINDOUT_DASHBOARD_IMAGE_TAG }}"
+
+          # Replace any existing dashboard image line, not just the initial placeholder
+          sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
+
+          echo "Updated compose file:"
+          grep -E "image:" ${{ env.COMPOSE_FILE }}
+
+      - name: Copy compose file to persistent deployment directory
+        run: |
+          mkdir -p /home/ubuntu/deployment/dashboard
+          cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
+
+      - name: Login to OVH Harbor
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.FINDOUT_HARBOR_REGISTRY }}
+          username: ${{ env.FINDOUT_HARBOR_USERNAME }}
+          password: ${{ secrets.FINDOUT_HARBOR_PASSWORD }}
+
+      - name: Deploy Findout dashboard with docker compose
+        working-directory: /home/ubuntu/deployment/dashboard
+        run: |
+          docker compose -f ${{ env.COMPOSE_FILE }} pull
+          docker compose -f ${{ env.COMPOSE_FILE }} up -d
+
 
 
