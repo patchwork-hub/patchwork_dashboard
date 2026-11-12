@@ -57,7 +57,7 @@ env:
   BRISTOLCABLE_HARBOR_USERNAME: robot$robotbristolcable
   BRISTOLCABLE_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
   # Findout
-  FINDOUT_HARBOR_REGISTRY: q3fu810o.gra7.container-registry.ovh.net
+  FINDOUT_HARBOR_REGISTRY: 17559c34.c1.bhs5.container-registry.ovh.net
   FINDOUT_HARBOR_PROJECT: findout
   FINDOUT_HARBOR_USERNAME: robot$findout
   FINDOUT_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
