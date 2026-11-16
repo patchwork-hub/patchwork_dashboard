@@ -67,10 +67,10 @@ env:
   NEWSMAST_HARBOR_USERNAME: robot$newsmast-social+newsmast-social
   NEWSMAST_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
   # Xeleme
-  NEWSMAST_HARBOR_REGISTRY: jo20b4yo.c1.bhs5.container-registry.ovh.net
-  NEWSMAST_HARBOR_PROJECT: xeleme
-  NEWSMAST_HARBOR_USERNAME: robot$xeleme
-  NEWSMAST_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
+  XELEME_HARBOR_REGISTRY: jo20b4yo.c1.bhs5.container-registry.ovh.net
+  XELEME_HARBOR_PROJECT: xeleme
+  XELEME_HARBOR_USERNAME: robot$xeleme
+  XELEME_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
 
 permissions:
   contents: write
