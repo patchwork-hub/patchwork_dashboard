@@ -66,6 +66,11 @@ env:
   NEWSMAST_HARBOR_PROJECT: newsmast-social
   NEWSMAST_HARBOR_USERNAME: robot$newsmast-social+newsmast-social
   NEWSMAST_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
+  # Xeleme
+  NEWSMAST_HARBOR_REGISTRY: jo20b4yo.c1.bhs5.container-registry.ovh.net
+  NEWSMAST_HARBOR_PROJECT: xeleme
+  NEWSMAST_HARBOR_USERNAME: robot$xeleme
+  NEWSMAST_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
 
 permissions:
   contents: write
@@ -107,6 +112,7 @@ jobs:
           IMAGE_BC=${{ env.BRISTOLCABLE_HARBOR_REGISTRY }}/${{ env.BRISTOLCABLE_HARBOR_PROJECT }}/dashboard
           IMAGE_FO=${{ env.FINDOUT_HARBOR_REGISTRY }}/${{ env.FINDOUT_HARBOR_PROJECT }}/dashboard
           IMAGE_NM=${{ env.NEWSMAST_HARBOR_REGISTRY }}/${{ env.NEWSMAST_HARBOR_PROJECT }}/dashboard
+          IMAGE_XM=${{ env.XELEME_HARBOR_REGISTRY }}/${{ env.XELEME_HARBOR_PROJECT }}/dashboard
           docker buildx build \
             --platform linux/amd64 \
             --cache-from type=local,src=/tmp/.buildx-cache-dashboard \
@@ -130,6 +136,8 @@ jobs:
             --tag $IMAGE_FO:latest \
             --tag $IMAGE_NM:${{ env.NEWSMAST_DASHBOARD_IMAGE_TAG }} \
             --tag $IMAGE_NM:latest \
+            --tag $IMAGE_XM:${{ env.XELEME_DASHBOARD_IMAGE_TAG }} \
+            --tag $IMAGE_XM:latest \
             --load \
             .
           rm -rf /tmp/.buildx-cache-dashboard
@@ -272,6 +280,22 @@ jobs:
         run: |
           IMAGE=${{ env.NEWSMAST_HARBOR_REGISTRY }}/${{ env.NEWSMAST_HARBOR_PROJECT }}/dashboard
           docker push $IMAGE:${{ env.NEWSMAST_DASHBOARD_IMAGE_TAG }}
+          docker push $IMAGE:
+          
+
+      - name: Push to Xeleme project
+        continue-on-error: true
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.XELEME_HARBOR_REGISTRY }}
+          username: ${{ env.XELEME_HARBOR_USERNAME }}
+          password: ${{ secrets.XELEME_HARBOR_PASSWORD }}
+
+      - name: Push Xeleme tags
+        continue-on-error: true
+        run: |
+          IMAGE=${{ env.XELEME_HARBOR_REGISTRY }}/${{ env.XELEME_HARBOR_PROJECT }}/dashboard
+          docker push $IMAGE:${{ env.XELEME_DASHBOARD_IMAGE_TAG }}
           docker push $IMAGE:latest
 
   deploy-pouetsocial:
@@ -580,6 +604,44 @@ jobs:
           password: ${{ secrets.FINDOUT_HARBOR_PASSWORD }}
 
       - name: Deploy Findout dashboard with docker compose
+        working-directory: /home/ubuntu/deployment/dashboard
+        run: |
+          docker compose -f ${{ env.COMPOSE_FILE }} pull
+          docker compose -f ${{ env.COMPOSE_FILE }} up -d
+
+  deploy-xeleme:
+    name: Update xeleme compose file and deploy
+    runs-on: xemele-d-runner
+    needs: build-dashboard
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update image tag in docker-compose.ovh.yml
+        run: |
+          DASHBOARD_IMAGE="${{ env.XELEME_HARBOR_REGISTRY }}/${{ env.XELEME_HARBOR_PROJECT }}/dashboard:${{ env.XELEME_DASHBOARD_IMAGE_TAG }}"
+
+          # Replace any existing dashboard image line, not just the initial placeholder
+          sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
+
+          echo "Updated compose file:"
+          grep -E "image:" ${{ env.COMPOSE_FILE }}
+
+      - name: Copy compose file to persistent deployment directory
+        run: |
+          mkdir -p /home/ubuntu/deployment/dashboard
+          cp -f ${{ env.COMPOSE_FILE }} /home/ubuntu/deployment/dashboard/
+
+      - name: Login to OVH Harbor
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.XELEME_HARBOR_REGISTRY }}
+          username: ${{ env.XELEME_HARBOR_USERNAME }}
+          password: ${{ secrets.XELEME_HARBOR_PASSWORD }}
+
+      - name: Deploy Xemele dashboard with docker compose
         working-directory: /home/ubuntu/deployment/dashboard
         run: |
           docker compose -f ${{ env.COMPOSE_FILE }} pull
