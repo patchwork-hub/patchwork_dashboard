@@ -71,11 +71,6 @@ env:
   XEMELE_HARBOR_PROJECT: xemele
   XEMELE_HARBOR_USERNAME: robot$xemele
   XEMELE_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
-  # Radio Fg
-  RADIO_FG_HARBOR_REGISTRY: 44eda7q3.gra7.container-registry.ovh.net
-  RADIO_FG_HARBOR_PROJECT: radio-fg
-  RADIO_FG_HARBOR_USERNAME: robot$radio-fg+radio-fg
-  RADIO_FG_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
 
 permissions:
   contents: write
@@ -118,7 +113,6 @@ jobs:
           IMAGE_FO=${{ env.FINDOUT_HARBOR_REGISTRY }}/${{ env.FINDOUT_HARBOR_PROJECT }}/dashboard
           IMAGE_NM=${{ env.NEWSMAST_HARBOR_REGISTRY }}/${{ env.NEWSMAST_HARBOR_PROJECT }}/dashboard
           IMAGE_XM=${{ env.XEMELE_HARBOR_REGISTRY }}/${{ env.XEMELE_HARBOR_PROJECT }}/dashboard
-          IMAGE_RADIO_FG=${{ env.RADIO_FG_HARBOR_REGISTRY }}/${{ env.RADIO_FG_HARBOR_PROJECT }}/dashboard
           docker buildx build \
             --platform linux/amd64 \
             --cache-from type=local,src=/tmp/.buildx-cache-dashboard \
@@ -144,8 +138,6 @@ jobs:
             --tag $IMAGE_NM:latest \
             --tag $IMAGE_XM:${{ env.XEMELE_DASHBOARD_IMAGE_TAG }} \
             --tag $IMAGE_XM:latest \
-            --tag $IMAGE_RADIO_FG:${{ env.RADIO_FG_DASHBOARD_IMAGE_TAG }} \
-            --tag $IMAGE_RADIO_FG:latest \
             --load \
             .
           rm -rf /tmp/.buildx-cache-dashboard
@@ -304,21 +296,6 @@ jobs:
         run: |
           IMAGE=${{ env.XEMELE_HARBOR_REGISTRY }}/${{ env.XEMELE_HARBOR_PROJECT }}/dashboard
           docker push $IMAGE:${{ env.XEMELE_DASHBOARD_IMAGE_TAG }}
-          docker push $IMAGE:latest
-
-      - name: Push to Radio Fg Harbor project
-        continue-on-error: true
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.RADIO_FG_HARBOR_REGISTRY }}
-          username: ${{ env.RADIO_FG_HARBOR_USERNAME }}
-          password: ${{ secrets.RADIO_FG_HARBOR_PASSWORD }}
-
-      - name: Push Radio Fg tags
-        continue-on-error: true
-        run: |
-          IMAGE=${{ env.RADIO_FG_HARBOR_REGISTRY }}/${{ env.RADIO_FG_HARBOR_PROJECT }}/dashboard
-          docker push $IMAGE:${{ env.RADIO_FG_DASHBOARD_IMAGE_TAG }}
           docker push $IMAGE:latest
 
   deploy-pouetsocial:
@@ -719,48 +696,3 @@ jobs:
           scp $SSH_OPTS ~/.docker/config.json ubuntu@$HOST:~/.docker/config.json
           ssh $SSH_OPTS ubuntu@$HOST \
             "set -e; cd /home/ubuntu/deployment/dashboard; docker compose -f ${{ env.COMPOSE_FILE }} pull; docker compose -f ${{ env.COMPOSE_FILE }} up -d"
-
-  deploy-radio-fg:
-    name: Update Radio Fg compose file and deploy
-    runs-on: ubuntu-latest
-    needs: build-dashboard
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Update image tag in docker-compose.ovh.yml
-        run: |
-          DASHBOARD_IMAGE="${{ env.RADIO_FG_HARBOR_REGISTRY }}/${{ env.RADIO_FG_HARBOR_PROJECT }}/dashboard:${{ env.RADIO_FG_DASHBOARD_IMAGE_TAG }}"
-
-          # Replace any existing dashboard image line, not just the initial placeholder
-          sed -i "\|image: .*/dashboard:|c\    image: $DASHBOARD_IMAGE" ${{ env.COMPOSE_FILE }}
-
-          echo "Updated compose file:"
-          grep -E "image:" ${{ env.COMPOSE_FILE }}
-
-      - name: Copy compose file to OVH server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ vars.RADIO_FG_SERVER_IP }}
-          username: ubuntu
-          key: ${{ secrets.OVH_SSH_PRIVATE_KEY }}
-          source: ${{ env.COMPOSE_FILE }}
-          target: /home/ubuntu/deployment/dashboard/
-          strip_components: 0
-          overwrite: true
-
-      # Credentials (.env.dashboard) live in /home/ubuntu/deployment/credential/ and are placed manually; CI never writes them.
-      - name: Deploy Radio Fg dashboard on OVH server
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ vars.RADIO_FG_SERVER_IP }}
-          username: ubuntu
-          key: ${{ secrets.OVH_SSH_PRIVATE_KEY }}
-          script_stop: true
-          script: |
-            set -euo pipefail
-            cd /home/ubuntu/deployment/dashboard
-            echo "${{ secrets.RADIO_FG_HARBOR_PASSWORD }}" | docker login "${{ env.RADIO_FG_HARBOR_REGISTRY }}" -u '${{ env.RADIO_FG_HARBOR_USERNAME }}' --password-stdin
-            docker compose -f ${{ env.COMPOSE_FILE }} pull
-            docker compose -f ${{ env.COMPOSE_FILE }} up -d
-            docker compose -f ${{ env.COMPOSE_FILE }} ps
