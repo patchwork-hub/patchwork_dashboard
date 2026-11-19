@@ -72,10 +72,10 @@ env:
   XEMELE_HARBOR_USERNAME: robot$xemele
   XEMELE_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
   # Mome
-  XEMELE_HARBOR_REGISTRY: 44eda7q3.gra7.container-registry.ovh.net
-  XEMELE_HARBOR_PROJECT: mome
-  XEMELE_HARBOR_USERNAME: robot$mome
-  XEMELE_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
+  MOME_HARBOR_REGISTRY: 44eda7q3.gra7.container-registry.ovh.net
+  MOME_HARBOR_PROJECT: mome
+  MOME_HARBOR_USERNAME: robot$mome
+  MOME_DASHBOARD_IMAGE_TAG: dashboard-${{ github.sha }}
 
 permissions:
   contents: write
