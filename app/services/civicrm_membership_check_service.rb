@@ -8,6 +8,8 @@ class CivicrmMembershipCheckService
   include HTTParty
 
   CONTACT_GET_PATH = "/civicrm/ajax/api4/Contact/get"
+  STAFF_GROUP_ID = 3
+  STAFF_GROUP_NAME = "CSIDNet Staff"
 
   Result = Struct.new(:valid?, :error_message, :user_groups, :values_present, keyword_init: true)
 
@@ -20,21 +22,17 @@ class CivicrmMembershipCheckService
   def call
     return valid_result unless force_remote? || feature_enabled?
     return invalid_result if @email.blank?
-    return invalid_result if working_group_ids.empty?
-    return valid_result if allowlisted_email? && !force_remote?
+    return valid_result if working_group_ids.any? && allowlisted_email? && !force_remote?
     return invalid_result unless config_present?
 
-    response = self.class.get(endpoint_url, headers: request_headers, query: { params: request_params.to_json })
-    response_body = response.respond_to?(:body) ? normalize_utf8(response.body) : ""
-
-    unless response.success?
-      Rails.logger.error("CiviCRM membership check unauthorized/failed: status=#{response.code} body=#{response_body}")
-      return invalid_result
+    if working_group_ids.any?
+      body = fetch_contact(working_group_ids)
+      return invalid_result unless body
+      return valid_result(extract_user_groups(body), values_present: true) if response_values(body).any?
     end
 
-    body = response.parsed_response
-    body = parse_response_body(response_body) unless body.is_a?(Hash)
-    return invalid_result if response_values(body).empty?
+    body = fetch_contact([STAFF_GROUP_ID])
+    return invalid_result unless response_values(body).any? { |value| staff_contact?(value) }
 
     valid_result(extract_user_groups(body), values_present: true)
   rescue StandardError => e
@@ -54,6 +52,19 @@ class CivicrmMembershipCheckService
 
   def config_present?
     base_url.present? && auth_token.present?
+  end
+
+  def fetch_contact(group_ids)
+    response = self.class.get(endpoint_url, headers: request_headers, query: { params: request_params(group_ids).to_json })
+    response_body = response.respond_to?(:body) ? normalize_utf8(response.body) : ""
+
+    unless response.success?
+      Rails.logger.error("CiviCRM membership check unauthorized/failed: status=#{response.code} body=#{response_body}")
+      return nil
+    end
+
+    body = response.parsed_response
+    body.is_a?(Hash) ? body : parse_response_body(response_body)
   end
 
   def base_url
@@ -93,7 +104,7 @@ class CivicrmMembershipCheckService
     "Bearer #{auth_token}"
   end
 
-  def request_params
+  def request_params(group_ids)
     {
       select: [
         "id",
@@ -134,18 +145,31 @@ class CivicrmMembershipCheckService
       where: [
         ["is_deleted", "=", false],
         ["email.email", "=", @email],
-        ["groups", "IN", working_group_ids]
+        ["groups", "IN", group_ids]
       ]
     }
   end
 
   def working_group_ids
-    Array(@working_group_id)
-      .flat_map { |value| value.to_s.split(",") }
+    parse_group_ids(@working_group_id)
+  end
+
+  def parse_group_ids(values, separator: ",")
+    Array(values)
+      .flat_map { |value| value.to_s.split(separator) }
       .map { |value| value.to_s.strip }
       .reject(&:blank?)
-      .filter_map { |value| Integer(value, 10) rescue nil }
+      .filter_map { |value| Integer(value, 10, exception: false) }
       .uniq
+  end
+
+  def staff_contact?(contact)
+    return false unless contact.is_a?(Hash)
+
+    group_ids = parse_group_ids(contact["user_group_ids"] || contact[:user_group_ids], separator: /[;,]/)
+
+    group_ids.include?(STAFF_GROUP_ID) &&
+      groups_from_result(contact).any? { |group| group.to_s.strip == STAFF_GROUP_NAME }
   end
 
   def allowlisted_email?
