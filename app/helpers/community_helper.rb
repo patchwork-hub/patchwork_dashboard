@@ -9,6 +9,10 @@ module CommunityHelper
     end
   end
 
+  def local_instance_domain
+    LocalAccountSearchService.local_domain
+  end
+
   def username(account)
     return nil unless account&.present?
 

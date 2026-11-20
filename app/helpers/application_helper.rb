@@ -50,7 +50,7 @@ module ApplicationHelper
       end
 
       if master_admin? || current_user.can?(:manage_starter_packs)
-        setup_items << { path: starter_packs_path, id: 'starter-packs-link', header: 'Starter packs', icon: 'collection.svg', text: 'Starter packs', active_if: 'starter_packs' }
+        setup_items << { path: starter_packs_path, id: 'starter-packs-link', header: 'Starter packs', icon: 'boxes.svg', text: 'Starter packs', active_if: 'starter_packs' }
       end
       if master_admin? || current_user.can?(:manage_auto_follows)
         setup_items << { path: auto_follows_path, id: 'auto-follows-link', header: 'Auto-follow', icon: 'users.svg', text: 'Auto-follow', active_if: 'auto_follows' }

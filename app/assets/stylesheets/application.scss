@@ -30,16 +30,12 @@ input[type='checkbox'] {
 }
 
 div.password {
-  .password-input-wrapper {
-    position: relative;
-  }
-
-  i {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
+  .input-group-text {
+    background-color: #fff;
+    border-left: 1px solid #ced4da;
     cursor: pointer;
+    position: relative;
+    z-index: 4;
   }
 }
 
