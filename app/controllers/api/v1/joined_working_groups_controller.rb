@@ -152,7 +152,6 @@ module Api
         return render_membership_not_eligible unless patchwork_community
 
         working_group_id = CIVICRM_WORKING_GROUP_IDS_BY_COMMUNITY_NAME[patchwork_community.name]
-        return render_membership_not_eligible unless working_group_id
 
         email = @account&.user&.email
         return render_membership_not_eligible if email.blank?
