@@ -24,18 +24,15 @@ class RemoteAccountVerifyService
   end
 
   def fetch_remote_account_id
-    # Find account in local server
-    domain = @domain
-    if @domain == 'backend.newsmast.org'
-      domain = 'newsmast.social'
-    end
-    account_id = if acc = Account.find_by(username: @remote_account["username"], domain: domain)
-      acc.id
-    else
-      account_handler = "@#{@remote_account["username"]}@#{domain}"
-      search_target_account_id(account_handler)
-    end
-    account_id
+    username = @remote_account['username']
+    account_domain = @domain == ENV.fetch('LOCAL_DOMAIN', nil) ? nil : @domain
+    account_domain = 'newsmast.social' if @domain == 'backend.newsmast.org'
+
+    account = Account.find_by(username: username, domain: account_domain)
+    return account.id if account
+
+    search_domain = account_domain || @domain
+    search_target_account_id("@#{username}@#{search_domain}")
   end
 
   def search_target_account_id(query)
